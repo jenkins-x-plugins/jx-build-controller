@@ -12,8 +12,6 @@
 
 Download the [jx-build-controller binary](https://github.com/jenkins-x-plugins/jx-build-controller/releases) for your operating system and add it to your `$PATH`.
 
-There will be an `app` you can install soon too...
-
 ## Commands
 
 See the [jx-build-controller command reference](https://github.com/jenkins-x-plugins/jx-build-controller/blob/master/docs/cmd/jx-build-controller.md#jx-build-controller)
