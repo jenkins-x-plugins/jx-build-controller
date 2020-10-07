@@ -1,0 +1,59 @@
+apiVersion: jenkins.io/v1
+kind: PipelineActivity
+metadata:
+  annotations:
+    lighthouse.jenkins-x.io/cloneURI: https://github.com/jstrachan/nodey530.git
+    lighthouse.jenkins-x.io/job: release
+  creationTimestamp: null
+  labels:
+    aadpodidbinding: tekton-bot
+    build: "1"
+    created-by-lighthouse: "true"
+    event-GUID: c7bc6ea8-086a-11eb-87dc-b86c5d9b6f3f
+    lighthouse.jenkins-x.io/baseSHA: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+    lighthouse.jenkins-x.io/branch: master
+    lighthouse.jenkins-x.io/buildNum: "1602054027949"
+    lighthouse.jenkins-x.io/context: release
+    lighthouse.jenkins-x.io/id: c7f487b6-086a-11eb-bdf0-6e97bc223765
+    lighthouse.jenkins-x.io/job: release
+    lighthouse.jenkins-x.io/lastCommitSHA: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+    lighthouse.jenkins-x.io/refs.org: jstrachan
+    lighthouse.jenkins-x.io/refs.repo: nodey530
+    lighthouse.jenkins-x.io/type: postsubmit
+    podName: release-9hs6f-from-build-pack-ddnhv-pod-dzw9t
+    tekton.dev/pipeline: release-9hs6f
+  name: jstrachan-nodey530-master-1
+  namespace: jx
+spec:
+  baseSHA: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+  batchPipelineActivity: {}
+  build: "1"
+  context: release
+  gitBranch: master
+  gitOwner: jstrachan
+  gitRepository: nodey530
+  gitUrl: https://github.com/jstrachan/nodey530.git
+  lastCommitSHA: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+  pipeline: jstrachan/nodey530/master
+  status: Pending
+  steps:
+  - kind: Stage
+    stage:
+      name: meta pipeline
+      status: Pending
+      steps:
+      - name: Git Clone
+        status: Pending
+      - name: Setup Builder Home
+        status: Pending
+      - name: Git Setup
+        status: Pending
+      - name: Git Merge
+        status: Pending
+      - name: Jx Variables
+        status: Pending
+      - name: Create Effective Pipeline
+        status: Pending
+      - name: Create Tekton Crds
+        status: Pending
+status: {}

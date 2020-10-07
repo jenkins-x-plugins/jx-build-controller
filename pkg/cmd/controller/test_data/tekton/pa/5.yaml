@@ -39,98 +39,72 @@ spec:
   steps:
   - kind: Stage
     stage:
-      completedTimestamp: "2020-10-07T03:23:57Z"
-      name: Git Clone
+      name: from build pack
       startedTimestamp: "2020-10-07T03:23:56Z"
       status: Succeeded
-  - kind: Stage
-    stage:
-      completedTimestamp: "2020-10-07T03:23:58Z"
-      name: Git Setup
-      startedTimestamp: "2020-10-07T03:23:57Z"
-      status: Succeeded
-  - kind: Stage
-    stage:
-      completedTimestamp: "2020-10-07T03:23:58Z"
-      name: Git Merge
-      startedTimestamp: "2020-10-07T03:23:58Z"
-      status: Succeeded
-  - kind: Stage
-    stage:
-      completedTimestamp: "2020-10-07T03:24:02Z"
-      name: Next Version
-      startedTimestamp: "2020-10-07T03:23:59Z"
-      status: Succeeded
-  - kind: Stage
-    stage:
-      completedTimestamp: "2020-10-07T03:24:03Z"
-      name: Update Version
-      startedTimestamp: "2020-10-07T03:24:02Z"
-      status: Succeeded
-  - kind: Stage
-    stage:
-      completedTimestamp: "2020-10-07T03:24:04Z"
-      name: Helm Template
-      startedTimestamp: "2020-10-07T03:24:04Z"
-      status: Succeeded
-  - kind: Stage
-    stage:
-      completedTimestamp: "2020-10-07T03:24:08Z"
-      name: Tag Version
-      startedTimestamp: "2020-10-07T03:24:04Z"
-      status: Succeeded
-  - kind: Stage
-    stage:
-      completedTimestamp: "2020-10-07T03:24:09Z"
-      name: Setup Builder Home
-      startedTimestamp: "2020-10-07T03:24:09Z"
-      status: Succeeded
-  - kind: Stage
-    stage:
-      completedTimestamp: "2020-10-07T03:24:09Z"
-      name: Jx Variables
-      startedTimestamp: "2020-10-07T03:24:09Z"
-      status: Succeeded
-  - kind: Stage
-    stage:
-      completedTimestamp: "2020-10-07T03:24:13Z"
-      name: Build Npmrc
-      startedTimestamp: "2020-10-07T03:24:10Z"
-      status: Succeeded
-  - kind: Stage
-    stage:
-      completedTimestamp: "2020-10-07T03:24:20Z"
-      name: Build Npm Install
-      startedTimestamp: "2020-10-07T03:24:13Z"
-      status: Succeeded
-  - kind: Stage
-    stage:
-      completedTimestamp: "2020-10-07T03:24:21Z"
-      name: Build Npm Test
-      startedTimestamp: "2020-10-07T03:24:21Z"
-      status: Succeeded
-  - kind: Stage
-    stage:
-      completedTimestamp: "2020-10-07T03:24:34Z"
-      name: Build Container Build
-      startedTimestamp: "2020-10-07T03:24:22Z"
-      status: Succeeded
-  - kind: Stage
-    stage:
-      completedTimestamp: "2020-10-07T03:24:43Z"
-      name: Promote Changelog
-      startedTimestamp: "2020-10-07T03:24:35Z"
-      status: Succeeded
-  - kind: Stage
-    stage:
-      completedTimestamp: "2020-10-07T03:24:44Z"
-      name: Promote Helm Release
-      startedTimestamp: "2020-10-07T03:24:43Z"
-      status: Succeeded
-  - kind: Stage
-    stage:
-      completedTimestamp: "2020-10-07T03:25:05Z"
-      name: Promote Jx Promote
-      startedTimestamp: "2020-10-07T03:24:45Z"
-      status: Succeeded
+      steps:
+      - completedTimestamp: "2020-10-07T03:23:57Z"
+        name: Git Clone
+        startedTimestamp: "2020-10-07T03:23:56Z"
+        status: Succeeded
+      - completedTimestamp: "2020-10-07T03:23:58Z"
+        name: Git Setup
+        startedTimestamp: "2020-10-07T03:23:57Z"
+        status: Succeeded
+      - completedTimestamp: "2020-10-07T03:23:58Z"
+        name: Git Merge
+        startedTimestamp: "2020-10-07T03:23:58Z"
+        status: Succeeded
+      - completedTimestamp: "2020-10-07T03:24:02Z"
+        name: Next Version
+        startedTimestamp: "2020-10-07T03:23:59Z"
+        status: Succeeded
+      - completedTimestamp: "2020-10-07T03:24:03Z"
+        name: Update Version
+        startedTimestamp: "2020-10-07T03:24:02Z"
+        status: Succeeded
+      - completedTimestamp: "2020-10-07T03:24:04Z"
+        name: Helm Template
+        startedTimestamp: "2020-10-07T03:24:04Z"
+        status: Succeeded
+      - completedTimestamp: "2020-10-07T03:24:08Z"
+        name: Tag Version
+        startedTimestamp: "2020-10-07T03:24:04Z"
+        status: Succeeded
+      - completedTimestamp: "2020-10-07T03:24:09Z"
+        name: Setup Builder Home
+        startedTimestamp: "2020-10-07T03:24:09Z"
+        status: Succeeded
+      - completedTimestamp: "2020-10-07T03:24:09Z"
+        name: Jx Variables
+        startedTimestamp: "2020-10-07T03:24:09Z"
+        status: Succeeded
+      - completedTimestamp: "2020-10-07T03:24:13Z"
+        name: Build Npmrc
+        startedTimestamp: "2020-10-07T03:24:10Z"
+        status: Succeeded
+      - completedTimestamp: "2020-10-07T03:24:20Z"
+        name: Build Npm Install
+        startedTimestamp: "2020-10-07T03:24:13Z"
+        status: Succeeded
+      - completedTimestamp: "2020-10-07T03:24:21Z"
+        name: Build Npm Test
+        startedTimestamp: "2020-10-07T03:24:21Z"
+        status: Succeeded
+      - completedTimestamp: "2020-10-07T03:24:34Z"
+        name: Build Container Build
+        startedTimestamp: "2020-10-07T03:24:22Z"
+        status: Succeeded
+      - completedTimestamp: "2020-10-07T03:24:43Z"
+        name: Promote Changelog
+        startedTimestamp: "2020-10-07T03:24:35Z"
+        status: Succeeded
+      - completedTimestamp: "2020-10-07T03:24:44Z"
+        name: Promote Helm Release
+        startedTimestamp: "2020-10-07T03:24:43Z"
+        status: Succeeded
+      - completedTimestamp: "2020-10-07T03:25:05Z"
+        name: Promote Jx Promote
+        startedTimestamp: "2020-10-07T03:24:45Z"
+        status: Succeeded
 status: {}

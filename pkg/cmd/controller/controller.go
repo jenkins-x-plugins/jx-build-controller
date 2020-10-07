@@ -192,21 +192,7 @@ func (o *Options) OnPipelineRunUpsert(pr *v1beta1.PipelineRun, ns string) (*jxv1
 	}
 	original := pa.DeepCopy()
 
-	if !found {
-		pipelines.ToPipelineActivity(pr, pa)
-	} else {
-		// lets remove all the steps other than promotions/previews and recreate the others from the PipelineRun
-		ps := &pa.Spec
-		oldSteps := ps.Steps
-		ps.Steps = nil
-		pipelines.ToPipelineActivity(pr, pa)
-
-		for _, s := range oldSteps {
-			if s.Kind == jxv1.ActivityStepKindTypePreview || s.Kind == jxv1.ActivityStepKindTypePromote {
-				ps.Steps = append(ps.Steps, s)
-			}
-		}
-	}
+	pipelines.ToPipelineActivity(pr, pa, true)
 
 	if found {
 		// lets ignore if we don't change it...

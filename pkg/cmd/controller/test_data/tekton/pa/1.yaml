@@ -38,66 +38,39 @@ spec:
   steps:
   - kind: Stage
     stage:
-      name: Git Clone
+      name: from build pack
       status: Pending
-  - kind: Stage
-    stage:
-      name: Git Setup
-      status: Pending
-  - kind: Stage
-    stage:
-      name: Git Merge
-      status: Pending
-  - kind: Stage
-    stage:
-      name: Next Version
-      status: Pending
-  - kind: Stage
-    stage:
-      name: Update Version
-      status: Pending
-  - kind: Stage
-    stage:
-      name: Helm Template
-      status: Pending
-  - kind: Stage
-    stage:
-      name: Tag Version
-      status: Pending
-  - kind: Stage
-    stage:
-      name: Setup Builder Home
-      status: Pending
-  - kind: Stage
-    stage:
-      name: Jx Variables
-      status: Pending
-  - kind: Stage
-    stage:
-      name: Build Npmrc
-      status: Pending
-  - kind: Stage
-    stage:
-      name: Build Npm Install
-      status: Pending
-  - kind: Stage
-    stage:
-      name: Build Npm Test
-      status: Pending
-  - kind: Stage
-    stage:
-      name: Build Container Build
-      status: Pending
-  - kind: Stage
-    stage:
-      name: Promote Changelog
-      status: Pending
-  - kind: Stage
-    stage:
-      name: Promote Helm Release
-      status: Pending
-  - kind: Stage
-    stage:
-      name: Promote Jx Promote
-      status: Pending
+      steps:
+      - name: Git Clone
+        status: Pending
+      - name: Git Setup
+        status: Pending
+      - name: Git Merge
+        status: Pending
+      - name: Next Version
+        status: Pending
+      - name: Update Version
+        status: Pending
+      - name: Helm Template
+        status: Pending
+      - name: Tag Version
+        status: Pending
+      - name: Setup Builder Home
+        status: Pending
+      - name: Jx Variables
+        status: Pending
+      - name: Build Npmrc
+        status: Pending
+      - name: Build Npm Install
+        status: Pending
+      - name: Build Npm Test
+        status: Pending
+      - name: Build Container Build
+        status: Pending
+      - name: Promote Changelog
+        status: Pending
+      - name: Promote Helm Release
+        status: Pending
+      - name: Promote Jx Promote
+        status: Pending
 status: {}
