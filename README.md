@@ -8,7 +8,7 @@
 
 `jx-build-controller` watches for `PipelineRun` resources and updates the `PipelineActivity` custom resources to reflect their status.
 
-Also `jx-build-controller` optionally stores resources and logs to long term storage (e.g. buckets)
+Also `jx-build-controller` optionally stores resources and logs to long term storage (e.g. buckets).
 
 ## Getting Started
 
