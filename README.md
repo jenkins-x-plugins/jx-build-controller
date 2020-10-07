@@ -6,7 +6,9 @@
 [![LICENSE](https://img.shields.io/github/license/jenkins-x/helmboot.svg)](https://github.com/jenkins-x-plugins/jx-build-controller/blob/master/LICENSE)
 [![Slack Status](https://img.shields.io/badge/slack-join_chat-white.svg?logo=slack&style=social)](https://slack.k8s.io/)
 
-`jx-build-controller` watches for `PipelineRun` resources and updates the `PipelineActivity` custom resources to reflect their status and optionally stores resources and logs to long term storage (e.g. buckets)
+`jx-build-controller` watches for `PipelineRun` resources and updates the `PipelineActivity` custom resources to reflect their status.
+
+Also `jx-build-controller` optionally stores resources and logs to long term storage (e.g. buckets)
 
 ## Getting Started
 
