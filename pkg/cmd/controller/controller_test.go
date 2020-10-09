@@ -47,7 +47,7 @@ func TestBuildControllerTekton(t *testing.T) {
 		err := yamls.LoadFile(prFile, pr)
 		require.NoError(t, err, "failed to load %s", prFile)
 
-		pa, err := o.OnPipelineRunUpsert(pr, ns)
+		pa, err := o.OnPipelineRunUpsert(nil, pr, ns)
 		require.NoError(t, err, "failed to process PipelineRun %i", i)
 
 		if regenTestDataMode {
@@ -90,7 +90,7 @@ func TestBuildControllerMetaPipeline(t *testing.T) {
 		err := yamls.LoadFile(prFile, pr)
 		require.NoError(t, err, "failed to load %s", prFile)
 
-		pa, err := o.OnPipelineRunUpsert(pr, ns)
+		pa, err := o.OnPipelineRunUpsert(nil, pr, ns)
 		require.NoError(t, err, "failed to process PipelineRun %i", i)
 
 		if regenTestDataMode {
