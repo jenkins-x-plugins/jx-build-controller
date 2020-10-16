@@ -12,6 +12,8 @@ Also `jx-build-controller` optionally stores resources and logs to long term sto
 
 ## Getting Started
 
+The build controller is included OOTB inside [Jenkins X](https://jenkins-x.io/docs/v3/)
+
 Download the [jx-build-controller binary](https://github.com/jenkins-x-plugins/jx-build-controller/releases) for your operating system and add it to your `$PATH`.
 
 ## Commands
