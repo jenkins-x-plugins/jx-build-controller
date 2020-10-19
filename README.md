@@ -20,5 +20,3 @@ Download the [jx-build-controller binary](https://github.com/jenkins-x-plugins/j
 
 See the [jx-build-controller command reference](https://github.com/jenkins-x-plugins/jx-build-controller/blob/master/docs/cmd/jx-build-controller.md#jx-build-controller)
 
-
-
