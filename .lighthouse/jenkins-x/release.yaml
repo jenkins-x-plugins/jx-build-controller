@@ -19,7 +19,7 @@ spec:
     - description: 'the kind of job: postsubmit or presubmit'
       name: JOB_TYPE
       type: string
-    - default: master
+    - default: main
       description: the base git reference of the pull request
       name: PULL_BASE_REF
       type: string
@@ -34,7 +34,7 @@ spec:
       description: git pull request ref in the form 'refs/pull/$PULL_NUMBER/head'
       name: PULL_PULL_REF
       type: string
-    - default: master
+    - default: main
       description: git revision to checkout (branch, tag, sha, ref…)
       name: PULL_PULL_SHA
       type: string
@@ -85,7 +85,7 @@ spec:
         - description: git url to clone
           name: REPO_URL
           type: string
-        - default: master
+        - default: main
           description: git revision to checkout (branch, tag, sha, ref…)
           name: PULL_PULL_SHA
           type: string
@@ -105,7 +105,7 @@ spec:
         - description: 'the kind of job: postsubmit or presubmit'
           name: JOB_TYPE
           type: string
-        - default: master
+        - default: main
           description: the base git reference of the pull request
           name: PULL_BASE_REF
           type: string
