@@ -1,12 +1,19 @@
 package controller
 
 import (
+	"context"
 	"fmt"
+	"net/http"
+	"os"
+	"os/signal"
+	"sync/atomic"
+	"syscall"
 	"time"
 
-	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/tekton"
-
 	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/jx"
+
+	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/handler"
+	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/tekton"
 
 	"github.com/jenkins-x-plugins/jx-build-controller/pkg/common"
 	jxv1 "github.com/jenkins-x/jx-api/v3/pkg/apis/jenkins.io/v1"
@@ -45,6 +52,7 @@ type Options struct {
 
 	Namespace               string
 	OperatorNamespace       string
+	port                    string
 	WriteLogToBucketTimeout time.Duration
 	KubeClient              kubernetes.Interface
 	JXClient                versioned.Interface
@@ -71,7 +79,7 @@ func NewCmdController() (*cobra.Command, *Options) {
 	cmd.Flags().StringVarP(&options.Namespace, "namespace", "n", "", "The kubernetes Namespace to watch for PipelineRun and PipelineActivity resources. Defaults to the current namespace")
 	cmd.Flags().StringVarP(&options.OperatorNamespace, "operator-namespace", "", "jx-git-operator", "The git operator namespace")
 	cmd.Flags().DurationVarP(&options.WriteLogToBucketTimeout, "write-log-timeout", "", time.Minute*30, "The timeout for writing pipeline logs to the bucket")
-
+	cmd.Flags().StringVarP(&options.port, "port", "", "8080", "The port for health and readiness checks to listen on")
 	options.BaseOptions.AddBaseFlags(cmd)
 	return cmd, options
 }
@@ -119,9 +127,13 @@ func (o *Options) Run() error {
 	log.Logger().Info("starting build controller")
 	ns := o.Namespace
 
-	// todo add readiness check
-	// todo add health check
 	// todo add resyncInterval
+
+	isTektonClientReady := &atomic.Value{}
+	isTektonClientReady.Store(false)
+
+	isJenkinXClientReady := &atomic.Value{}
+	isJenkinXClientReady.Store(false)
 
 	go func() {
 		(&jx.Options{
@@ -129,6 +141,7 @@ func (o *Options) Run() error {
 			Namespace:        ns,
 			Masker:           o.Masker,
 			EnvironmentCache: o.EnvironmentCache,
+			IsReady:          isJenkinXClientReady,
 		}).Start()
 	}()
 
@@ -136,9 +149,44 @@ func (o *Options) Run() error {
 		(&tekton.Options{
 			TektonClient: o.TektonClient,
 			KubeClient:   o.KubeClient,
+			JXClient:     o.JXClient,
 			Namespace:    ns,
+			IsReady:      isTektonClientReady,
 		}).Start()
 	}()
 
+	o.startHealthEndpoint(isTektonClientReady, isJenkinXClientReady)
+	return nil
+}
+
+func (o Options) startHealthEndpoint(isTektonClientReady, isJenkinXClientReady *atomic.Value) error {
+	r := handler.Router(isTektonClientReady, isJenkinXClientReady)
+
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
+
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%s", o.port),
+		Handler: r,
+	}
+	go func() {
+		log.Logger().Fatal(srv.ListenAndServe())
+	}()
+	log.Logger().Infof("The service is ready to listen and serve.")
+
+	killSignal := <-interrupt
+	switch killSignal {
+	case os.Interrupt:
+		log.Logger().Infof("Got SIGINT...")
+	case syscall.SIGTERM:
+		log.Logger().Infof("Got SIGTERM...")
+	}
+
+	log.Logger().Infof("The service is shutting down...")
+	err := srv.Shutdown(context.Background())
+	if err != nil {
+		return errors.Wrapf(err, "failed to shutdown cleanly")
+	}
+	log.Logger().Infof("Done")
 	return nil
 }

@@ -2,6 +2,7 @@ package jx
 
 import (
 	"fmt"
+	"sync/atomic"
 	"time"
 
 	jxv1 "github.com/jenkins-x/jx-api/v3/pkg/apis/jenkins.io/v1"
@@ -20,6 +21,7 @@ type Options struct {
 	Masker           watcher.Options
 	EnvironmentCache map[string]*jxv1.Environment
 	Namespace        string
+	IsReady          *atomic.Value
 }
 
 func (o *Options) Start() error {
@@ -53,16 +55,15 @@ func (o *Options) Start() error {
 			log.Logger().Infof("updated %s", e.Name)
 		},
 	})
-
+	informerFactory.Start(stop)
 	if !cache.WaitForCacheSync(stop, jxEnvironmentInformer.HasSynced) {
 		msg := "timed out waiting for jx caches to sync"
 		runtime.HandleError(fmt.Errorf(msg))
 		return errors.New(msg)
 	}
-
 	// Starts all the shared informers that have been created by the factory so
 	// far.
-	informerFactory.Start(stop)
+
 	// wait for the initial synchronization of the local cache.
 	if !cache.WaitForCacheSync(stop, jxEnvironmentInformer.HasSynced) {
 		msg := "timed out waiting for jx caches to sync"
@@ -70,7 +71,8 @@ func (o *Options) Start() error {
 		return errors.New(msg)
 	}
 
-	//todo i.IsReady.Store(true)
+	o.IsReady.Store(true)
+
 	<-stop
 
 	// Wait forever

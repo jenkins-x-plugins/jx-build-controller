@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/jenkins-x/jx-secret/pkg/masker/watcher"
@@ -43,6 +44,7 @@ type Options struct {
 	Namespace               string
 	Masker                  watcher.Options
 	WriteLogToBucketTimeout time.Duration
+	IsReady                 *atomic.Value
 }
 
 func (o *Options) Start() error {
@@ -80,8 +82,8 @@ func (o *Options) Start() error {
 		runtime.HandleError(fmt.Errorf(msg))
 		return errors.New(msg)
 	}
+	o.IsReady.Store(true)
 
-	//todo i.IsReady.Store(true)
 	<-stop
 
 	// Wait forever
