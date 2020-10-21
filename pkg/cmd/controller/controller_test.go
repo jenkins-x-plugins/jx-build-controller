@@ -1,6 +1,7 @@
 package controller_test
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
@@ -48,7 +49,7 @@ func TestBuildControllerTekton(t *testing.T) {
 		err := yamls.LoadFile(prFile, pr)
 		require.NoError(t, err, "failed to load %s", prFile)
 
-		pa, err := o.OnPipelineRunUpsert(nil, pr, ns)
+		pa, err := o.OnPipelineRunUpsert(context.TODO(), pr, ns)
 		require.NoError(t, err, "failed to process PipelineRun %i", i)
 
 		testpipelines.ClearTimestamps(pa)
@@ -92,7 +93,7 @@ func TestBuildControllerMetaPipeline(t *testing.T) {
 		err := yamls.LoadFile(prFile, pr)
 		require.NoError(t, err, "failed to load %s", prFile)
 
-		pa, err := o.OnPipelineRunUpsert(nil, pr, ns)
+		pa, err := o.OnPipelineRunUpsert(context.TODO(), pr, ns)
 		require.NoError(t, err, "failed to process PipelineRun %i", i)
 		testpipelines.ClearTimestamps(pa)
 
