@@ -18,7 +18,6 @@ require (
 )
 
 replace (
-	github.com/jenkins-x/jx-pipeline => /workspace/go/src/github.com/jenkins-x/jx-pipeline
 	github.com/tektoncd/pipeline => github.com/jenkins-x/pipeline v0.0.0-20201002150609-ca0741e5d19a
 	k8s.io/client-go => k8s.io/client-go v0.19.2
 )
