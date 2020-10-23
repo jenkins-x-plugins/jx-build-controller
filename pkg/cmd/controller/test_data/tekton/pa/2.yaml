@@ -34,41 +34,26 @@ spec:
   gitUrl: https://github.com/jstrachan/nodey532.git
   lastCommitSHA: a086c129ce37779d435145f2f40e0ee3f9eb59ef
   pipeline: jstrachan/nodey532/master
-  startedTimestamp: "2020-10-07T03:23:56Z"
   status: Running
   steps:
   - kind: Stage
     stage:
       name: from build pack
-      startedTimestamp: "2020-10-07T03:23:56Z"
       status: Running
       steps:
-      - completedTimestamp: "2020-10-07T03:23:57Z"
-        name: Git Clone
-        startedTimestamp: "2020-10-07T03:23:56Z"
+      - name: Git Clone
         status: Succeeded
-      - completedTimestamp: "2020-10-07T03:23:58Z"
-        name: Git Setup
-        startedTimestamp: "2020-10-07T03:23:57Z"
+      - name: Git Setup
         status: Succeeded
-      - completedTimestamp: "2020-10-07T03:23:58Z"
-        name: Git Merge
-        startedTimestamp: "2020-10-07T03:23:58Z"
+      - name: Git Merge
         status: Succeeded
-      - completedTimestamp: "2020-10-07T03:24:02Z"
-        name: Next Version
-        startedTimestamp: "2020-10-07T03:23:59Z"
+      - name: Next Version
         status: Succeeded
-      - completedTimestamp: "2020-10-07T03:24:03Z"
-        name: Update Version
-        startedTimestamp: "2020-10-07T03:24:02Z"
+      - name: Update Version
         status: Succeeded
-      - completedTimestamp: "2020-10-07T03:24:04Z"
-        name: Helm Template
-        startedTimestamp: "2020-10-07T03:24:04Z"
+      - name: Helm Template
         status: Succeeded
       - name: Tag Version
-        startedTimestamp: "2020-10-07T03:23:51Z"
         status: Running
       - name: Setup Builder Home
         status: Pending

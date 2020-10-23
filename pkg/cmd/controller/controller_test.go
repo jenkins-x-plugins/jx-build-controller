@@ -10,6 +10,7 @@ import (
 	fakejx "github.com/jenkins-x/jx-api/v3/pkg/client/clientset/versioned/fake"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/testhelpers"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/yamls"
+	"github.com/jenkins-x/jx-pipeline/pkg/testpipelines"
 	"github.com/stretchr/testify/require"
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	faketekton "github.com/tektoncd/pipeline/pkg/client/clientset/versioned/fake"
@@ -50,6 +51,7 @@ func TestBuildControllerTekton(t *testing.T) {
 		pa, err := o.OnPipelineRunUpsert(nil, pr, ns)
 		require.NoError(t, err, "failed to process PipelineRun %i", i)
 
+		testpipelines.ClearTimestamps(pa)
 		if regenTestDataMode {
 			actualPaFile := filepath.Join(sourceDir, "pa", fileName)
 			err = yamls.SaveFile(pa, actualPaFile)
@@ -92,6 +94,7 @@ func TestBuildControllerMetaPipeline(t *testing.T) {
 
 		pa, err := o.OnPipelineRunUpsert(nil, pr, ns)
 		require.NoError(t, err, "failed to process PipelineRun %i", i)
+		testpipelines.ClearTimestamps(pa)
 
 		if regenTestDataMode {
 			actualPaFile := filepath.Join(sourceDir, "pa", fileName)

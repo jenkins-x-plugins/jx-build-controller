@@ -40,86 +40,52 @@ spec:
   gitUrl: https://github.com/jstrachan/nodey530.git
   lastCommitSHA: 1233cfd611a1d5280879c5f3fca44c181e3183cb
   pipeline: jstrachan/nodey530/master
-  startedTimestamp: "2020-10-07T07:00:35Z"
   status: Running
   steps:
   - kind: Stage
     stage:
       name: meta pipeline
-      startedTimestamp: "2020-10-07T07:00:35Z"
       status: Succeeded
       steps:
-      - completedTimestamp: "2020-10-07T07:00:35Z"
-        name: Git Clone
-        startedTimestamp: "2020-10-07T07:00:35Z"
+      - name: Git Clone
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:00:36Z"
-        name: Setup Builder Home
-        startedTimestamp: "2020-10-07T07:00:36Z"
+      - name: Setup Builder Home
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:00:37Z"
-        name: Git Setup
-        startedTimestamp: "2020-10-07T07:00:37Z"
+      - name: Git Setup
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:00:38Z"
-        name: Git Merge
-        startedTimestamp: "2020-10-07T07:00:37Z"
+      - name: Git Merge
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:00:38Z"
-        name: Jx Variables
-        startedTimestamp: "2020-10-07T07:00:38Z"
+      - name: Jx Variables
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:00:42Z"
-        name: Create Effective Pipeline
-        startedTimestamp: "2020-10-07T07:00:38Z"
+      - name: Create Effective Pipeline
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:00:54Z"
-        name: Create Tekton Crds
-        startedTimestamp: "2020-10-07T07:00:43Z"
+      - name: Create Tekton Crds
         status: Succeeded
   - kind: Stage
     stage:
       name: from build pack
-      startedTimestamp: "2020-10-07T07:01:06Z"
       status: Running
       steps:
-      - completedTimestamp: "2020-10-07T07:01:06Z"
-        name: Setup Builder Home
-        startedTimestamp: "2020-10-07T07:01:06Z"
+      - name: Setup Builder Home
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:01:07Z"
-        name: Git Merge
-        startedTimestamp: "2020-10-07T07:01:06Z"
+      - name: Git Merge
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:01:09Z"
-        name: Setup Jx Git Credentials
-        startedTimestamp: "2020-10-07T07:01:08Z"
+      - name: Setup Jx Git Credentials
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:01:09Z"
-        name: Build Npmrc
-        startedTimestamp: "2020-10-07T07:01:09Z"
+      - name: Build Npmrc
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:01:12Z"
-        name: Build Npm Install
-        startedTimestamp: "2020-10-07T07:01:10Z"
+      - name: Build Npm Install
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:01:13Z"
-        name: Build Npm Test
-        startedTimestamp: "2020-10-07T07:01:12Z"
+      - name: Build Npm Test
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:01:27Z"
-        name: Build Container Build
-        startedTimestamp: "2020-10-07T07:01:14Z"
+      - name: Build Container Build
         status: Succeeded
       - name: Promote Changelog
-        startedTimestamp: "2020-10-07T07:01:00Z"
         status: Running
       - name: Promote Helm Release
         status: Pending
       - name: Promote Jx Promote
         status: Pending
-      - completedTimestamp: "2020-10-07T07:01:05Z"
-        name: Git Source Workspace Sx9ms
-        startedTimestamp: "2020-10-07T07:01:03Z"
+      - name: Git Source Workspace Sx9ms
         status: Succeeded
 status: {}

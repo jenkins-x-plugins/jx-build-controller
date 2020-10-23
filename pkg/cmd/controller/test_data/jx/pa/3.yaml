@@ -35,41 +35,25 @@ spec:
   gitUrl: https://github.com/jstrachan/nodey530.git
   lastCommitSHA: 1233cfd611a1d5280879c5f3fca44c181e3183cb
   pipeline: jstrachan/nodey530/master
-  startedTimestamp: "2020-10-07T07:00:35Z"
   status: Succeeded
   steps:
   - kind: Stage
     stage:
       name: meta pipeline
-      startedTimestamp: "2020-10-07T07:00:35Z"
       status: Succeeded
       steps:
-      - completedTimestamp: "2020-10-07T07:00:35Z"
-        name: Git Clone
-        startedTimestamp: "2020-10-07T07:00:35Z"
+      - name: Git Clone
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:00:36Z"
-        name: Setup Builder Home
-        startedTimestamp: "2020-10-07T07:00:36Z"
+      - name: Setup Builder Home
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:00:37Z"
-        name: Git Setup
-        startedTimestamp: "2020-10-07T07:00:37Z"
+      - name: Git Setup
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:00:38Z"
-        name: Git Merge
-        startedTimestamp: "2020-10-07T07:00:37Z"
+      - name: Git Merge
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:00:38Z"
-        name: Jx Variables
-        startedTimestamp: "2020-10-07T07:00:38Z"
+      - name: Jx Variables
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:00:42Z"
-        name: Create Effective Pipeline
-        startedTimestamp: "2020-10-07T07:00:38Z"
+      - name: Create Effective Pipeline
         status: Succeeded
-      - completedTimestamp: "2020-10-07T07:00:54Z"
-        name: Create Tekton Crds
-        startedTimestamp: "2020-10-07T07:00:43Z"
+      - name: Create Tekton Crds
         status: Succeeded
 status: {}
