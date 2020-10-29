@@ -38,7 +38,7 @@ spec:
       description: git revision to checkout (branch, tag, sha, ref…)
       name: PULL_PULL_SHA
       type: string
-    - description: git pull reference strings of base and latest in the form 'master:$PULL_BASE_SHA,$PULL_NUMBER:$PULL_PULL_SHA:refs/pull/$PULL_NUMBER/head'
+    - description: git pull reference strings of base and latest in the form 'main:$PULL_BASE_SHA,$PULL_NUMBER:$PULL_PULL_SHA:refs/pull/$PULL_NUMBER/head'
       name: PULL_REFS
       type: string
     - description: git repository name
@@ -120,7 +120,7 @@ spec:
           description: git pull request ref in the form 'refs/pull/$PULL_NUMBER/head'
           name: PULL_PULL_REF
           type: string
-        - description: git pull reference strings of base and latest in the form 'master:$PULL_BASE_SHA,$PULL_NUMBER:$PULL_PULL_SHA:refs/pull/$PULL_NUMBER/head'
+        - description: git pull reference strings of base and latest in the form 'main:$PULL_BASE_SHA,$PULL_NUMBER:$PULL_PULL_SHA:refs/pull/$PULL_NUMBER/head'
           name: PULL_REFS
           type: string
         - description: git repository name
@@ -176,7 +176,7 @@ spec:
             to dir: /workspace/$(params.subdirectory); ls -al'
           command:
           - /bin/sh
-          image: gcr.io/jenkinsxio/builder-jx:2.1.32-662
+          image: gcr.io/jenkinsxio/builder-jx:2.1.142-761
           name: git-clone
           resources: {}
           workingDir: /workspace
@@ -193,22 +193,6 @@ spec:
           resources: {}
           workingDir: /workspace
         - args:
-          - step
-          - git
-          - merge
-          - --verbose
-          - --baseSHA
-          - $(params.PULL_BASE_SHA)
-          - --sha
-          - $(params.PULL_PULL_SHA)
-          - --baseBranch
-          - $(params.PULL_BASE_REF)
-          command:
-          - jx
-          image: gcr.io/jenkinsxio/builder-jx:2.1.142-761
-          name: git-merge
-          resources: {}
-        - args:
           - -c
           - jx step next-version --use-git-tag-only
           command:
@@ -223,14 +207,6 @@ spec:
           - /bin/sh
           image: gcr.io/jenkinsxio/builder-go
           name: update-version
-          resources: {}
-        - args:
-          - -c
-          - echo disabled
-          command:
-          - /bin/sh
-          image: gcr.io/jenkinsxio-labs-private/jxl:0.0.136
-          name: helm-template
           resources: {}
         - args:
           - -c
@@ -272,7 +248,7 @@ spec:
           command:
           - /busybox/sh
           - -c
-          image: gcr.io/kaniko-project/executor:debug-9912ccbf8d22bbafbf971124600fbb0b13b9cbd6
+          image: gcr.io/kaniko-project/executor:debug-1d1298564878f2a57d8f77b4269c66c6e2d9bb6b
           name: build-and-push-image
           resources: {}
         - args:
