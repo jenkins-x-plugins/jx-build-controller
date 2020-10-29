@@ -6,6 +6,6 @@ import (
 )
 
 // Main creates a command object for the command
-func Main() (*cobra.Command, *controller.Options) {
+func Main() (*cobra.Command, *controller.ControllerOptions) {
 	return controller.NewCmdController()
 }

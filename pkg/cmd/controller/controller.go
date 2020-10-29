@@ -23,7 +23,6 @@ import (
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/jxclient"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/options"
-	"github.com/jenkins-x/jx-helpers/v3/pkg/termcolor"
 	"github.com/jenkins-x/jx-kube-client/v3/pkg/kubeclient"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 	"github.com/jenkins-x/jx-secret/pkg/masker/watcher"
@@ -34,8 +33,6 @@ import (
 )
 
 var (
-	info = termcolor.ColorInfo
-
 	cmdLong = templates.LongDesc(`
 		Promotes a version of an application to an Environment
 `)
@@ -46,8 +43,8 @@ var (
 	`)
 )
 
-// Options the options for this command
-type Options struct {
+// ControllerOptions the options for this command
+type ControllerOptions struct {
 	options.BaseOptions
 
 	Namespace               string
@@ -62,8 +59,8 @@ type Options struct {
 }
 
 // NewCmdController creates a command object for the command
-func NewCmdController() (*cobra.Command, *Options) {
-	options := &Options{}
+func NewCmdController() (*cobra.Command, *ControllerOptions) {
+	o := &ControllerOptions{}
 
 	cmd := &cobra.Command{
 		Use:     "run",
@@ -71,21 +68,21 @@ func NewCmdController() (*cobra.Command, *Options) {
 		Long:    cmdLong,
 		Example: fmt.Sprintf(cmdExample, common.BinaryName),
 		Run: func(cmd *cobra.Command, args []string) {
-			err := options.Run()
+			err := o.Run()
 			helper.CheckErr(err)
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.Namespace, "namespace", "n", "", "The kubernetes Namespace to watch for PipelineRun and PipelineActivity resources. Defaults to the current namespace")
-	cmd.Flags().StringVarP(&options.OperatorNamespace, "operator-namespace", "", "jx-git-operator", "The git operator namespace")
-	cmd.Flags().DurationVarP(&options.WriteLogToBucketTimeout, "write-log-timeout", "", time.Minute*30, "The timeout for writing pipeline logs to the bucket")
-	cmd.Flags().StringVarP(&options.port, "port", "", "8080", "The port for health and readiness checks to listen on")
-	options.BaseOptions.AddBaseFlags(cmd)
-	return cmd, options
+	cmd.Flags().StringVarP(&o.Namespace, "namespace", "n", "", "The kubernetes Namespace to watch for PipelineRun and PipelineActivity resources. Defaults to the current namespace")
+	cmd.Flags().StringVarP(&o.OperatorNamespace, "operator-namespace", "", "jx-git-operator", "The git operator namespace")
+	cmd.Flags().DurationVarP(&o.WriteLogToBucketTimeout, "write-log-timeout", "", time.Minute*30, "The timeout for writing pipeline logs to the bucket")
+	cmd.Flags().StringVarP(&o.port, "port", "", "8080", "The port for health and readiness checks to listen on")
+	o.BaseOptions.AddBaseFlags(cmd)
+	return cmd, o
 }
 
 // Validate verifies things are setup correctly
-func (o *Options) Validate() error {
+func (o *ControllerOptions) Validate() error {
 	var err error
 	o.KubeClient, o.Namespace, err = kube.LazyCreateKubeClientAndNamespace(o.KubeClient, o.Namespace)
 	if err != nil {
@@ -111,6 +108,7 @@ func (o *Options) Validate() error {
 	}
 	o.Masker.KubeClient = o.KubeClient
 	o.Masker.Namespaces = []string{o.Namespace, o.OperatorNamespace}
+
 	err = o.Masker.Validate()
 	if err != nil {
 		return errors.Wrapf(err, "failed to validate secret masker")
@@ -118,7 +116,7 @@ func (o *Options) Validate() error {
 	return nil
 }
 
-func (o *Options) Run() error {
+func (o *ControllerOptions) Run() error {
 	err := o.Validate()
 	if err != nil {
 		return errors.Wrapf(err, "failed to validate options")
@@ -159,7 +157,7 @@ func (o *Options) Run() error {
 	return nil
 }
 
-func (o Options) startHealthEndpoint(isTektonClientReady, isJenkinXClientReady *atomic.Value) error {
+func (o ControllerOptions) startHealthEndpoint(isTektonClientReady, isJenkinXClientReady *atomic.Value) error {
 	r := handler.Router(isTektonClientReady, isJenkinXClientReady)
 
 	interrupt := make(chan os.Signal, 1)

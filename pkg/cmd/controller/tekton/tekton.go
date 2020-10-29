@@ -47,7 +47,7 @@ type Options struct {
 	IsReady                 *atomic.Value
 }
 
-func (o *Options) Start() error {
+func (o *Options) Start() {
 	stop := make(chan struct{})
 	defer close(stop)
 	defer runtime.HandleCrash()
@@ -78,9 +78,7 @@ func (o *Options) Start() error {
 	informerFactoryTekton.Start(stop)
 	// wait for the initial synchronization of the local cache
 	if !cache.WaitForCacheSync(stop, pipelineRunInformer.HasSynced) {
-		msg := "timed out waiting for tekton caches to sync"
-		runtime.HandleError(fmt.Errorf(msg))
-		return errors.New(msg)
+		runtime.HandleError(fmt.Errorf("timed out waiting for tekton caches to sync"))
 	}
 	o.IsReady.Store(true)
 
