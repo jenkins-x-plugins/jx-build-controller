@@ -1,12 +1,14 @@
-package controller_test
+package tekton_test
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
 
-	controller2 "github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller"
+	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/tekton"
+
 	fakejx "github.com/jenkins-x/jx-api/v3/pkg/client/clientset/versioned/fake"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/testhelpers"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/yamls"
@@ -30,14 +32,11 @@ func TestBuildControllerTekton(t *testing.T) {
 	require.NoError(t, err, "failed to create temp dir")
 	t.Logf("generating PipelineActivity resources to %s\n", tmpDir)
 
-	_, o := controller2.NewCmdController()
+	o := tekton.Options{}
 	o.KubeClient = fake.NewSimpleClientset()
 	o.JXClient = fakejx.NewSimpleClientset()
 	o.TektonClient = faketekton.NewSimpleClientset()
 	o.Namespace = ns
-
-	err = o.Validate()
-	require.NoError(t, err, "failed to validate controller")
 
 	for i := 1; i <= 5; i++ {
 		fileName := fmt.Sprintf("%d.yaml", i)
@@ -48,7 +47,7 @@ func TestBuildControllerTekton(t *testing.T) {
 		err := yamls.LoadFile(prFile, pr)
 		require.NoError(t, err, "failed to load %s", prFile)
 
-		pa, err := o.OnPipelineRunUpsert(nil, pr, ns)
+		pa, err := o.OnPipelineRunUpsert(context.TODO(), pr, ns)
 		require.NoError(t, err, "failed to process PipelineRun %i", i)
 
 		testpipelines.ClearTimestamps(pa)
@@ -74,14 +73,11 @@ func TestBuildControllerMetaPipeline(t *testing.T) {
 	require.NoError(t, err, "failed to create temp dir")
 	t.Logf("generating PipelineActivity resources to %s\n", tmpDir)
 
-	_, o := controller2.NewCmdController()
+	o := tekton.Options{}
 	o.KubeClient = fake.NewSimpleClientset()
 	o.JXClient = fakejx.NewSimpleClientset()
 	o.TektonClient = faketekton.NewSimpleClientset()
 	o.Namespace = ns
-
-	err = o.Validate()
-	require.NoError(t, err, "failed to validate controller")
 
 	for i := 1; i <= 6; i++ {
 		fileName := fmt.Sprintf("%d.yaml", i)
@@ -92,7 +88,7 @@ func TestBuildControllerMetaPipeline(t *testing.T) {
 		err := yamls.LoadFile(prFile, pr)
 		require.NoError(t, err, "failed to load %s", prFile)
 
-		pa, err := o.OnPipelineRunUpsert(nil, pr, ns)
+		pa, err := o.OnPipelineRunUpsert(context.TODO(), pr, ns)
 		require.NoError(t, err, "failed to process PipelineRun %i", i)
 		testpipelines.ClearTimestamps(pa)
 
