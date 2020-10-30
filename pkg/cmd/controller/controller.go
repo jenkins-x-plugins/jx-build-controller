@@ -145,11 +145,12 @@ func (o *ControllerOptions) Run() error {
 
 	go func() {
 		(&tekton.Options{
-			TektonClient: o.TektonClient,
-			KubeClient:   o.KubeClient,
-			JXClient:     o.JXClient,
-			Namespace:    ns,
-			IsReady:      isTektonClientReady,
+			TektonClient:     o.TektonClient,
+			KubeClient:       o.KubeClient,
+			JXClient:         o.JXClient,
+			Namespace:        ns,
+			IsReady:          isTektonClientReady,
+			EnvironmentCache: o.EnvironmentCache,
 		}).Start()
 	}()
 
