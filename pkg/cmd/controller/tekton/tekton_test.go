@@ -9,7 +9,7 @@ import (
 
 	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/tekton"
 
-	fakejx "github.com/jenkins-x/jx-api/v3/pkg/client/clientset/versioned/fake"
+	fakejx "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned/fake"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/testhelpers"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/yamls"
 	"github.com/jenkins-x/jx-pipeline/pkg/testpipelines"

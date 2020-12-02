@@ -14,8 +14,8 @@ import (
 
 	"k8s.io/client-go/kubernetes"
 
-	jxv1 "github.com/jenkins-x/jx-api/v3/pkg/apis/jenkins.io/v1"
-	"github.com/jenkins-x/jx-api/v3/pkg/config"
+	jxcore "github.com/jenkins-x/jx-api/v4/pkg/apis/core/v4beta1"
+	jxv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/naming"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/stringhelpers"
@@ -26,7 +26,7 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	jxVersioned "github.com/jenkins-x/jx-api/v3/pkg/client/clientset/versioned"
+	jxVersioned "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 	"github.com/pkg/errors"
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
@@ -186,15 +186,15 @@ func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, a
 		return nil
 	}
 	settings := &devEnv.Spec.TeamSettings
-	requirements, err := config.GetRequirementsConfigFromTeamSettings(settings)
+	requirements, err := jxcore.GetRequirementsConfigFromTeamSettings(settings)
 	if err != nil {
 		return errors.Wrapf(err, "failed to get requirements from Environment %s", devEnv.Name)
 	}
 	if requirements == nil {
 		return errors.Errorf("no requirements for Environment %s", devEnv.Name)
 	}
-	bucketURL := requirements.Storage.Logs.URL
-	if !requirements.Storage.Logs.Enabled || bucketURL == "" {
+	bucketURL := requirements.GetStorageURL("logs")
+	if bucketURL == "" {
 		return nil
 	}
 
@@ -249,7 +249,7 @@ func streamMaskedRunningBuildLogs(tl *tektonlog.TektonLogger, activity *jxv1.Pip
 	reader, writer := io.Pipe()
 	go func() {
 		var err error
-		for l := range tl.GetRunningBuildLogs(activity, prList, buildName) {
+		for l := range tl.GetRunningBuildLogs(context.TODO(), activity, prList, buildName) {
 			if err == nil {
 				line := l.Line
 				if logMasker != nil && l.ShouldMask {

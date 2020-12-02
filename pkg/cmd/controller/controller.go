@@ -16,8 +16,8 @@ import (
 	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/tekton"
 
 	"github.com/jenkins-x-plugins/jx-build-controller/pkg/common"
-	jxv1 "github.com/jenkins-x/jx-api/v3/pkg/apis/jenkins.io/v1"
-	"github.com/jenkins-x/jx-api/v3/pkg/client/clientset/versioned"
+	jxv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
+	"github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cobras/helper"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cobras/templates"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube"
