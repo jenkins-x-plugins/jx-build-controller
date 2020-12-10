@@ -22,7 +22,6 @@ import (
 	"k8s.io/client-go/kubernetes"
 
 	jxv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
-	"github.com/jenkins-x/jx-helpers/v3/pkg/kube"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/naming"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/stringhelpers"
 	"github.com/jenkins-x/jx-pipeline/pkg/cloud/buckets"
@@ -61,15 +60,20 @@ func (o *Options) Start() {
 	defer close(stop)
 	defer runtime.HandleCrash()
 
-	req, err := requirements.GetClusterRequirementsConfig(o.gitClient, o.JXClient)
+	req, err := requirements.GetClusterRequirementsConfig(o.GitClient(), o.JXClient)
 	if err != nil {
-		log.Logger().Fatal("failed to get cluster requirements: %v", err)
+		log.Logger().Fatalf("failed to get cluster requirements: %v", err)
 	}
 	if req == nil {
 		log.Logger().Fatal("no cluster requirements found")
 	}
 	// sets an empty string if no logs URL exists
 	o.bucketURL = req.GetStorageURL("logs")
+	if o.bucketURL != "" {
+		log.Logger().Infof("long term storage for logs is being used, bucket %s", o.bucketURL)
+	} else {
+		log.Logger().Info("long term storage for logs is not configured in cluster requirements")
+	}
 
 	informerFactoryTekton := informersTekton.NewSharedInformerFactoryWithOptions(
 		o.TektonClient,
@@ -197,18 +201,10 @@ func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, a
 	}
 
 	// lets get the build log and store it
-	log.Logger().Debugf("Storing build logs for %s", activity.Name)
-	envName := kube.LabelValueDevEnvironment
-	devEnv := o.EnvironmentCache[envName]
-	if devEnv == nil {
-		log.Logger().Warnf("No Environment %s found", envName)
-		return nil
-	}
-
 	if o.bucketURL == "" {
 		return nil
 	}
-	log.Logger().Info("yay")
+
 	owner := activity.RepositoryOwner()
 	repository := activity.RepositoryName()
 	branch := activity.BranchName()
