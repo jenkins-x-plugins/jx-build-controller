@@ -54,15 +54,19 @@ spec:
               path: {{ .Values.probe.readypath }}
               port: http
 
-{{- if .Values.env }}
+
           env:
+          - name: GIT_SECRET_MOUNT_PATH
+            value: /secrets/git
 {{- range $pkey, $pval := .Values.env }}
           - name: {{ $pkey }}
             value: {{ $pval }}
 {{- end }}
-{{- end }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
+          volumeMounts:
+          - mountPath: /secrets/git
+            name: secrets-git
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
@@ -75,3 +79,8 @@ spec:
       tolerations:
 {{ toYaml . | indent 8 }}
     {{- end }}
+      volumes:
+      - name: secrets-git
+        secret:
+          defaultMode: 420
+          secretName: tekton-git

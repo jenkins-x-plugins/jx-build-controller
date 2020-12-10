@@ -64,9 +64,7 @@ func (o *Options) Start() {
 	if err != nil {
 		log.Logger().Fatalf("failed to get cluster requirements: %v", err)
 	}
-	if req == nil {
-		log.Logger().Fatal("no cluster requirements found")
-	}
+
 	// sets an empty string if no logs URL exists
 	o.bucketURL = req.GetStorageURL("logs")
 	if o.bucketURL != "" {
