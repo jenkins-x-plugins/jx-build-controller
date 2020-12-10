@@ -10,11 +10,17 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/jenkins-x/jx-helpers/v3/pkg/requirements"
+
+	"github.com/jenkins-x/jx-helpers/v3/pkg/cmdrunner"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient/cli"
+
+	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
+
 	"github.com/jenkins-x/jx-secret/pkg/masker/watcher"
 
 	"k8s.io/client-go/kubernetes"
 
-	jxcore "github.com/jenkins-x/jx-api/v4/pkg/apis/core/v4beta1"
 	jxv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/naming"
@@ -40,17 +46,30 @@ type Options struct {
 	KubeClient              kubernetes.Interface
 	TektonClient            tkversioned.Interface
 	JXClient                jxVersioned.Interface
+	gitClient               gitclient.Interface
 	EnvironmentCache        map[string]*jxv1.Environment
 	Namespace               string
 	Masker                  watcher.Options
 	WriteLogToBucketTimeout time.Duration
 	IsReady                 *atomic.Value
+	CommandRunner           cmdrunner.CommandRunner
+	bucketURL               string
 }
 
 func (o *Options) Start() {
 	stop := make(chan struct{})
 	defer close(stop)
 	defer runtime.HandleCrash()
+
+	req, err := requirements.GetClusterRequirementsConfig(o.gitClient, o.JXClient)
+	if err != nil {
+		log.Logger().Fatal("failed to get cluster requirements: %v", err)
+	}
+	if req == nil {
+		log.Logger().Fatal("no cluster requirements found")
+	}
+	// sets an empty string if no logs URL exists
+	o.bucketURL = req.GetStorageURL("logs")
 
 	informerFactoryTekton := informersTekton.NewSharedInformerFactoryWithOptions(
 		o.TektonClient,
@@ -185,19 +204,11 @@ func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, a
 		log.Logger().Warnf("No Environment %s found", envName)
 		return nil
 	}
-	settings := &devEnv.Spec.TeamSettings
-	requirements, err := jxcore.GetRequirementsConfigFromTeamSettings(settings)
-	if err != nil {
-		return errors.Wrapf(err, "failed to get requirements from Environment %s", devEnv.Name)
-	}
-	if requirements == nil {
-		return errors.Errorf("no requirements for Environment %s", devEnv.Name)
-	}
-	bucketURL := requirements.GetStorageURL("logs")
-	if bucketURL == "" {
+
+	if o.bucketURL == "" {
 		return nil
 	}
-
+	log.Logger().Info("yay")
 	owner := activity.RepositoryOwner()
 	repository := activity.RepositoryName()
 	branch := activity.BranchName()
@@ -228,20 +239,27 @@ func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, a
 	reader := streamMaskedRunningBuildLogs(&tektonLogger, activity, pr, buildName, myMasker)
 	defer reader.Close()
 
-	err = buckets.WriteBucket(ctx, bucketURL, fileName, reader, o.WriteLogToBucketTimeout)
+	err := buckets.WriteBucket(ctx, o.bucketURL, fileName, reader, o.WriteLogToBucketTimeout)
 	if err != nil {
-		return errors.Wrapf(err, "failed to write to bucket %s file %s", bucketURL, fileName)
+		return errors.Wrapf(err, "failed to write to bucket %s file %s", o.bucketURL, fileName)
 	}
 
-	log.Logger().Infof("wrote file %s to bucket %s", fileName, bucketURL)
+	log.Logger().Infof("wrote file %s to bucket %s", fileName, o.bucketURL)
 
-	activity.Spec.BuildLogsURL = stringhelpers.UrlJoin(bucketURL, fileName)
+	activity.Spec.BuildLogsURL = stringhelpers.UrlJoin(o.bucketURL, fileName)
 	_, err = o.JXClient.JenkinsV1().PipelineActivities(ns).Update(ctx, activity, metav1.UpdateOptions{})
 	if err != nil {
 		return errors.Wrapf(err, "failed to update PipelineActivity %s", activity.Name)
 	}
 	log.Logger().Infof("updated PipelineActivity %s with new build logs URL %s", activity.Name, activity.Spec.BuildLogsURL)
 	return nil
+}
+
+func (o *Options) GitClient() gitclient.Interface {
+	if o.gitClient == nil {
+		o.gitClient = cli.NewCLIClient("", o.CommandRunner)
+	}
+	return o.gitClient
 }
 
 func streamMaskedRunningBuildLogs(tl *tektonlog.TektonLogger, activity *jxv1.PipelineActivity, pr *v1beta1.PipelineRun, buildName string, logMasker *masker.Client) io.ReadCloser {
