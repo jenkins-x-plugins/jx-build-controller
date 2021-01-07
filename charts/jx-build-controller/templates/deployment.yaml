@@ -62,6 +62,15 @@ spec:
           - name: {{ $pkey }}
             value: {{ $pval }}
 {{- end }}
+{{- if .Values.envSecrets }}
+{{- range $pkey, $pval := .Values.envSecrets }}
+          - name: {{ $pkey }}
+            valueFrom:
+              secretKeyRef:
+                name: jx-build-controller-env
+                key: {{ $pkey }}
+{{- end }}
+{{- end }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
           volumeMounts:
