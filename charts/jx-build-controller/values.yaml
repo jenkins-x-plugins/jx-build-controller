@@ -18,7 +18,7 @@ args: []
 env:
   GIT_AUTHOR_NAME: "jenkins-x-bot"
   GIT_AUTHOR_EMAIL: "jenkins-x@googlegroups.com"
-  XDG_CONFIG_HOME: "/home/jenkins"
+  XDG_CONFIG_HOME: "/tmp/git-creds"
 
 # define environment variables that will be stored in a secret namd 'jx-build-controller-env' and populated as env vars on the deployment
 #
