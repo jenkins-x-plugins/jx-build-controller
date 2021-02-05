@@ -1,6 +1,6 @@
 image:
   repository: gcr.io/jenkinsxio/jx-build-controller
-  tag: 0.0.12
+  tag: 0.0.30
 
 serviceaccount:
   customName: jenkins-x-controllerbuild
