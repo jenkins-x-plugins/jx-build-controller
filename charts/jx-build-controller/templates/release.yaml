@@ -1,0 +1,49 @@
+{{- if .Capabilities.APIVersions.Has "jenkins.io/v1/Release" }}
+apiVersion: jenkins.io/v1
+kind: Release
+metadata:
+  creationTimestamp: "2021-02-05T11:25:04Z"
+  deletionTimestamp: null
+  name: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
+spec:
+  commits:
+  - author:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    branch: master
+    committer:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    message: |
+      chore: upgrade go dependencies
+
+      from: https://github.com/jenkins-x/jx3-versions
+    sha: 5a4caf1d19474572d6dcfbca0cb82499481bc417
+  - author:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    branch: master
+    committer:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    message: |
+      chore: upgrade pipelines
+    sha: e0e6db78f43e3d17659baf6b7276727f8c321d67
+  - author:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    branch: master
+    committer:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    message: |
+      chore: upgrade deps
+    sha: 793f3adb318411a8d7a1fdc6a502189c6a18b027
+  gitHttpUrl: https://github.com/jenkins-x-plugins/jx-build-controller
+  gitOwner: jenkins-x-plugins
+  gitRepository: jx-build-controller
+  name: '{{ .Chart.Name }}'
+  version: 0.0.29
+status: {}
+ 
+{{- end }}
