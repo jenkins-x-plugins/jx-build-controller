@@ -84,6 +84,7 @@ func NewCmdController() (*cobra.Command, *ControllerOptions) {
 // Validate verifies things are setup correctly
 func (o *ControllerOptions) Validate() error {
 	var err error
+
 	o.KubeClient, o.Namespace, err = kube.LazyCreateKubeClientAndNamespace(o.KubeClient, o.Namespace)
 	if err != nil {
 		return errors.Wrapf(err, "failed to create kube client")
@@ -122,7 +123,6 @@ func (o *ControllerOptions) Run() error {
 		return errors.Wrapf(err, "failed to validate options")
 	}
 
-	log.Logger().Info("starting build controller")
 	ns := o.Namespace
 
 	// todo add resyncInterval
@@ -132,6 +132,24 @@ func (o *ControllerOptions) Run() error {
 
 	isJenkinXClientReady := &atomic.Value{}
 	isJenkinXClientReady.Store(false)
+
+	to := &tekton.Options{
+		TektonClient:     o.TektonClient,
+		KubeClient:       o.KubeClient,
+		JXClient:         o.JXClient,
+		Namespace:        ns,
+		IsReady:          isTektonClientReady,
+		EnvironmentCache: o.EnvironmentCache,
+	}
+
+	// lets ensure the git client is setup to use git credentials
+	g := to.GitClient()
+	_, err = g.Command(".", "config", "--global", "credential.helper", "store")
+	if err != nil {
+		return errors.Wrapf(err, "failed to setup git")
+	}
+
+	log.Logger().Info("starting build controller")
 
 	go func() {
 		(&jx.Options{
@@ -144,14 +162,7 @@ func (o *ControllerOptions) Run() error {
 	}()
 
 	go func() {
-		(&tekton.Options{
-			TektonClient:     o.TektonClient,
-			KubeClient:       o.KubeClient,
-			JXClient:         o.JXClient,
-			Namespace:        ns,
-			IsReady:          isTektonClientReady,
-			EnvironmentCache: o.EnvironmentCache,
-		}).Start()
+		to.Start()
 	}()
 
 	o.startHealthEndpoint(isTektonClientReady, isJenkinXClientReady)
