@@ -4,7 +4,7 @@ description: Jenkins X next gen cloud CI / CD platform for Kubernetes
 home: https://jenkins-x.io/
 version: 0.0.1
 appVersion: 3.0.0
-icon: https://jenkins-x.github.io/jenkins-x-website/img/profile.png
+icon: https://raw.githubusercontent.com/jenkins-x/jenkins-x-website/master/images/logo/jenkinsx-icon-color.svg
 sources:
 - https://github.com/jenkins-x-plugins/jx-build-controller
 maintainers:
