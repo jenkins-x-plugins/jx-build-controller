@@ -1,0 +1,57 @@
+{{- if .Capabilities.APIVersions.Has "jenkins.io/v1/Release" }}
+apiVersion: jenkins.io/v1
+kind: Release
+metadata:
+  creationTimestamp: "2021-03-14T06:54:08Z"
+  deletionTimestamp: null
+  name: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
+spec:
+  commits:
+  - author:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    branch: master
+    committer:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    message: |
+      chore: upgrade deps
+    sha: 72065e686ed5eb52f425716a9a5b825d51b87752
+  - author:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    branch: master
+    committer:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    message: |
+      fix: add smaller resource limits
+    sha: 54cfa2be8e5e65723a5b5457d61c786b82e442c1
+  - author:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    branch: master
+    committer:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    message: |
+      chore: ugprade dependencies
+    sha: 55cad0a88af645d46b6c9a53af10bbae396d733e
+  - author:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    branch: master
+    committer:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    message: |
+      chore: fix ensure we have git setup
+    sha: ac00e0c62e0377133782b93027f49a4d65ae261e
+  gitHttpUrl: https://github.com/jenkins-x-plugins/jx-build-controller
+  gitOwner: jenkins-x-plugins
+  gitRepository: jx-build-controller
+  name: '{{ .Chart.Name }}'
+  version: 0.0.34
+status: {}
+ 
+{{- end }}
