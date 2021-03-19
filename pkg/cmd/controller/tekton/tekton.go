@@ -216,6 +216,7 @@ func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, a
 	pathDir := filepath.Join("jenkins-x", "logs", owner, repository, branch)
 	logsFileName := filepath.Join(pathDir, buildNumber+".log")
 	activityFileName := filepath.Join(pathDir, buildNumber+".yaml")
+	pipelineRunFileName := filepath.Join("jenkins-x", "pipelineruns", pr.Namespace, pr.Name+".yaml")
 
 	buildName := fmt.Sprintf("%s/%s/%s #%s",
 		naming.ToValidName(owner),
@@ -253,6 +254,17 @@ func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, a
 		return errors.Wrapf(err, "failed to write to bucket %s file %s", o.bucketURL, activityFileName)
 	}
 	log.Logger().Infof("wrote file %s to bucket %s", activityFileName, o.bucketURL)
+
+	prYAML, err := yaml.Marshal(pr)
+	if err != nil {
+		return errors.Wrap(err, "failed to marshal pipelineRun to YAML")
+	}
+
+	err = buckets.WriteBucket(ctx, o.bucketURL, pipelineRunFileName, bytes.NewReader(prYAML), o.WriteLogToBucketTimeout)
+	if err != nil {
+		return errors.Wrapf(err, "failed to write to bucket %s file %s", o.bucketURL, pipelineRunFileName)
+	}
+	log.Logger().Infof("wrote file %s to bucket %s", pipelineRunFileName, o.bucketURL)
 
 	_, err = o.JXClient.JenkinsV1().PipelineActivities(ns).Update(ctx, activity, metav1.UpdateOptions{})
 	if err != nil {
