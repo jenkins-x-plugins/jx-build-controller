@@ -2,7 +2,7 @@ apiVersion: v2
 name: jx-build-controller
 description: Jenkins X next gen cloud CI / CD platform for Kubernetes
 home: https://jenkins-x.io/
-version: 0.0.1
+version: 0.1.0
 appVersion: 3.0.0
 icon: https://raw.githubusercontent.com/jenkins-x/jenkins-x-website/master/images/logo/jenkinsx-icon-color.svg
 sources:
