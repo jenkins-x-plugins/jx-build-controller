@@ -1,0 +1,61 @@
+{{- if and (.Capabilities.APIVersions.Has "jenkins.io/v1/Release") (hasKey .Values.jx "releaseCRD") (.Values.jx.releaseCRD)}}
+apiVersion: jenkins.io/v1
+kind: Release
+metadata:
+  creationTimestamp: "2021-04-07T06:29:08Z"
+  deletionTimestamp: null
+  name: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
+spec:
+  commits:
+  - author:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    branch: master
+    committer:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    message: |
+      chore: upgrade dependencies
+    sha: b428247a69b4cb322a7f47ecf3670d3a6f9292f8
+  - author:
+      email: v.behar@free.fr
+      name: Vincent Behar
+    branch: master
+    committer:
+      email: v.behar@free.fr
+      name: Vincent Behar
+    issueIds:
+    - "13"
+    message: |
+      feat: store pipelineruns yaml in the longterm storage
+
+      fixes #13
+
+      we're storing the YAML representation of the pipelineruns in the long-term storage in `jenkins-x/pipelineruns/{namespace}/{name}.yaml`
+      so that https://github.com/jenkins-x/jx-pipelines-visualizer can retrieve the pipelineruns - even if they have been garbage-collected from the cluster
+    sha: d0d25a9964c1aedf54cff9e6ef6115c912fee802
+  gitHttpUrl: https://github.com/jenkins-x-plugins/jx-build-controller
+  gitOwner: jenkins-x-plugins
+  gitRepository: jx-build-controller
+  issues:
+  - body: "related to https://github.com/jenkins-x/jx-pipelines-visualizer/issues/54
+      : when we try to render the pipeline and logs for a pipelinerun that has been
+      garbage-collected... well, we can't, because we have no information (except
+      for the pipelinerun name and its namespace).\r\n\r\nwe could ensure links always
+      work by storing the pipelineruns in the long-term storage, alongside the logs
+      - similar to #11 for the pipelineactivities.\r\n\r\nthe main difference is that
+      we can't use the standard layout of `jenkins-x/logs/owner/repository/branch/build.log`,
+      because the pipelines-visualizer doesn't know the owner/repo/branch/build -
+      only the pr name and ns.\r\nso maybe we could store the pipelineruns under `jenkins-x/logs/namespace/name.yaml`?
+      or `jenkins-x/pipelineruns/namespace/name.yaml`?\r\n\r\n@jstrachan what do you
+      think?"
+    creationTimestamp: "2021-01-14T08:35:21Z"
+    id: "13"
+    state: closed
+    title: store the pipelinerun in the long-term storage
+    url: https://github.com/jenkins-x-plugins/jx-build-controller/issues/13
+  name: '{{ .Chart.Name }}'
+  version: 0.1.1
+status: {}
+ 
+{{- end }}
