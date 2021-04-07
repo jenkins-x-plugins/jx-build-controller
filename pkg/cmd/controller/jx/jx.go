@@ -5,12 +5,12 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/jenkins-x-plugins/jx-secret/pkg/masker/watcher"
 	jxv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 	v1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 	jxVersioned "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
 	informers "github.com/jenkins-x/jx-api/v4/pkg/client/informers/externalversions"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
-	"github.com/jenkins-x/jx-secret/pkg/masker/watcher"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/tools/cache"
 )

@@ -16,6 +16,7 @@ import (
 	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/tekton"
 
 	"github.com/jenkins-x-plugins/jx-build-controller/pkg/common"
+	"github.com/jenkins-x-plugins/jx-secret/pkg/masker/watcher"
 	jxv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 	"github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cobras/helper"
@@ -25,7 +26,6 @@ import (
 	"github.com/jenkins-x/jx-helpers/v3/pkg/options"
 	"github.com/jenkins-x/jx-kube-client/v3/pkg/kubeclient"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
-	"github.com/jenkins-x/jx-secret/pkg/masker/watcher"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	tektonclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"

@@ -18,17 +18,17 @@ import (
 
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
 
-	"github.com/jenkins-x/jx-secret/pkg/masker/watcher"
+	"github.com/jenkins-x-plugins/jx-secret/pkg/masker/watcher"
 
 	"k8s.io/client-go/kubernetes"
 
+	"github.com/jenkins-x-plugins/jx-pipeline/pkg/cloud/buckets"
+	"github.com/jenkins-x-plugins/jx-pipeline/pkg/pipelines"
+	"github.com/jenkins-x-plugins/jx-pipeline/pkg/tektonlog"
+	"github.com/jenkins-x-plugins/jx-secret/pkg/masker"
 	jxv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/naming"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/stringhelpers"
-	"github.com/jenkins-x/jx-pipeline/pkg/cloud/buckets"
-	"github.com/jenkins-x/jx-pipeline/pkg/pipelines"
-	"github.com/jenkins-x/jx-pipeline/pkg/tektonlog"
-	"github.com/jenkins-x/jx-secret/pkg/masker"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
