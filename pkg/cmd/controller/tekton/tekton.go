@@ -266,6 +266,12 @@ func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, a
 	}
 	log.Logger().Infof("wrote file %s to bucket %s", pipelineRunFileName, o.bucketURL)
 
+	// lets reload the activity to ensure we are on the latest version
+	activity, err = o.JXClient.JenkinsV1().PipelineActivities(ns).Get(ctx, activity.Name, metav1.GetOptions{})
+	if err != nil {
+		return errors.Wrapf(err, "failed to load PipelineActivity %s", activity.Name)
+	}
+	activity.Spec.BuildLogsURL = stringhelpers.UrlJoin(o.bucketURL, logsFileName)
 	_, err = o.JXClient.JenkinsV1().PipelineActivities(ns).Update(ctx, activity, metav1.UpdateOptions{})
 	if err != nil {
 		return errors.Wrapf(err, "failed to update PipelineActivity %s", activity.Name)
