@@ -6,15 +6,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"sync/atomic"
 	"syscall"
 	"time"
 
-	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/jx"
-
 	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/handler"
+	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/jx"
 	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/tekton"
-
 	"github.com/jenkins-x-plugins/jx-build-controller/pkg/common"
 	"github.com/jenkins-x-plugins/jx-secret/pkg/masker/watcher"
 	jxv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
@@ -29,6 +28,15 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	tektonclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpgrpc"
+	"go.opentelemetry.io/otel/exporters/otlp/otlphttp"
+	"go.opentelemetry.io/otel/exporters/trace/jaeger"
+	exporttrace "go.opentelemetry.io/otel/sdk/export/trace"
+	sdkresource "go.opentelemetry.io/otel/sdk/resource"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/semconv"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -56,6 +64,8 @@ type ControllerOptions struct {
 	TektonClient            tektonclient.Interface
 	EnvironmentCache        map[string]*jxv1.Environment
 	Masker                  watcher.Options
+	tracesExporterType      string
+	tracesExporterEndpoint  string
 }
 
 // NewCmdController creates a command object for the command
@@ -77,13 +87,18 @@ func NewCmdController() (*cobra.Command, *ControllerOptions) {
 	cmd.Flags().StringVarP(&o.OperatorNamespace, "operator-namespace", "", "jx-git-operator", "The git operator namespace")
 	cmd.Flags().DurationVarP(&o.WriteLogToBucketTimeout, "write-log-timeout", "", time.Minute*30, "The timeout for writing pipeline logs to the bucket")
 	cmd.Flags().StringVarP(&o.port, "port", "", "8080", "The port for health and readiness checks to listen on")
+	cmd.Flags().StringVarP(&o.tracesExporterType, "traces-exporter-type", "", os.Getenv("TRACES_EXPORTER_TYPE"), "The OpenTelemetry traces exporter type: otlp:grpc:insecure, otlp:http:insecure or jaeger:http:thrift")
+	cmd.Flags().StringVarP(&o.tracesExporterEndpoint, "traces-exporter-endpoint", "", os.Getenv("TRACES_EXPORTER_ENDPOINT"), "The OpenTelemetry traces exporter endpoint (host:port)")
 	o.BaseOptions.AddBaseFlags(cmd)
 	return cmd, o
 }
 
 // Validate verifies things are setup correctly
 func (o *ControllerOptions) Validate() error {
-	var err error
+	var (
+		ctx = context.Background()
+		err error
+	)
 
 	o.KubeClient, o.Namespace, err = kube.LazyCreateKubeClientAndNamespace(o.KubeClient, o.Namespace)
 	if err != nil {
@@ -114,6 +129,52 @@ func (o *ControllerOptions) Validate() error {
 	if err != nil {
 		return errors.Wrapf(err, "failed to validate secret masker")
 	}
+
+	if len(o.tracesExporterType) > 0 && len(o.tracesExporterEndpoint) > 0 {
+		log.Logger().WithField("type", o.tracesExporterType).WithField("endpoint", o.tracesExporterEndpoint).Info("Initializing OpenTelemetry Traces Exporter")
+		var exporter exporttrace.SpanExporter
+		switch o.tracesExporterType {
+		case "otlp:grpc:insecure":
+			exporter, err = otlp.NewExporter(ctx, otlpgrpc.NewDriver(
+				otlpgrpc.WithEndpoint(o.tracesExporterEndpoint),
+				otlpgrpc.WithInsecure(),
+			))
+		case "otlp:http:insecure":
+			exporter, err = otlp.NewExporter(ctx, otlphttp.NewDriver(
+				otlphttp.WithEndpoint(o.tracesExporterEndpoint),
+				otlphttp.WithInsecure(),
+			))
+		case "jaeger:http:thrift":
+			endpoint := fmt.Sprintf("http://%s/api/traces", o.tracesExporterEndpoint)
+			_, err = http.Post(endpoint, "application/x-thrift", nil)
+			if err != nil && strings.Contains(err.Error(), "no such host") {
+				log.Logger().WithError(err).Warning("Traces Exporter Endpoint configuration error. Maybe you need to install/configure the Observability stack? https://jenkins-x.io/v3/admin/guides/observability/ The OpenTelemetry Tracing feature won't be enabled until this is fixed.")
+				err = nil // ensure we won't fail. we just need to NOT set the exporter
+			} else {
+				exporter, err = jaeger.NewRawExporter(
+					jaeger.WithCollectorEndpoint(endpoint),
+				)
+			}
+		}
+		if err != nil {
+			return errors.Wrapf(err, "failed to create an OpenTelemetry Exporter for %s on %s", o.tracesExporterType, o.tracesExporterEndpoint)
+		}
+		if exporter != nil {
+			otel.SetTracerProvider(sdktrace.NewTracerProvider(
+				sdktrace.WithBatcher(exporter,
+					sdktrace.WithMaxQueueSize(20),
+					sdktrace.WithBatchTimeout(1000),
+					sdktrace.WithMaxExportBatchSize(512),
+				),
+				sdktrace.WithSampler(sdktrace.AlwaysSample()),
+				sdktrace.WithResource(sdkresource.NewWithAttributes(
+					semconv.ServiceNameKey.String("pipeline"),
+					semconv.ServiceNamespaceKey.String(o.Namespace),
+				)),
+			))
+		}
+	}
+
 	return nil
 }
 
