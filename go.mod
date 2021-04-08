@@ -18,6 +18,7 @@ require (
 	go.opentelemetry.io/otel/exporters/otlp v0.19.0
 	go.opentelemetry.io/otel/exporters/trace/jaeger v0.19.0
 	go.opentelemetry.io/otel/sdk v0.19.0
+	go.opentelemetry.io/otel/trace v0.19.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.20.5
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
