@@ -11,37 +11,38 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/jenkins-x/jx-helpers/v3/pkg/requirements"
-
-	"github.com/jenkins-x/jx-helpers/v3/pkg/cmdrunner"
-	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient/cli"
-
-	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
-
-	"github.com/jenkins-x-plugins/jx-secret/pkg/masker/watcher"
-
-	"k8s.io/client-go/kubernetes"
-
 	"github.com/jenkins-x-plugins/jx-pipeline/pkg/cloud/buckets"
 	"github.com/jenkins-x-plugins/jx-pipeline/pkg/pipelines"
 	"github.com/jenkins-x-plugins/jx-pipeline/pkg/tektonlog"
 	"github.com/jenkins-x-plugins/jx-secret/pkg/masker"
+	"github.com/jenkins-x-plugins/jx-secret/pkg/masker/watcher"
 	jxv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
-	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/naming"
-	"github.com/jenkins-x/jx-helpers/v3/pkg/stringhelpers"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
 	jxVersioned "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/cmdrunner"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient/cli"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/naming"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/requirements"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/stringhelpers"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 	"github.com/pkg/errors"
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	tkversioned "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	informersTekton "github.com/tektoncd/pipeline/pkg/client/informers/externalversions"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 	"gopkg.in/yaml.v2"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/runtime"
+	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
 )
+
+// TODO move it to the jx-pipeline project?
+const traceIDAnnotationKey = "pipeline.jenkins-x.io/traceID"
 
 type Options struct {
 	KubeClient              kubernetes.Interface
@@ -207,6 +208,12 @@ func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, a
 		return nil
 	}
 
+	traceID := generatePipelineTrace(ctx, activity)
+	if traceID != "" {
+		log.Logger().WithField("traceID", traceID).Infof("Published trace/spans for PipelineActivity %s in namespace %s", activity.Name, activity.Namespace)
+		activity.Annotations[traceIDAnnotationKey] = traceID
+	}
+
 	owner := activity.RepositoryOwner()
 	repository := activity.RepositoryName()
 	branch := activity.BranchName()
@@ -274,6 +281,7 @@ func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, a
 		return errors.Wrapf(err, "failed to load PipelineActivity %s", activity.Name)
 	}
 	activity.Spec.BuildLogsURL = stringhelpers.UrlJoin(o.bucketURL, logsFileName)
+	activity.Annotations[traceIDAnnotationKey] = traceID
 	_, err = o.JXClient.JenkinsV1().PipelineActivities(ns).Update(ctx, activity, metav1.UpdateOptions{})
 	if err != nil {
 		return errors.Wrapf(err, "failed to update PipelineActivity %s", activity.Name)
@@ -309,4 +317,114 @@ func streamMaskedRunningBuildLogs(tl *tektonlog.TektonLogger, activity *jxv1.Pip
 		writer.CloseWithError(err) //nolint
 	}()
 	return reader
+}
+
+// generatePipelineTrace generates a logical trace (stages/steps) for the given pipeline activity
+// and returns the traceID - or an empty string if tracing is disabled
+func generatePipelineTrace(ctx context.Context, activity *jxv1.PipelineActivity) string {
+	var (
+		tracer             = otel.Tracer("")
+		pipelineAttributes = []attribute.KeyValue{
+			attribute.Key("pipeline.owner").String(activity.RepositoryOwner()),
+			attribute.Key("pipeline.repository").String(activity.RepositoryName()),
+			attribute.Key("pipeline.branch").String(activity.BranchName()),
+			attribute.Key("pipeline.build").String(activity.Spec.Build),
+			attribute.Key("pipeline.context").String(activity.Spec.Context),
+			attribute.Key("pipeline.author").String(activity.Spec.Author),
+			attribute.Key("pipeline.pulltitle").String(activity.Spec.PullTitle),
+		}
+	)
+
+	ctx, rootSpan := tracer.Start(ctx, activity.Name,
+		trace.WithNewRoot(),
+		trace.WithTimestamp(activity.Spec.StartedTimestamp.Time),
+		trace.WithAttributes(pipelineAttributes...),
+	)
+
+	if !rootSpan.SpanContext().TraceID().IsValid() {
+		// if the traceID is invalid, we're using the no-op tracer, because tracing is not enabled
+		// let's avoid doing more work, and return now
+		return ""
+	}
+
+	for i := range activity.Spec.Steps {
+		stageStep := activity.Spec.Steps[i]
+		if stageStep.Stage == nil {
+			continue
+		}
+		stage := stageStep.Stage
+
+		// ignore pending/running stages, which don't have started/completed timestamps
+		if !stage.Status.IsTerminated() {
+			continue
+		}
+		if stage.StartedTimestamp == nil {
+			continue
+		}
+
+		stageCtx, stageSpan := tracer.Start(ctx, stage.Name,
+			trace.WithTimestamp(stage.StartedTimestamp.Time),
+			trace.WithAttributes(pipelineAttributes...),
+		)
+
+		for j := range stage.Steps {
+			step := stage.Steps[j]
+
+			// ignore pending/running steps, which don't have started/completed timestamps
+			if !step.Status.IsTerminated() {
+				continue
+			}
+			if step.StartedTimestamp == nil {
+				continue
+			}
+
+			_, stepSpan := tracer.Start(stageCtx, step.Name,
+				trace.WithTimestamp(step.StartedTimestamp.Time),
+				trace.WithAttributes(pipelineAttributes...),
+			)
+			switch step.Status {
+			case jxv1.ActivityStatusTypeFailed:
+				stepSpan.SetStatus(codes.Error, stage.Description)
+				stepSpan.RecordError(errors.New(stage.Description))
+			default:
+				stepSpan.SetStatus(codes.Ok, step.Description)
+			}
+			if step.CompletedTimestamp == nil {
+				step.CompletedTimestamp = stage.CompletedTimestamp
+			}
+			if step.CompletedTimestamp == nil {
+				step.CompletedTimestamp = activity.Spec.CompletedTimestamp
+			}
+			stepSpan.End(
+				trace.WithTimestamp(step.CompletedTimestamp.Time),
+			)
+		}
+
+		switch stage.Status {
+		case jxv1.ActivityStatusTypeFailed:
+			stageSpan.SetStatus(codes.Error, stage.Description)
+			stageSpan.RecordError(errors.New(stage.Description))
+		default:
+			stageSpan.SetStatus(codes.Ok, stage.Description)
+		}
+		if stage.CompletedTimestamp == nil {
+			stage.CompletedTimestamp = activity.Spec.CompletedTimestamp
+		}
+		stageSpan.End(
+			trace.WithTimestamp(stage.CompletedTimestamp.Time),
+		)
+	}
+
+	switch activity.Spec.Status {
+	case jxv1.ActivityStatusTypeFailed:
+		rootSpan.SetStatus(codes.Error, "pipeline failed")
+	default:
+		rootSpan.SetStatus(codes.Ok, "")
+	}
+
+	rootSpan.End(
+		trace.WithTimestamp(activity.Spec.CompletedTimestamp.Time),
+	)
+
+	return rootSpan.SpanContext().TraceID().String()
 }
