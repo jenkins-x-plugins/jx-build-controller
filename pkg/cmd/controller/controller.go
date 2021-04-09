@@ -200,13 +200,12 @@ func (o *ControllerOptions) Run() error {
 	}
 
 	to := &tekton.Options{
-		TektonClient:     o.TektonClient,
-		KubeClient:       o.KubeClient,
-		JXClient:         o.JXClient,
-		Namespace:        ns,
-		IsReady:          isTektonClientReady,
-		EnvironmentCache: o.EnvironmentCache,
-		ActivityCache:    activityCache,
+		TektonClient:  o.TektonClient,
+		KubeClient:    o.KubeClient,
+		JXClient:      o.JXClient,
+		Namespace:     ns,
+		IsReady:       isTektonClientReady,
+		ActivityCache: activityCache,
 	}
 
 	// lets ensure the git client is setup to use git credentials
@@ -220,12 +219,11 @@ func (o *ControllerOptions) Run() error {
 
 	go func() {
 		(&jx.Options{
-			JXClient:         o.JXClient,
-			Namespace:        ns,
-			Masker:           o.Masker,
-			EnvironmentCache: o.EnvironmentCache,
-			IsReady:          isJenkinXClientReady,
-			ActivityCache:    activityCache,
+			JXClient:      o.JXClient,
+			Namespace:     ns,
+			Masker:        o.Masker,
+			IsReady:       isJenkinXClientReady,
+			ActivityCache: activityCache,
 		}).Start()
 	}()
 

@@ -49,7 +49,6 @@ type Options struct {
 	TektonClient            tkversioned.Interface
 	JXClient                jxVersioned.Interface
 	gitClient               gitclient.Interface
-	EnvironmentCache        map[string]*jxv1.Environment
 	ActivityCache           *jx.ActivityCache
 	Namespace               string
 	Masker                  watcher.Options
