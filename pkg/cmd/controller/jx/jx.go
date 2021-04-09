@@ -19,6 +19,7 @@ type Options struct {
 	JXClient         jxVersioned.Interface
 	Masker           watcher.Options
 	EnvironmentCache map[string]*jxv1.Environment
+	ActivityCache    *ActivityCache
 	Namespace        string
 	IsReady          *atomic.Value
 }
@@ -54,8 +55,31 @@ func (o *Options) Start() {
 			log.Logger().Infof("updated %s", e.Name)
 		},
 	})
+
+	jxActivityInformer := informerFactory.Jenkins().V1().PipelineActivities().Informer()
+	jxActivityInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc: func(obj interface{}) {
+			r := obj.(*v1.PipelineActivity)
+			if r != nil {
+				o.ActivityCache.Upsert(r)
+			}
+		},
+		UpdateFunc: func(old, new interface{}) {
+			r := new.(*v1.PipelineActivity)
+			if r != nil {
+				o.ActivityCache.Upsert(r)
+			}
+		},
+		DeleteFunc: func(obj interface{}) {
+			r := obj.(*v1.PipelineActivity)
+			if r != nil {
+				o.ActivityCache.Delete(r)
+			}
+		},
+	})
+
 	informerFactory.Start(stop)
-	if !cache.WaitForCacheSync(stop, jxEnvironmentInformer.HasSynced) {
+	if !cache.WaitForCacheSync(stop, jxActivityInformer.HasSynced) {
 		msg := "timed out waiting for jx caches to sync"
 		runtime.HandleError(fmt.Errorf(msg))
 	}

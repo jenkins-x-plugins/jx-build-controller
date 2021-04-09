@@ -3,6 +3,7 @@ package tekton_test
 import (
 	"context"
 	"fmt"
+	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/jx"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
@@ -47,6 +48,10 @@ func TestBuildControllerTekton(t *testing.T) {
 		err := yamls.LoadFile(prFile, pr)
 		require.NoError(t, err, "failed to load %s", prFile)
 
+		// lets recreate the cache each loop so we load all the latest activities
+		o.ActivityCache, err = jx.NewActivityCache(o.JXClient, ns)
+		require.NoError(t, err, "failed to create activity cache")
+
 		pa, err := o.OnPipelineRunUpsert(context.TODO(), pr, ns)
 		require.NoError(t, err, "failed to process PipelineRun %i", i)
 
@@ -87,6 +92,10 @@ func TestBuildControllerMetaPipeline(t *testing.T) {
 		pr := &v1beta1.PipelineRun{}
 		err := yamls.LoadFile(prFile, pr)
 		require.NoError(t, err, "failed to load %s", prFile)
+
+		// lets recreate the cache each loop so we load all the latest activities
+		o.ActivityCache, err = jx.NewActivityCache(o.JXClient, ns)
+		require.NoError(t, err, "failed to create activity cache")
 
 		pa, err := o.OnPipelineRunUpsert(context.TODO(), pr, ns)
 		require.NoError(t, err, "failed to process PipelineRun %i", i)

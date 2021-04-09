@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/jx"
 	"io"
 	"path/filepath"
 	"reflect"
@@ -34,7 +35,6 @@ import (
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 	"gopkg.in/yaml.v2"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/kubernetes"
@@ -50,6 +50,7 @@ type Options struct {
 	JXClient                jxVersioned.Interface
 	gitClient               gitclient.Interface
 	EnvironmentCache        map[string]*jxv1.Environment
+	ActivityCache           *jx.ActivityCache
 	Namespace               string
 	Masker                  watcher.Options
 	WriteLogToBucketTimeout time.Duration
@@ -140,19 +141,13 @@ func (o *Options) onPipelineRun(obj interface{}, ns string) {
 func (o *Options) OnPipelineRunUpsert(ctx context.Context, pr *v1beta1.PipelineRun, ns string) (*jxv1.PipelineActivity, error) {
 	activityInterface := o.JXClient.JenkinsV1().PipelineActivities(ns)
 
-	paResources, err := activityInterface.List(ctx, metav1.ListOptions{})
-	if err != nil {
-		if !apierrors.IsNotFound(err) {
-			return nil, errors.Wrapf(err, "failed to list PipelineActivity resources in namespace %s", ns)
-		}
-	}
-
-	paItems := paResources.Items
+	paItems := o.ActivityCache.List()
 	name := pipelines.ToPipelineActivityName(pr, paItems)
 	if name == "" {
 		return nil, nil
 	}
 
+	var err error
 	found := false
 	pa := &jxv1.PipelineActivity{
 		ObjectMeta: metav1.ObjectMeta{

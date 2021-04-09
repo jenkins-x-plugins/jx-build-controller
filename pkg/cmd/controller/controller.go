@@ -194,6 +194,11 @@ func (o *ControllerOptions) Run() error {
 	isJenkinXClientReady := &atomic.Value{}
 	isJenkinXClientReady.Store(false)
 
+	activityCache, err := jx.NewActivityCache(o.JXClient, ns)
+	if err != nil {
+		return errors.Wrapf(err, "failed to create the pipeline activity cache")
+	}
+
 	to := &tekton.Options{
 		TektonClient:     o.TektonClient,
 		KubeClient:       o.KubeClient,
@@ -201,6 +206,7 @@ func (o *ControllerOptions) Run() error {
 		Namespace:        ns,
 		IsReady:          isTektonClientReady,
 		EnvironmentCache: o.EnvironmentCache,
+		ActivityCache:    activityCache,
 	}
 
 	// lets ensure the git client is setup to use git credentials
@@ -219,6 +225,7 @@ func (o *ControllerOptions) Run() error {
 			Masker:           o.Masker,
 			EnvironmentCache: o.EnvironmentCache,
 			IsReady:          isJenkinXClientReady,
+			ActivityCache:    activityCache,
 		}).Start()
 	}()
 
