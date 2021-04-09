@@ -276,10 +276,13 @@ func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, a
 	log.Logger().Infof("wrote file %s to bucket %s", pipelineRunFileName, o.bucketURL)
 
 	// lets reload the activity to ensure we are on the latest version
+	previousStatus := activity.Spec.Status
 	activity, err = o.JXClient.JenkinsV1().PipelineActivities(ns).Get(ctx, activity.Name, metav1.GetOptions{})
 	if err != nil {
 		return errors.Wrapf(err, "failed to load PipelineActivity %s", activity.Name)
 	}
+	// lets update the status as we may have detected the pod has gone
+	activity.Spec.Status = previousStatus
 	activity.Spec.BuildLogsURL = stringhelpers.UrlJoin(o.bucketURL, logsFileName)
 	activity.Annotations[traceIDAnnotationKey] = traceID
 	_, err = o.JXClient.JenkinsV1().PipelineActivities(ns).Update(ctx, activity, metav1.UpdateOptions{})
