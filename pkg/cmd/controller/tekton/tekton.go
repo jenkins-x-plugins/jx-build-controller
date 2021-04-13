@@ -5,7 +5,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/jx"
+	"github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned/typed/jenkins.io/v1"
 	"io"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -140,50 +142,90 @@ func (o *Options) onPipelineRun(obj interface{}, ns string) {
 func (o *Options) OnPipelineRunUpsert(ctx context.Context, pr *v1beta1.PipelineRun, ns string) (*jxv1.PipelineActivity, error) {
 	activityInterface := o.JXClient.JenkinsV1().PipelineActivities(ns)
 
-	paItems := o.ActivityCache.List()
-	name := pipelines.ToPipelineActivityName(pr, paItems)
-	if name == "" {
-		return nil, nil
-	}
-
-	var err error
-	found := false
-	pa := &jxv1.PipelineActivity{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: name,
-		},
-	}
-	for i := range paItems {
-		r := &paItems[i]
-		if r.Name == name {
-			found = true
-			pa = r
-			break
-		}
-	}
-	original := pa.DeepCopy()
-
-	pipelines.ToPipelineActivity(pr, pa, true)
-
-	if found {
-		// lets ignore if we don't change it...
-		if reflect.DeepEqual(original, pa) {
+	f := func() (*jxv1.PipelineActivity, error) {
+		paItems := o.ActivityCache.List()
+		name := pipelines.ToPipelineActivityName(pr, paItems)
+		if name == "" {
 			return nil, nil
 		}
-		pa, err = activityInterface.Update(ctx, pa, metav1.UpdateOptions{})
-		if err != nil {
-			return pa, errors.Wrapf(err, "failed to update PipelineActivity %s in namespace %s", name, ns)
+
+		var err error
+		found := false
+		pa := &jxv1.PipelineActivity{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: name,
+			},
 		}
-		log.Logger().Infof("updated PipelineActivity %s in namespace %s", name, ns)
+		for i := range paItems {
+			r := &paItems[i]
+			if r.Name == name {
+				found = true
+				pa = r
+				break
+			}
+		}
+		original := pa.DeepCopy()
+
+		pipelines.ToPipelineActivity(pr, pa, true)
+
+		if found {
+			// lets ignore if we don't change it...
+			if reflect.DeepEqual(original, pa) {
+				return nil, nil
+			}
+			pa, err = activityInterface.Update(ctx, pa, metav1.UpdateOptions{})
+			if err != nil {
+				return pa, errors.Wrapf(err, "failed to update PipelineActivity %s in namespace %s", name, ns)
+			}
+			log.Logger().Infof("updated PipelineActivity %s in namespace %s", name, ns)
+			return pa, nil
+		}
+
+		pa, err = activityInterface.Create(ctx, pa, metav1.CreateOptions{})
+		if err != nil {
+			return pa, errors.Wrapf(err, "failed to create PipelineActivity %s in namespace %s", name, ns)
+		}
+		log.Logger().Infof("created PipelineActivity %s in namespace %s", name, ns)
 		return pa, nil
 	}
 
-	pa, err = activityInterface.Create(ctx, pa, metav1.CreateOptions{})
-	if err != nil {
-		return pa, errors.Wrapf(err, "failed to create PipelineActivity %s in namespace %s", name, ns)
+	return o.retryUpdate(ctx, f, activityInterface, 5)
+}
+
+func (o *Options) retryUpdate(ctx context.Context, f func() (*jxv1.PipelineActivity, error), activityInterface v1.PipelineActivityInterface, retryCount int) (*jxv1.PipelineActivity, error) {
+	i := 0
+	for {
+		i++
+		pa, err := f()
+		name := "nil"
+		if pa != nil {
+			name = pa.Name
+		}
+		if err == nil {
+			if i > 1 {
+				log.Logger().Infof("took %d attempts to update PipelineActivity %s", i, name)
+			}
+			return pa, nil
+		}
+		if i >= retryCount {
+			return nil, errors.Wrapf(err, "failed to update PipelineActivity %s after %d attempts", name, retryCount)
+		}
+
+		if pa != nil {
+			pa, err = activityInterface.Get(ctx, name, metav1.GetOptions{})
+			if err != nil && apierrors.IsNotFound(err) {
+				err = nil
+			}
+			if err == nil || pa == nil {
+				continue
+			}
+			if err != nil {
+				log.Logger().Warningf("Unable to get PipelineActivity %s due to: %s", name, err)
+			} else {
+				o.ActivityCache.Upsert(pa)
+			}
+		}
 	}
-	log.Logger().Infof("created PipelineActivity %s in namespace %s", name, ns)
-	return pa, nil
 }
 
 // StoreResources stores resources
