@@ -2,12 +2,13 @@ package jx
 
 import (
 	"context"
+	"sync"
+
 	v1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 	jxVersioned "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
 	"github.com/pkg/errors"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"sync"
 )
 
 // ActivityCache a cache of activities

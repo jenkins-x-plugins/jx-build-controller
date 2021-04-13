@@ -3,10 +3,11 @@ package tekton_test
 import (
 	"context"
 	"fmt"
-	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/jx"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
+
+	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/jx"
 
 	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/tekton"
 
