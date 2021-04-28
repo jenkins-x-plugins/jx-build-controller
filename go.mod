@@ -3,12 +3,12 @@ module github.com/jenkins-x-plugins/jx-build-controller
 require (
 	github.com/cpuguy83/go-md2man v1.0.10
 	github.com/gorilla/mux v1.7.4
-	github.com/jenkins-x-plugins/jx-pipeline v0.0.129
-	github.com/jenkins-x-plugins/jx-secret v0.1.19
-	github.com/jenkins-x/jx-api/v4 v4.0.28
-	github.com/jenkins-x/jx-helpers/v3 v3.0.104
+	github.com/jenkins-x-plugins/jx-pipeline v0.0.131
+	github.com/jenkins-x-plugins/jx-secret v0.1.25
+	github.com/jenkins-x/jx-api/v4 v4.0.29
+	github.com/jenkins-x/jx-helpers/v3 v3.0.107
 	github.com/jenkins-x/jx-kube-client/v3 v3.0.2
-	github.com/jenkins-x/jx-logging/v3 v3.0.3
+	github.com/jenkins-x/jx-logging/v3 v3.0.4
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/pflag v1.0.5
@@ -20,7 +20,7 @@ require (
 	go.opentelemetry.io/otel/sdk v0.19.0
 	go.opentelemetry.io/otel/trace v0.19.0
 	gopkg.in/yaml.v2 v2.4.0
-	k8s.io/apimachinery v0.20.5
+	k8s.io/apimachinery v0.20.6
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
 )
 
