@@ -7,6 +7,16 @@ serviceaccount:
 
 internalPort: 8080
 
+log:
+  # the service name for logigng
+  service: ""
+  # level such as debug, info, warn
+  level: "info"
+  # json or stackdriver are the common values
+  format: "json"
+  # lets you skip stack frames in logs
+  stackSkip: ""
+
 probe:
   readypath: "/readyz"
   livepath: "/healthz"

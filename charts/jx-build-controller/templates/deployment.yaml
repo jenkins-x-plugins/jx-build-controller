@@ -53,9 +53,17 @@ spec:
             httpGet:
               path: {{ .Values.probe.readypath }}
               port: http
-
-
           env:
+          - name: JX_LOG_FORMAT
+            value: "{{ .Values.log.format }}"
+          - name: JX_LOG_LEVEL
+            value: "{{ .Values.log.level }}"
+          - name: JX_LOG_SERVICE
+            value: "{{ .Values.log.service | default .Chart.Name }}"
+          - name: JX_LOG_SERVICE_VERSION
+            value: "{{ .Chart.Version }}"
+          - name: JX_LOG_STACK_SKIP
+            value: "{{ .Values.log.stackSkip }}"
           - name: GIT_SECRET_MOUNT_PATH
             value: /secrets/git
 {{- range $pkey, $pval := .Values.env }}
