@@ -12,9 +12,6 @@ import (
 	"time"
 
 	"github.com/jenkins-x-plugins/jx-build-controller/pkg/cmd/controller/jx"
-	v1 "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned/typed/jenkins.io/v1"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
-
 	"github.com/jenkins-x-plugins/jx-pipeline/pkg/cloud/buckets"
 	"github.com/jenkins-x-plugins/jx-pipeline/pkg/pipelines"
 	"github.com/jenkins-x-plugins/jx-pipeline/pkg/tektonlog"
@@ -22,6 +19,7 @@ import (
 	"github.com/jenkins-x-plugins/jx-secret/pkg/masker/watcher"
 	jxv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 	jxVersioned "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
+	v1 "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned/typed/jenkins.io/v1"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cmdrunner"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient/cli"
@@ -38,7 +36,9 @@ import (
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 	"gopkg.in/yaml.v2"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
@@ -231,24 +231,39 @@ func (o *Options) retryUpdate(ctx context.Context, f func() (*jxv1.PipelineActiv
 
 // StoreResources stores resources
 func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, activity *jxv1.PipelineActivity, ns string) error {
+	// we'll store the logs only of the pipeline is finished
 	if !activity.Spec.Status.IsTerminated() {
 		return nil
 	}
-
-	// lets check if we've stored the pipeline log
+	// but we'll store it only once
 	if activity.Spec.BuildLogsURL != "" {
 		return nil
 	}
 
-	// lets get the build log and store it
-	if o.bucketURL == "" {
-		return nil
+	var (
+		traceID            = activity.Annotations[traceIDAnnotationKey]
+		needToStoreTraceID bool
+	)
+	if traceID == "" {
+		traceID = generatePipelineTrace(ctx, activity)
+		if traceID != "" {
+			log.Logger().WithField("traceID", traceID).Infof("Published trace/spans for PipelineActivity %s in namespace %s", activity.Name, activity.Namespace)
+			activity.Annotations[traceIDAnnotationKey] = traceID
+			needToStoreTraceID = true
+		}
 	}
 
-	traceID := generatePipelineTrace(ctx, activity)
-	if traceID != "" {
-		log.Logger().WithField("traceID", traceID).Infof("Published trace/spans for PipelineActivity %s in namespace %s", activity.Name, activity.Namespace)
-		activity.Annotations[traceIDAnnotationKey] = traceID
+	// if long term storage is disabled, we have nothing more to do
+	if o.bucketURL == "" {
+		// except maybe patch the pipelineactivity with our newly generated traceID
+		if needToStoreTraceID {
+			patch := fmt.Sprintf(`{"metadata": {"annotations": {"%s": "%s"}}}`, traceIDAnnotationKey, traceID)
+			_, err := o.JXClient.JenkinsV1().PipelineActivities(ns).Patch(ctx, activity.Name, types.MergePatchType, []byte(patch), metav1.PatchOptions{})
+			if err != nil {
+				return errors.Wrapf(err, "failed to patch PipelineActivity %s", activity.Name)
+			}
+		}
+		return nil
 	}
 
 	owner := activity.RepositoryOwner()
