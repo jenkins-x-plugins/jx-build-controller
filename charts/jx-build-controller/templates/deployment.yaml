@@ -80,6 +80,9 @@ spec:
           volumeMounts:
           - mountPath: /secrets/git
             name: secrets-git
+{{ if .Values.extraVolumeMounts }}
+{{ toYaml .Values.extraVolumeMounts | indent 10 }}
+{{- end }}
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
@@ -97,3 +100,6 @@ spec:
         secret:
           defaultMode: 420
           secretName: tekton-git
+{{ if .Values.extraVolumes }}
+{{ toYaml .Values.extraVolumes | indent 6 }}
+{{ end }}
