@@ -29,9 +29,9 @@ spec:
           resources: {}
         - name: chart-docs
           resources: {}
-        - name: release-chart
-          resources: {}
         - name: changelog
+          resources: {}
+        - name: release-chart
           resources: {}
         - name: upload-binaries
           resources: {}
