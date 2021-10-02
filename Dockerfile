@@ -1,4 +1,4 @@
-FROM gcr.io/jenkinsxio/jx-cli-base:0.0.21
+FROM ghcr.io/jenkins-x/jx-cli-base-image:0.0.48
 
 ENTRYPOINT ["jx-build-controller"]
 

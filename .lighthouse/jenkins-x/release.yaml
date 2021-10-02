@@ -35,7 +35,7 @@ spec:
           resources: {}
         - name: upload-binaries
           resources: {}
-        - image: gcr.io/jenkinsxio/builder-go:2.1.142-761
+        - image: ghcr.io/jenkins-x/builder-go:latest
           name: promote-release
           resources: {}
           script: |
