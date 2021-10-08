@@ -23,6 +23,7 @@ import (
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cmdrunner"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient/cli"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/activities"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/naming"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/requirements"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/stringhelpers"
@@ -129,7 +130,7 @@ func (o *Options) onPipelineRun(obj interface{}, ns string) {
 		}
 
 		if pa != nil {
-			pipelines.DefaultValues(pa)
+			activities.DefaultValues(pa)
 
 			err = o.StoreResources(ctx, pr, pa, ns)
 			if err != nil {
