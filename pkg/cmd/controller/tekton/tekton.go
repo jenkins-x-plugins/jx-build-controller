@@ -91,7 +91,7 @@ func (o *Options) Start() {
 		AddFunc: func(obj interface{}) {
 			e := obj.(*v1beta1.PipelineRun)
 			o.onPipelineRun(obj, o.Namespace)
-			log.Logger().Infof("added %s", e.Name)
+			log.Logger().Infof("added pipelinerun %s", e.Name)
 		},
 		UpdateFunc: func(old, new interface{}) {
 			e := new.(*v1beta1.PipelineRun)
