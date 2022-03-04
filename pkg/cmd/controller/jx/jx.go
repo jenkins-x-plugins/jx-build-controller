@@ -24,9 +24,9 @@ type Options struct {
 }
 
 func (o *Options) Start() {
-	var externalVersions []informers.SharedInformerOption
+	var informerOptions []informers.SharedInformerOption
 	if !o.AllNamespaces {
-		externalVersions = []informers.SharedInformerOption{
+		informerOptions = []informers.SharedInformerOption{
 			informers.WithNamespace(o.Namespace),
 		}
 	}
@@ -34,7 +34,7 @@ func (o *Options) Start() {
 	informerFactory := informers.NewSharedInformerFactoryWithOptions(
 		o.JXClient,
 		time.Minute*10,
-		externalVersions...,
+		informerOptions...,
 	)
 
 	stop := make(chan struct{})

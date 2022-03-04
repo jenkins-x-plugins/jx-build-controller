@@ -81,9 +81,9 @@ func (o *Options) Start() {
 		log.Logger().Info("long term storage for logs is not configured in cluster requirements")
 	}
 
-	var externalVersions []informersTekton.SharedInformerOption
+	var informerOptions []informersTekton.SharedInformerOption
 	if !o.AllNamespaces {
-		externalVersions = []informersTekton.SharedInformerOption{
+		informerOptions = []informersTekton.SharedInformerOption{
 			informersTekton.WithNamespace(o.Namespace),
 		}
 	}
@@ -91,7 +91,7 @@ func (o *Options) Start() {
 	informerFactoryTekton := informersTekton.NewSharedInformerFactoryWithOptions(
 		o.TektonClient,
 		time.Minute*10,
-		externalVersions...,
+		informerOptions...,
 	)
 
 	pipelineRunInformer := informerFactoryTekton.Tekton().V1beta1().PipelineRuns().Informer()
