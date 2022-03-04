@@ -55,6 +55,7 @@ type Options struct {
 	gitClient               gitclient.Interface
 	ActivityCache           *jx.ActivityCache
 	Namespace               string
+	AllNamespaces           bool
 	Masker                  watcher.Options
 	WriteLogToBucketTimeout time.Duration
 	IsReady                 *atomic.Value
@@ -80,22 +81,29 @@ func (o *Options) Start() {
 		log.Logger().Info("long term storage for logs is not configured in cluster requirements")
 	}
 
+	var externalVersions []informersTekton.SharedInformerOption
+	if !o.AllNamespaces {
+		externalVersions = []informersTekton.SharedInformerOption{
+			informersTekton.WithNamespace(o.Namespace),
+		}
+	}
+
 	informerFactoryTekton := informersTekton.NewSharedInformerFactoryWithOptions(
 		o.TektonClient,
 		time.Minute*10,
-		informersTekton.WithNamespace(o.Namespace),
+		externalVersions...,
 	)
 
 	pipelineRunInformer := informerFactoryTekton.Tekton().V1beta1().PipelineRuns().Informer()
 	pipelineRunInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
 			e := obj.(*v1beta1.PipelineRun)
-			o.onPipelineRun(obj, o.Namespace)
+			o.onPipelineRun(obj, e.Namespace)
 			log.Logger().Infof("added pipelinerun %s", e.Name)
 		},
 		UpdateFunc: func(old, new interface{}) {
 			e := new.(*v1beta1.PipelineRun)
-			o.onPipelineRun(new, o.Namespace)
+			o.onPipelineRun(new, e.Namespace)
 			log.Logger().Infof("updated %s", e.Name)
 		},
 	})
@@ -290,7 +298,7 @@ func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, a
 		JXClient:     o.JXClient,
 		KubeClient:   o.KubeClient,
 		TektonClient: o.TektonClient,
-		Namespace:    o.Namespace,
+		Namespace:    pr.Namespace,
 	}
 
 	log.Logger().Debugf("Capturing running build logs for %s", activity.Name)

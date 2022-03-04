@@ -56,6 +56,7 @@ type ControllerOptions struct {
 	options.BaseOptions
 
 	Namespace               string
+	AllNamespaces           bool
 	OperatorNamespace       string
 	port                    string
 	WriteLogToBucketTimeout time.Duration
@@ -84,6 +85,7 @@ func NewCmdController() (*cobra.Command, *ControllerOptions) {
 	}
 
 	cmd.Flags().StringVarP(&o.Namespace, "namespace", "n", "", "The kubernetes Namespace to watch for PipelineRun and PipelineActivity resources. Defaults to the current namespace")
+	cmd.Flags().BoolVarP(&o.AllNamespaces, "all-namespaces", "a", false, "Watch all namespaces for PipelineRun and PipelineActivity resources, ignores --namespace/-n switch")
 	cmd.Flags().StringVarP(&o.OperatorNamespace, "operator-namespace", "", "jx-git-operator", "The git operator namespace")
 	cmd.Flags().DurationVarP(&o.WriteLogToBucketTimeout, "write-log-timeout", "", time.Minute*30, "The timeout for writing pipeline logs to the bucket")
 	cmd.Flags().StringVarP(&o.port, "port", "", "8080", "The port for health and readiness checks to listen on")
@@ -191,8 +193,8 @@ func (o *ControllerOptions) Run() error {
 	isTektonClientReady := &atomic.Value{}
 	isTektonClientReady.Store(false)
 
-	isJenkinXClientReady := &atomic.Value{}
-	isJenkinXClientReady.Store(false)
+	isJenkinsXClientReady := &atomic.Value{}
+	isJenkinsXClientReady.Store(false)
 
 	activityCache, err := jx.NewActivityCache(o.JXClient, ns)
 	if err != nil {
@@ -204,6 +206,7 @@ func (o *ControllerOptions) Run() error {
 		KubeClient:    o.KubeClient,
 		JXClient:      o.JXClient,
 		Namespace:     ns,
+		AllNamespaces: o.AllNamespaces,
 		IsReady:       isTektonClientReady,
 		ActivityCache: activityCache,
 	}
@@ -221,8 +224,9 @@ func (o *ControllerOptions) Run() error {
 		(&jx.Options{
 			JXClient:      o.JXClient,
 			Namespace:     ns,
+			AllNamespaces: o.AllNamespaces,
 			Masker:        o.Masker,
-			IsReady:       isJenkinXClientReady,
+			IsReady:       isJenkinsXClientReady,
 			ActivityCache: activityCache,
 		}).Start()
 	}()
@@ -231,12 +235,14 @@ func (o *ControllerOptions) Run() error {
 		to.Start()
 	}()
 
-	o.startHealthEndpoint(isTektonClientReady, isJenkinXClientReady)
+	if err := o.startHealthEndpoint(isTektonClientReady, isJenkinsXClientReady); err != nil {
+		return errors.Wrap(err, "cannot create health endpoint")
+	}
 	return nil
 }
 
-func (o ControllerOptions) startHealthEndpoint(isTektonClientReady, isJenkinXClientReady *atomic.Value) error {
-	r := handler.Router(isTektonClientReady, isJenkinXClientReady)
+func (o ControllerOptions) startHealthEndpoint(isTektonClientReady, isJenkinsXClientReady *atomic.Value) error {
+	r := handler.Router(isTektonClientReady, isJenkinsXClientReady)
 
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)

@@ -19,14 +19,22 @@ type Options struct {
 	Masker        watcher.Options
 	ActivityCache *ActivityCache
 	Namespace     string
+	AllNamespaces bool
 	IsReady       *atomic.Value
 }
 
 func (o *Options) Start() {
+	var externalVersions []informers.SharedInformerOption
+	if !o.AllNamespaces {
+		externalVersions = []informers.SharedInformerOption{
+			informers.WithNamespace(o.Namespace),
+		}
+	}
+
 	informerFactory := informers.NewSharedInformerFactoryWithOptions(
 		o.JXClient,
 		time.Minute*10,
-		informers.WithNamespace(o.Namespace),
+		externalVersions...,
 	)
 
 	stop := make(chan struct{})

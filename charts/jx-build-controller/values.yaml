@@ -35,7 +35,8 @@ resources:
 restartPolicy: Always
 command:
 - jx-build-controller
-args: []
+args:
+  - "--all-namespaces"
 env:
   GIT_AUTHOR_NAME: "jenkins-x-bot"
   GIT_AUTHOR_EMAIL: "jenkins-x@googlegroups.com"
@@ -91,6 +92,17 @@ clusterrole:
     - get
     - list
     - watch
+  - apiGroups:
+      - jenkins.io
+    resources:
+      - pipelineactivities
+    verbs:
+      - list
+      - get
+      - watch
+      - create
+      - update
+      - patch
 role:
   enabled: true
   rules:
