@@ -799,8 +799,8 @@ github.com/jcmturner/gofork v1.0.0/go.mod h1:MK8+TM0La+2rjBD4jE12Kj1pCCxK7d2LK/U
 github.com/jehiah/go-strftime v0.0.0-20171201141054-1d33003b3869/go.mod h1:cJ6Cj7dQo+O6GJNiMx+Pa94qKj+TG8ONdKHgMNIyyag=
 github.com/jenkins-x-plugins/jx-charter v0.0.28/go.mod h1:oWhIpQIRc08qikMIH7VF08kQM/onYtU9teWq8eCSaJE=
 github.com/jenkins-x-plugins/jx-gitops v0.4.3/go.mod h1:Beb5FCfhm2ZZBaWB+WlYHK07A65p67nAe9LoirbZPHg=
-github.com/jenkins-x-plugins/jx-pipeline v0.1.16 h1:FDwCLToQf2x9vhIe+AS8Qx0PNxui5OPXUv903zjwSLU=
-github.com/jenkins-x-plugins/jx-pipeline v0.1.16/go.mod h1:c47Raah0rv2X63Rj3MRHL0nYVTCL9iFyeOeuuMRET3g=
+github.com/jenkins-x-plugins/jx-pipeline v0.1.17 h1:uzO+Gq0ULhJxk9UQAD5iON8j2csV7TmM5rhc21O9BUM=
+github.com/jenkins-x-plugins/jx-pipeline v0.1.17/go.mod h1:c47Raah0rv2X63Rj3MRHL0nYVTCL9iFyeOeuuMRET3g=
 github.com/jenkins-x-plugins/jx-secret v0.1.55 h1:HuS9QhUlRjwPHUuGwERchrDK3tGhwWT662rWF2HpJQc=
 github.com/jenkins-x-plugins/jx-secret v0.1.55/go.mod h1:Alu4JBsmHGz9vLFxarl0aHRflearTtAQJqhX6JIoxmA=
 github.com/jenkins-x-plugins/secretfacade v0.1.3/go.mod h1:PG8a3Y0dVpVPKOGySobjFpL/kw5V6qFU3SkD3iTQ+nM=
