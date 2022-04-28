@@ -3,7 +3,7 @@ module github.com/jenkins-x-plugins/jx-build-controller
 require (
 	github.com/cpuguy83/go-md2man v1.0.10
 	github.com/gorilla/mux v1.7.4
-	github.com/jenkins-x-plugins/jx-pipeline v0.1.37
+	github.com/jenkins-x-plugins/jx-pipeline v0.1.38
 	github.com/jenkins-x-plugins/jx-secret v0.1.68
 	github.com/jenkins-x/jx-api/v4 v4.3.6
 	github.com/jenkins-x/jx-helpers/v3 v3.2.8
@@ -178,7 +178,8 @@ replace (
 	github.com/docker/docker => github.com/moby/moby v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
 	// override the go-scm from tekton
 	github.com/jenkins-x/go-scm => github.com/jenkins-x/go-scm v1.11.5
-	// github.com/tektoncd/pipeline => github.com/jenkins-x/pipeline v0.3.2-0.20210118090417-1e821d85abf6
+	// See: https://github.com/google/go-cloud/issues/3114
+	github.com/mattn/go-ieproxy => github.com/mattn/go-ieproxy v0.0.1
 	go.opentelemetry.io/otel => go.opentelemetry.io/otel v0.19.0
 	go.opentelemetry.io/otel/sdk => go.opentelemetry.io/otel/sdk v0.19.0
 	go.opentelemetry.io/otel/trace => go.opentelemetry.io/otel/trace v0.19.0
@@ -186,7 +187,6 @@ replace (
 	k8s.io/apimachinery => k8s.io/apimachinery v0.21.4
 	k8s.io/client-go => k8s.io/client-go v0.21.4
 	k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20210305001622-591a79e4bda7
-// knative.dev/pkg => github.com/jstrachan/pkg v0.0.0-20210118084935-c7bdd6c14bd0
 )
 
 go 1.17
