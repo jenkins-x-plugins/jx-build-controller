@@ -747,6 +747,7 @@ github.com/go-logfmt/logfmt v0.5.0 h1:TrB8swr/68K7m9CcGut2g3UOihhbcbiMAYiuTXdEih
 github.com/go-logfmt/logfmt v0.5.0/go.mod h1:wCYkCAKZfumFQihp8CzCvQ3paCTfi41vtzG1KdI/P7A=
 github.com/go-logr/logr v0.1.0/go.mod h1:ixOQHD9gLJUVQQ2ZOR7zLEifBX6tGkNJF4QyIY7sIas=
 github.com/go-logr/logr v0.2.0/go.mod h1:z6/tIYblkpsD+a4lm/fGIIU9mZ+XfAiaFtq7xTgseGU=
+github.com/go-logr/logr v0.2.1/go.mod h1:z6/tIYblkpsD+a4lm/fGIIU9mZ+XfAiaFtq7xTgseGU=
 github.com/go-logr/logr v0.3.0/go.mod h1:z6/tIYblkpsD+a4lm/fGIIU9mZ+XfAiaFtq7xTgseGU=
 github.com/go-logr/logr v0.4.0 h1:K7/B1jt6fIBQVd4Owv2MqGQClcgf0R266+7C/QjRcLc=
 github.com/go-logr/logr v0.4.0/go.mod h1:z6/tIYblkpsD+a4lm/fGIIU9mZ+XfAiaFtq7xTgseGU=
@@ -1335,13 +1336,17 @@ github.com/jeffchao/backoff v0.0.0-20140404060208-9d7fd7aa17f2/go.mod h1:xkfESuH
 github.com/jefferai/isbadcipher v0.0.0-20190226160619-51d2077c035f/go.mod h1:3J2qVK16Lq8V+wfiL2lPeDZ7UWMxk5LemerHa1p6N00=
 github.com/jefferai/jsonx v1.0.0/go.mod h1:OGmqmi2tTeI/PS+qQfBDToLHHJIy/RMp24fPo8vFvoQ=
 github.com/jehiah/go-strftime v0.0.0-20171201141054-1d33003b3869/go.mod h1:cJ6Cj7dQo+O6GJNiMx+Pa94qKj+TG8ONdKHgMNIyyag=
+github.com/jenkins-x-plugins/jx-charter v0.0.28 h1:Pwtcm2L8+xmtboPBIvTsc3jPLEwZuYnzDtBQurdVuv0=
 github.com/jenkins-x-plugins/jx-charter v0.0.28/go.mod h1:oWhIpQIRc08qikMIH7VF08kQM/onYtU9teWq8eCSaJE=
+github.com/jenkins-x-plugins/jx-gitops v0.7.6 h1:53ZapHjOS5QlBB2+7+wvwcHCg9EGyTZvc3/OErtKFzI=
 github.com/jenkins-x-plugins/jx-gitops v0.7.6/go.mod h1:IQurqapdxQ3oaLBqo25gH9nahOWPC9krPwQrk6BqiOY=
 github.com/jenkins-x-plugins/jx-pipeline v0.1.38 h1:OSNswfWfuGav5WE8/XrZGxR0tOCL2YWrje9H0XSY7YQ=
 github.com/jenkins-x-plugins/jx-pipeline v0.1.38/go.mod h1:jbScXZiiq1Pa4gMSCACTEk7C7wtpBlsO3aLNU80bF2U=
 github.com/jenkins-x-plugins/jx-secret v0.1.68 h1:C7Sb+nWHPoRUFjMrCp8pOZoVNzmFe0jwt347ftR5QLI=
 github.com/jenkins-x-plugins/jx-secret v0.1.68/go.mod h1:vDSFSsGPkHK3pouYlRyVjNqmFAnm4gCQH98Q4os/Yec=
+github.com/jenkins-x-plugins/secretfacade v0.2.3 h1:CUEkA8Bi3ZaSPM2ARdv3RTi/C9COMIR0YJ0XpVGVTEU=
 github.com/jenkins-x-plugins/secretfacade v0.2.3/go.mod h1:LA5u8YaWpHaAHMYeMluAso1oBqS+2bLJmFk7JWHWL3c=
+github.com/jenkins-x/gen-crd-api-reference-docs v0.1.6 h1:jV0THW6KeMYC0rcawdPeix7+ZmDZMR0UMU+QJr5gU6Y=
 github.com/jenkins-x/gen-crd-api-reference-docs v0.1.6/go.mod h1:a4dzSf/nNLMMMqultm6IlV/04xq26uICEYPkSTOahWQ=
 github.com/jenkins-x/go-scm v1.11.5 h1:bWfyBlcDB/HHSRmJOSmBs2l4VRL2YF1Ka6Y1dn4Inx0=
 github.com/jenkins-x/go-scm v1.11.5/go.mod h1:GB6XjszezsDOxKTsPoyk4MT/cKw30qkPdJ4tml+MImg=
@@ -1360,6 +1365,8 @@ github.com/jenkins-x/jx-logging/v3 v3.0.6 h1:rXiLYK7WuliCtujKkeU77fnSTJRDSIgbIk7
 github.com/jenkins-x/jx-logging/v3 v3.0.6/go.mod h1:Vp2ER2SYgGhAgEEHlLwfi2ZB54tz6ya1qExq0A4CKMI=
 github.com/jenkins-x/lighthouse-client v0.0.438/go.mod h1:N7QjV8q6Pc72XiEWdEJAfx/HxO4XyiDj7H9l6ah6mcE=
 github.com/jenkins-x/lighthouse-client v0.0.440/go.mod h1:N7QjV8q6Pc72XiEWdEJAfx/HxO4XyiDj7H9l6ah6mcE=
+github.com/jenkins-x/lighthouse-client v0.0.442 h1:Oc7sOdFKWT8MD7wSE37umZwFD+/5Oc8XbFwzeR/bfvY=
+github.com/jenkins-x/lighthouse-client v0.0.442/go.mod h1:N7QjV8q6Pc72XiEWdEJAfx/HxO4XyiDj7H9l6ah6mcE=
 github.com/jenkins-x/logrus-stackdriver-formatter v0.2.3 h1:NuRWKUPCEX1wKlXA8ZYSG28qGKd41R7BK11YDQkPwqo=
 github.com/jenkins-x/logrus-stackdriver-formatter v0.2.3/go.mod h1:litPp7VZWDRCl8LvXuqGngy+65kkg/+T23TgFnDmfTk=
 github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
@@ -1843,6 +1850,7 @@ github.com/russross/blackfriday v1.5.2/go.mod h1:JO/DiYxRf+HjHt06OyowR9PTA263kcR
 github.com/russross/blackfriday v1.6.0 h1:KqfZb0pUVN2lYqZUYRddxF4OR8ZMURnJIG5Y3VRLtww=
 github.com/russross/blackfriday v1.6.0/go.mod h1:ti0ldHuxg49ri4ksnFxlkCfN+hvslNlmVHqNRXXJNAY=
 github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
+github.com/russross/blackfriday/v2 v2.1.0 h1:JIOH55/0cWyOuilr9/qlrm0BSXldqnqwMsf35Ld67mk=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
 github.com/ryanuber/columnize v2.1.0+incompatible/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
@@ -3019,9 +3027,11 @@ k8s.io/gengo v0.0.0-20200413195148-3a45101e95ac/go.mod h1:ezvh/TsK7cY6rbqRK0oQQ8
 k8s.io/gengo v0.0.0-20200428234225-8167cfdcfc14/go.mod h1:ezvh/TsK7cY6rbqRK0oQQ8IAqLxYwwyPxAX1Pzy0ii0=
 k8s.io/gengo v0.0.0-20201113003025-83324d819ded/go.mod h1:FiNAH4ZV3gBg2Kwh89tzAEV2be7d5xI0vBa/VySYy3E=
 k8s.io/gengo v0.0.0-20201214224949-b6c5ce23f027/go.mod h1:FiNAH4ZV3gBg2Kwh89tzAEV2be7d5xI0vBa/VySYy3E=
+k8s.io/gengo v0.0.0-20210203185629-de9496dff47b h1:bAU8IlrMA6KbP0dIg/sVSJn95pDCUHDZx0DpTGrf2v4=
 k8s.io/gengo v0.0.0-20210203185629-de9496dff47b/go.mod h1:FiNAH4ZV3gBg2Kwh89tzAEV2be7d5xI0vBa/VySYy3E=
 k8s.io/klog v0.2.0/go.mod h1:Gq+BEi5rUBO/HRz0bTSXDUcqjScdoY3a9IHpCEIOOfk=
 k8s.io/klog v0.3.0/go.mod h1:Gq+BEi5rUBO/HRz0bTSXDUcqjScdoY3a9IHpCEIOOfk=
+k8s.io/klog v0.3.3/go.mod h1:Gq+BEi5rUBO/HRz0bTSXDUcqjScdoY3a9IHpCEIOOfk=
 k8s.io/klog v1.0.0 h1:Pt+yjF5aB1xDSVbau4VsWe+dQNzA0qv1LlXdC2dF6Q8=
 k8s.io/klog v1.0.0/go.mod h1:4Bi6QPql/J/LkTDqv7R/cd3hPo4k2DG6Ptcz060Ez5I=
 k8s.io/klog/v2 v2.0.0/go.mod h1:PBfzABfn139FHAV07az/IF9Wp1bkk3vpT2XSJ76fSDE=
