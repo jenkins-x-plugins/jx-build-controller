@@ -70,7 +70,12 @@ spec:
           - name: {{ $pkey }}
             value: {{ $pval }}
 {{- end }}
-{{- if .Values.envSecrets }}
+{{ $envFromLength := len .Values.envFrom }} {{ if ne $envFromLength 0 }}
+{{- with .Values.envFrom }}
+          envFrom:
+          {{- toYaml . | trim | nindent 10 }}
+{{- end }}
+{{- else if .Values.envSecrets }}
           envFrom:
           - secretRef:
               name: jx-build-controller-env
