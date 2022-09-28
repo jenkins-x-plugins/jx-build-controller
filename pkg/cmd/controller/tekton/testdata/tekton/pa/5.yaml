@@ -33,13 +33,15 @@ spec:
   gitRepository: nodey532
   gitUrl: https://github.com/jstrachan/nodey532.git
   lastCommitSHA: a086c129ce37779d435145f2f40e0ee3f9eb59ef
+  message: 'Tasks Completed: 1 (Failed: 0, Cancelled 0), Skipped: 0'
   pipeline: jstrachan/nodey532/master
-  status: Running
+  status: Succeeded
   steps:
   - kind: Stage
     stage:
+      message: All Steps have completed executing
       name: from build pack
-      status: Running
+      status: Succeeded
       steps:
       - name: Git Clone
         status: Succeeded
@@ -54,23 +56,23 @@ spec:
       - name: Helm Template
         status: Succeeded
       - name: Tag Version
-        status: Running
+        status: Succeeded
       - name: Setup Builder Home
-        status: Pending
+        status: Succeeded
       - name: Jx Variables
-        status: Pending
+        status: Succeeded
       - name: Build Npmrc
-        status: Pending
+        status: Succeeded
       - name: Build Npm Install
-        status: Pending
+        status: Succeeded
       - name: Build Npm Test
-        status: Pending
+        status: Succeeded
       - name: Build Container Build
-        status: Pending
+        status: Succeeded
       - name: Promote Changelog
-        status: Pending
+        status: Succeeded
       - name: Promote Helm Release
-        status: Pending
+        status: Succeeded
       - name: Promote Jx Promote
-        status: Pending
+        status: Succeeded
 status: {}

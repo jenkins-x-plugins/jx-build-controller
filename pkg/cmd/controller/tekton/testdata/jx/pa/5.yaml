@@ -39,11 +39,13 @@ spec:
   gitRepository: nodey530
   gitUrl: https://github.com/jstrachan/nodey530.git
   lastCommitSHA: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+  message: 'Tasks Completed: 0 (Failed: 0, Cancelled 0), Incomplete: 1, Skipped: 0'
   pipeline: jstrachan/nodey530/master
-  status: Succeeded
+  status: Running
   steps:
   - kind: Stage
     stage:
+      message: Not all Steps in the Task have finished executing
       name: meta pipeline
       status: Succeeded
       steps:
@@ -64,7 +66,7 @@ spec:
   - kind: Stage
     stage:
       name: from build pack
-      status: Succeeded
+      status: Running
       steps:
       - name: Setup Builder Home
         status: Succeeded
@@ -85,7 +87,7 @@ spec:
       - name: Promote Helm Release
         status: Succeeded
       - name: Promote Jx Promote
-        status: Succeeded
+        status: Running
       - name: Git Source Workspace Sx9ms
         status: Succeeded
 status: {}
