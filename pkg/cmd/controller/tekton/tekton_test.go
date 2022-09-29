@@ -27,7 +27,7 @@ const (
 )
 
 func TestBuildControllerTekton(t *testing.T) {
-	sourceDir := filepath.Join("test_data", "tekton")
+	sourceDir := filepath.Join("testdata", "tekton")
 	ns := "jx"
 
 	tmpDir, err := ioutil.TempDir("", "")
@@ -72,7 +72,7 @@ func TestBuildControllerTekton(t *testing.T) {
 }
 
 func TestBuildControllerMetaPipeline(t *testing.T) {
-	sourceDir := filepath.Join("test_data", "jx")
+	sourceDir := filepath.Join("testdata", "jx")
 	ns := "jx"
 
 	tmpDir, err := ioutil.TempDir("", "")

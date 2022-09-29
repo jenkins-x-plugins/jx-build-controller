@@ -7,12 +7,9 @@ metadata:
   creationTimestamp: null
   labels:
     aadpodidbinding: tekton-bot
-    branch: master
     build: "1"
-    context: release
     created-by-lighthouse: "true"
     event-GUID: c7bc6ea8-086a-11eb-87dc-b86c5d9b6f3f
-    jenkins.io/pipelineType: build
     lighthouse.jenkins-x.io/baseSHA: 1233cfd611a1d5280879c5f3fca44c181e3183cb
     lighthouse.jenkins-x.io/branch: master
     lighthouse.jenkins-x.io/buildNum: "1602054027949"
@@ -23,10 +20,8 @@ metadata:
     lighthouse.jenkins-x.io/refs.org: jstrachan
     lighthouse.jenkins-x.io/refs.repo: nodey530
     lighthouse.jenkins-x.io/type: postsubmit
-    owner: jstrachan
-    podName: jstrachan-nodey530-master-relea-ttnnr-1-from-build-pack-5-bl22f
-    repository: nodey530
-    tekton.dev/pipeline: jstrachan-nodey530-master-relea-ttnnr-1
+    podName: release-9hs6f-from-build-pack-ddnhv-pod-dzw9t
+    tekton.dev/pipeline: release-9hs6f
   name: jstrachan-nodey530-master-1
   namespace: jx
 spec:
@@ -39,13 +34,15 @@ spec:
   gitRepository: nodey530
   gitUrl: https://github.com/jstrachan/nodey530.git
   lastCommitSHA: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+  message: 'Tasks Completed: 0 (Failed: 0, Cancelled 0), Incomplete: 1, Skipped: 0'
   pipeline: jstrachan/nodey530/master
   status: Running
   steps:
   - kind: Stage
     stage:
+      message: Not all Steps in the Task have finished executing
       name: meta pipeline
-      status: Succeeded
+      status: Running
       steps:
       - name: Git Clone
         status: Succeeded
@@ -60,32 +57,5 @@ spec:
       - name: Create Effective Pipeline
         status: Succeeded
       - name: Create Tekton Crds
-        status: Succeeded
-  - kind: Stage
-    stage:
-      name: from build pack
-      status: Running
-      steps:
-      - name: Setup Builder Home
-        status: Succeeded
-      - name: Git Merge
-        status: Succeeded
-      - name: Setup Jx Git Credentials
-        status: Succeeded
-      - name: Build Npmrc
-        status: Succeeded
-      - name: Build Npm Install
-        status: Succeeded
-      - name: Build Npm Test
-        status: Succeeded
-      - name: Build Container Build
-        status: Succeeded
-      - name: Promote Changelog
-        status: Succeeded
-      - name: Promote Helm Release
-        status: Succeeded
-      - name: Promote Jx Promote
         status: Running
-      - name: Git Source Workspace Sx9ms
-        status: Succeeded
 status: {}

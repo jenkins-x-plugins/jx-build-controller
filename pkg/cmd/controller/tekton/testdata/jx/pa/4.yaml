@@ -39,11 +39,13 @@ spec:
   gitRepository: nodey530
   gitUrl: https://github.com/jstrachan/nodey530.git
   lastCommitSHA: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+  message: 'Tasks Completed: 0 (Failed: 0, Cancelled 0), Incomplete: 1, Skipped: 0'
   pipeline: jstrachan/nodey530/master
   status: Running
   steps:
   - kind: Stage
     stage:
+      message: Not all Steps in the Task have finished executing
       name: meta pipeline
       status: Succeeded
       steps:
