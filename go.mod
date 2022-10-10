@@ -3,7 +3,7 @@ module github.com/jenkins-x-plugins/jx-build-controller
 require (
 	github.com/cpuguy83/go-md2man v1.0.10
 	github.com/gorilla/mux v1.8.0
-	github.com/jenkins-x-plugins/jx-pipeline v0.5.9
+	github.com/jenkins-x-plugins/jx-pipeline v0.5.12
 	github.com/jenkins-x-plugins/jx-secret v0.3.1
 	github.com/jenkins-x/jx-api/v4 v4.6.2
 	github.com/jenkins-x/jx-helpers/v3 v3.4.0
