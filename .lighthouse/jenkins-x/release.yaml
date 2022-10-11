@@ -44,5 +44,5 @@ spec:
             ./promote.sh
   podTemplate: {}
   serviceAccountName: tekton-bot
-  timeout: 1h30m
+  timeout: 2h
 status: {}
