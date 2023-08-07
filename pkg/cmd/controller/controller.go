@@ -29,14 +29,14 @@ import (
 	"github.com/spf13/cobra"
 	tektonclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/exporters/otlp"
-	"go.opentelemetry.io/otel/exporters/otlp/otlpgrpc"
-	"go.opentelemetry.io/otel/exporters/otlp/otlphttp"
-	"go.opentelemetry.io/otel/exporters/trace/jaeger"
-	exporttrace "go.opentelemetry.io/otel/sdk/export/trace"
+	"go.opentelemetry.io/otel/exporters/jaeger"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
+	exporttrace "go.opentelemetry.io/otel/sdk/trace"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
-	"go.opentelemetry.io/otel/semconv"
+	"go.opentelemetry.io/otel/semconv/v1.20.0"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -135,14 +135,14 @@ func (o *ControllerOptions) Validate() error {
 		var exporter exporttrace.SpanExporter
 		switch o.tracesExporterType {
 		case "otlp:grpc:insecure":
-			exporter, err = otlp.NewExporter(ctx, otlpgrpc.NewDriver(
-				otlpgrpc.WithEndpoint(o.tracesExporterEndpoint),
-				otlpgrpc.WithInsecure(),
+			exporter, err = otlptrace.New(ctx, otlptracegrpc.NewClient(
+				otlptracegrpc.WithEndpoint(o.tracesExporterEndpoint),
+				otlptracegrpc.WithInsecure(),
 			))
 		case "otlp:http:insecure":
-			exporter, err = otlp.NewExporter(ctx, otlphttp.NewDriver(
-				otlphttp.WithEndpoint(o.tracesExporterEndpoint),
-				otlphttp.WithInsecure(),
+			exporter, err = otlptrace.New(ctx, otlptracehttp.NewClient(
+				otlptracehttp.WithEndpoint(o.tracesExporterEndpoint),
+				otlptracehttp.WithInsecure(),
 			))
 		case "jaeger:http:thrift":
 			endpoint := fmt.Sprintf("http://%s/api/traces", o.tracesExporterEndpoint)
@@ -151,8 +151,8 @@ func (o *ControllerOptions) Validate() error {
 				log.Logger().WithError(err).Warning("Traces Exporter Endpoint configuration error. Maybe you need to install/configure the Observability stack? https://jenkins-x.io/v3/admin/guides/observability/ The OpenTelemetry Tracing feature won't be enabled until this is fixed.")
 				err = nil // ensure we won't fail. we just need to NOT set the exporter
 			} else {
-				exporter, err = jaeger.NewRawExporter(
-					jaeger.WithCollectorEndpoint(endpoint),
+				exporter, err = jaeger.New(
+					jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(endpoint)),
 				)
 			}
 		}
@@ -168,6 +168,7 @@ func (o *ControllerOptions) Validate() error {
 				),
 				sdktrace.WithSampler(sdktrace.AlwaysSample()),
 				sdktrace.WithResource(sdkresource.NewWithAttributes(
+					semconv.SchemaURL,
 					semconv.ServiceNameKey.String("pipeline"),
 					semconv.ServiceNamespaceKey.String(o.Namespace),
 				)),
