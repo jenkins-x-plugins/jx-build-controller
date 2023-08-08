@@ -7,6 +7,7 @@ spec:
   pipelineSpec:
     tasks:
     - name: chart
+      timeout: 3h
       resources: {}
       taskSpec:
         metadata: {}
@@ -44,5 +45,5 @@ spec:
             ./promote.sh
   podTemplate: {}
   serviceAccountName: tekton-bot
-  timeout: 2h
+  timeout: 3h
 status: {}
