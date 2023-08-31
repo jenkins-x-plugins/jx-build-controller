@@ -1392,8 +1392,8 @@ github.com/jenkins-x/go-scm v1.14.11 h1:dOlniSMoTptK45WK1gvQb+/xr38nk7CENt/v6O64
 github.com/jenkins-x/go-scm v1.14.11/go.mod h1:f/eqTDtJC410DWwBJv82zhrAl4NAEr3h5UDCMXIcn4c=
 github.com/jenkins-x/jx-api/v4 v4.6.2 h1:RuS5pyPUhVe19CpUStA+1Bqmv1B3kLFyng8Wd6KYOxs=
 github.com/jenkins-x/jx-api/v4 v4.6.2/go.mod h1:OhbFyIS+3OqAQwyCEQMQoTILCREyv0uQl2Ggq0Im2/A=
-github.com/jenkins-x/jx-helpers/v3 v3.6.0 h1:rsTb4WV5o5mDl78F1oUjKXJ85wyp4eZSHBMpNrZ6Wc4=
-github.com/jenkins-x/jx-helpers/v3 v3.6.0/go.mod h1:/2n7uMXbbLp1V9fG1fnf7ngdu3vGQFSMYnglY4oKx7c=
+github.com/jenkins-x/jx-helpers/v3 v3.6.1 h1:jZ7nU7wCOKFsigA9zUYx5F5owxxAiTKxIOvvG/aJBv8=
+github.com/jenkins-x/jx-helpers/v3 v3.6.1/go.mod h1:YVQuPRPOq5KO71bhIRoV1IDShdrFMtTHlYFa/Msh8Uo=
 github.com/jenkins-x/jx-kube-client/v3 v3.0.5 h1:L3viNWf+es5kMy+995eOeAL/gJqVJ2RkDIHpnYVbXBE=
 github.com/jenkins-x/jx-kube-client/v3 v3.0.5/go.mod h1:Ac61MkTmuPPFJTL/XVMcFEZSNaHShDFI8RYsSv36QCA=
 github.com/jenkins-x/jx-logging/v3 v3.0.10 h1:V0Qy9eknxRs5S82yjHT+bYcXWNn5zduanDGLqy04dDQ=
