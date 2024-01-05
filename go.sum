@@ -1384,8 +1384,8 @@ github.com/jcmturner/gofork v1.0.0/go.mod h1:MK8+TM0La+2rjBD4jE12Kj1pCCxK7d2LK/U
 github.com/jcmturner/goidentity/v6 v6.0.1/go.mod h1:X1YW3bgtvwAXju7V3LCIMpY0Gbxyjn/mY9zx4tFonSg=
 github.com/jcmturner/gokrb5/v8 v8.4.2/go.mod h1:sb+Xq/fTY5yktf/VxLsE3wlfPqQjp0aWNYyvBVK62bc=
 github.com/jcmturner/rpc/v2 v2.0.3/go.mod h1:VUJYCIDm3PVOEHw8sgt091/20OJjskO/YJki3ELg/Hc=
-github.com/jenkins-x-plugins/jx-pipeline v0.7.5 h1:xi0qZ7tlyWYLJ1iNQxjdbvPLjITkIdlFcJGWzE+dSIc=
-github.com/jenkins-x-plugins/jx-pipeline v0.7.5/go.mod h1:JbMumhUVOcy5rB2FcD8gr2fEK2MqGJdj1IHAlJeF/jA=
+github.com/jenkins-x-plugins/jx-pipeline v0.7.6 h1:EQ6fxkXh6yuhS+BouO04ssjREOQYuT3xSXS2bTBIsEw=
+github.com/jenkins-x-plugins/jx-pipeline v0.7.6/go.mod h1:HyXRExOGwHfeeTpvJmsga98Vcx+BOi4WxLTe64uNXI8=
 github.com/jenkins-x-plugins/jx-secret v0.3.1 h1:bnmJYJvrwQ5WxEM5MRvxkjaG9OFLAQP6ZVhQY4p39Zk=
 github.com/jenkins-x-plugins/jx-secret v0.3.1/go.mod h1:2TnnWApp/Mz0ZYS53s6ncDUOeArn2LNtBZamwt+hmgg=
 github.com/jenkins-x/go-scm v1.14.11 h1:dOlniSMoTptK45WK1gvQb+/xr38nk7CENt/v6O647bo=
