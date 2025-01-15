@@ -3,6 +3,7 @@ package tekton
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"path/filepath"
@@ -28,7 +29,7 @@ import (
 	"github.com/jenkins-x/jx-helpers/v3/pkg/requirements"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/stringhelpers"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
-	"github.com/pkg/errors"
+
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	tkversioned "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	informersTekton "github.com/tektoncd/pipeline/pkg/client/informers/externalversions"
@@ -49,17 +50,16 @@ import (
 const traceIDAnnotationKey = "pipeline.jenkins-x.io/traceID"
 
 type Options struct {
-	KubeClient              kubernetes.Interface
-	TektonClient            tkversioned.Interface
-	JXClient                jxVersioned.Interface
-	gitClient               gitclient.Interface
-	ActivityCache           *jx.ActivityCache
-	Namespace               string
-	Masker                  watcher.Options
-	WriteLogToBucketTimeout time.Duration
-	IsReady                 *atomic.Value
-	CommandRunner           cmdrunner.CommandRunner
-	bucketURL               string
+	KubeClient    kubernetes.Interface
+	TektonClient  tkversioned.Interface
+	JXClient      jxVersioned.Interface
+	gitClient     gitclient.Interface
+	ActivityCache *jx.ActivityCache
+	Namespace     string
+	Masker        watcher.Options
+	IsReady       *atomic.Value
+	CommandRunner cmdrunner.CommandRunner
+	bucketURL     string
 }
 
 func (o *Options) Start() {
@@ -177,7 +177,7 @@ func (o *Options) OnPipelineRunUpsert(ctx context.Context, pr *v1beta1.PipelineR
 			}
 			pa, err = activityInterface.Update(ctx, pa, metav1.UpdateOptions{})
 			if err != nil {
-				return pa, errors.Wrapf(err, "failed to update PipelineActivity %s in namespace %s", name, ns)
+				return pa, fmt.Errorf("failed to update PipelineActivity %s in namespace %s: %w", name, ns, err)
 			}
 			log.Logger().Infof("updated PipelineActivity %s in namespace %s", name, ns)
 			return pa, nil
@@ -185,7 +185,7 @@ func (o *Options) OnPipelineRunUpsert(ctx context.Context, pr *v1beta1.PipelineR
 
 		pa, err = activityInterface.Create(ctx, pa, metav1.CreateOptions{})
 		if err != nil {
-			return pa, errors.Wrapf(err, "failed to create PipelineActivity %s in namespace %s", name, ns)
+			return pa, fmt.Errorf("failed to create PipelineActivity %s in namespace %s: %w", name, ns, err)
 		}
 		log.Logger().Infof("created PipelineActivity %s in namespace %s", name, ns)
 		return pa, nil
@@ -210,7 +210,7 @@ func (o *Options) retryUpdate(ctx context.Context, f func() (*jxv1.PipelineActiv
 			return pa, nil
 		}
 		if i >= retryCount {
-			return nil, errors.Wrapf(err, "failed to update PipelineActivity %s after %d attempts", name, retryCount)
+			return nil, fmt.Errorf("failed to update PipelineActivity %s after %d attempts: %w", name, retryCount, err)
 		}
 
 		if pa != nil {
@@ -261,7 +261,7 @@ func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, a
 			patch := fmt.Sprintf(`{"metadata": {"annotations": {"%s": "%s"}}}`, traceIDAnnotationKey, traceID)
 			_, err := o.JXClient.JenkinsV1().PipelineActivities(ns).Patch(ctx, activity.Name, types.MergePatchType, []byte(patch), metav1.PatchOptions{})
 			if err != nil {
-				return errors.Wrapf(err, "failed to patch PipelineActivity %s", activity.Name)
+				return fmt.Errorf("failed to patch PipelineActivity %s: %w", activity.Name, err)
 			}
 		}
 		return nil
@@ -299,32 +299,32 @@ func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, a
 	reader := streamMaskedRunningBuildLogs(&tektonLogger, activity, pr, buildName, myMasker)
 	defer reader.Close()
 
-	err := buckets.WriteBucket(ctx, o.bucketURL, logsFileName, reader, o.WriteLogToBucketTimeout)
+	err := buckets.WriteBucket(ctx, o.bucketURL, logsFileName, reader)
 	if err != nil {
-		return errors.Wrapf(err, "failed to write to bucket %s file %s", o.bucketURL, logsFileName)
+		return fmt.Errorf("failed to write to bucket %s file %s: %w", o.bucketURL, logsFileName, err)
 	}
 	log.Logger().Infof("wrote file %s to bucket %s", logsFileName, o.bucketURL)
 	activity.Spec.BuildLogsURL = stringhelpers.UrlJoin(o.bucketURL, logsFileName)
 
 	activityYAML, err := yaml.Marshal(activity)
 	if err != nil {
-		return errors.Wrap(err, "failed to marshal activity to YAML")
+		return fmt.Errorf("failed to marshal activity to YAML: %w", err)
 	}
 
-	err = buckets.WriteBucket(ctx, o.bucketURL, activityFileName, bytes.NewReader(activityYAML), o.WriteLogToBucketTimeout)
+	err = buckets.WriteBucket(ctx, o.bucketURL, activityFileName, bytes.NewReader(activityYAML))
 	if err != nil {
-		return errors.Wrapf(err, "failed to write to bucket %s file %s", o.bucketURL, activityFileName)
+		return fmt.Errorf("failed to write to bucket %s file %s: %w", o.bucketURL, activityFileName, err)
 	}
 	log.Logger().Infof("wrote file %s to bucket %s", activityFileName, o.bucketURL)
 
 	prYAML, err := yaml.Marshal(pr)
 	if err != nil {
-		return errors.Wrap(err, "failed to marshal pipelineRun to YAML")
+		return fmt.Errorf("failed to marshal pipelineRun to YAML: %w", err)
 	}
 
-	err = buckets.WriteBucket(ctx, o.bucketURL, pipelineRunFileName, bytes.NewReader(prYAML), o.WriteLogToBucketTimeout)
+	err = buckets.WriteBucket(ctx, o.bucketURL, pipelineRunFileName, bytes.NewReader(prYAML))
 	if err != nil {
-		return errors.Wrapf(err, "failed to write to bucket %s file %s", o.bucketURL, pipelineRunFileName)
+		return fmt.Errorf("failed to write to bucket %s file %s: %w", o.bucketURL, pipelineRunFileName, err)
 	}
 	log.Logger().Infof("wrote file %s to bucket %s", pipelineRunFileName, o.bucketURL)
 
@@ -332,7 +332,7 @@ func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, a
 	previousStatus := activity.Spec.Status
 	activity, err = o.JXClient.JenkinsV1().PipelineActivities(ns).Get(ctx, activity.Name, metav1.GetOptions{})
 	if err != nil {
-		return errors.Wrapf(err, "failed to load PipelineActivity %s", activity.Name)
+		return fmt.Errorf("failed to load PipelineActivity %s: %w", activity.Name, err)
 	}
 	// lets update the status as we may have detected the pod has gone
 	activity.Spec.Status = previousStatus
@@ -340,7 +340,7 @@ func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, a
 	activity.Annotations[traceIDAnnotationKey] = traceID
 	_, err = o.JXClient.JenkinsV1().PipelineActivities(ns).Update(ctx, activity, metav1.UpdateOptions{})
 	if err != nil {
-		return errors.Wrapf(err, "failed to update PipelineActivity %s", activity.Name)
+		return fmt.Errorf("failed to update PipelineActivity %s: %w", activity.Name, err)
 	}
 	log.Logger().Infof("updated PipelineActivity %s with new build logs URL %s", activity.Name, activity.Spec.BuildLogsURL)
 	return nil
@@ -368,7 +368,7 @@ func streamMaskedRunningBuildLogs(tl *tektonlog.TektonLogger, activity *jxv1.Pip
 			}
 		}
 		if err == nil {
-			err = errors.Wrapf(tl.Err(), "getting logs for build %s", buildName)
+			err = fmt.Errorf("getting logs for build %s: %w", buildName, tl.Err())
 		}
 		writer.CloseWithError(err) //nolint
 	}()

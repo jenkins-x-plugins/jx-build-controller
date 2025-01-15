@@ -17,9 +17,7 @@ ROOT_PACKAGE := github.com/$(ORG_REPO)
 # This does not reflect the go binary version which was used to build the jx binary, and also does not reflect the version in the catalog.
 # The sole purpose of this variable is to build a new binary if we ever need to build a new jx binary with a new go version with no code change.
 # If you notice that this version is not the same as the catalog version, please open a PR, the maintainers are happy to review it.
-DUMMY_GO_VERSION := 1.18.6
-
-GO_VERSION := $(shell $(GO) version | sed -e 's/^[^0-9.]*\([0-9.]*\).*/\1/')
+DUMMY_GO_VERSION := 1.23.3
 
 GO_DEPENDENCIES := $(call rwildcard,pkg/,*.go) $(call rwildcard,cmd/j,*.go)
 
@@ -40,13 +38,7 @@ VERSION ?= $(shell echo "$$(git for-each-ref refs/tags/ --count=1 --sort=-versio
 #BUILD_TIME_CONFIG_FLAGS ?= ""
 
 # Full build flags used when building binaries. Not used for test compilation/execution.
-BUILDFLAGS :=  -ldflags \
-  " -X $(ROOT_PACKAGE)/pkg/version.Version=$(VERSION)\
-		-X $(ROOT_PACKAGE)/pkg/version.Revision='$(REV)'\
-		-X $(ROOT_PACKAGE)/pkg/version.Branch='$(BRANCH)'\
-		-X $(ROOT_PACKAGE)/pkg/version.BuildDate='$(BUILD_DATE)'\
-		-X $(ROOT_PACKAGE)/pkg/version.GoVersion='$(GO_VERSION)'\
-		$(BUILD_TIME_CONFIG_FLAGS)"
+BUILDFLAGS :=  -ldflags "$(BUILD_TIME_CONFIG_FLAGS)"
 
 # Some tests expect default values for version.*, so just use the config package values there.
 TEST_BUILDFLAGS :=  -ldflags "$(BUILD_TIME_CONFIG_FLAGS)"
@@ -140,9 +132,6 @@ release: clean linux test
 
 release-all: release linux win darwin
 
-.PHONY: goreleaser
-goreleaser:
-	step-go-releaser --organisation=$(ORG) --revision=$(REV) --branch=$(BRANCH) --build-date=$(BUILD_DATE) --go-version=$(GO_VERSION) --root-package=$(ROOT_PACKAGE) --version=$(VERSION)
 
 .PHONY: clean
 clean: ## Clean the generated artifacts
