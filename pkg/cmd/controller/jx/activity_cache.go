@@ -2,11 +2,12 @@ package jx
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	v1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 	jxVersioned "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
-	"github.com/pkg/errors"
+
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -24,7 +25,7 @@ func NewActivityCache(jxClient jxVersioned.Interface, ns string) (*ActivityCache
 	ctx := context.TODO()
 	resources, err := jxClient.JenkinsV1().PipelineActivities(ns).List(ctx, metav1.ListOptions{})
 	if err != nil && !apierrors.IsNotFound(err) {
-		return nil, errors.Wrapf(err, "failed to list PipelineActivity resources in namespace %s", ns)
+		return nil, fmt.Errorf("failed to list PipelineActivity resources in namespace %s: %w", ns, err)
 	}
 	if resources != nil {
 		for i := range resources.Items {

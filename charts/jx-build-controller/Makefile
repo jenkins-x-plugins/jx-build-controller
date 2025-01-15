@@ -19,13 +19,3 @@ clean:
 	rm -rf charts
 	rm -rf ${NAME}*.tgz
 
-release: clean
-	sed -i -e "s/version:.*/version: $(VERSION)/" Chart.yaml
-	sed -i -e "s/tag:.*/tag: $(VERSION)/" values.yaml
-
-	helm dependency build
-	helm lint
-	helm package .
-	helm repo add jx $(CHART_REPO)
-	helm gcs push ${NAME}*.tgz jx --public
-	rm -rf ${NAME}*.tgz%

@@ -25,7 +25,7 @@ import (
 	"github.com/jenkins-x/jx-helpers/v3/pkg/options"
 	"github.com/jenkins-x/jx-kube-client/v3/pkg/kubeclient"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
-	"github.com/pkg/errors"
+
 	"github.com/spf13/cobra"
 	tektonclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	"go.opentelemetry.io/otel"
@@ -102,21 +102,21 @@ func (o *ControllerOptions) Validate() error {
 
 	o.KubeClient, o.Namespace, err = kube.LazyCreateKubeClientAndNamespace(o.KubeClient, o.Namespace)
 	if err != nil {
-		return errors.Wrapf(err, "failed to create kube client")
+		return fmt.Errorf("failed to create kube client: %w", err)
 	}
 	o.JXClient, err = jxclient.LazyCreateJXClient(o.JXClient)
 	if err != nil {
-		return errors.Wrapf(err, "failed to create the jx client")
+		return fmt.Errorf("failed to create the jx client: %w", err)
 	}
 	if o.TektonClient == nil {
 		f := kubeclient.NewFactory()
 		cfg, err := f.CreateKubeConfig()
 		if err != nil {
-			return errors.Wrap(err, "failed to get kubernetes config")
+			return fmt.Errorf("failed to get kubernetes config: %w", err)
 		}
 		o.TektonClient, err = tektonclient.NewForConfig(cfg)
 		if err != nil {
-			return errors.Wrap(err, "error building tekton client")
+			return fmt.Errorf("error building tekton client: %w", err)
 		}
 	}
 	if o.EnvironmentCache == nil {
@@ -127,7 +127,7 @@ func (o *ControllerOptions) Validate() error {
 
 	err = o.Masker.Validate()
 	if err != nil {
-		return errors.Wrapf(err, "failed to validate secret masker")
+		return fmt.Errorf("failed to validate secret masker: %w", err)
 	}
 
 	if len(o.tracesExporterType) > 0 && len(o.tracesExporterEndpoint) > 0 {
@@ -157,7 +157,7 @@ func (o *ControllerOptions) Validate() error {
 			}
 		}
 		if err != nil {
-			return errors.Wrapf(err, "failed to create an OpenTelemetry Exporter for %s on %s", o.tracesExporterType, o.tracesExporterEndpoint)
+			return fmt.Errorf("failed to create an OpenTelemetry Exporter for %s on %s: %w", o.tracesExporterType, o.tracesExporterEndpoint, err)
 		}
 		if exporter != nil {
 			otel.SetTracerProvider(sdktrace.NewTracerProvider(
@@ -182,7 +182,7 @@ func (o *ControllerOptions) Validate() error {
 func (o *ControllerOptions) Run() error {
 	err := o.Validate()
 	if err != nil {
-		return errors.Wrapf(err, "failed to validate options")
+		return fmt.Errorf("failed to validate options: %w", err)
 	}
 
 	ns := o.Namespace
@@ -197,7 +197,7 @@ func (o *ControllerOptions) Run() error {
 
 	activityCache, err := jx.NewActivityCache(o.JXClient, ns)
 	if err != nil {
-		return errors.Wrapf(err, "failed to create the pipeline activity cache")
+		return fmt.Errorf("failed to create the pipeline activity cache: %w", err)
 	}
 
 	to := &tekton.Options{
@@ -213,7 +213,7 @@ func (o *ControllerOptions) Run() error {
 	g := to.GitClient()
 	_, err = g.Command(".", "config", "--global", "credential.helper", "store")
 	if err != nil {
-		return errors.Wrapf(err, "failed to setup git")
+		return fmt.Errorf("failed to setup git: %w", err)
 	}
 
 	log.Logger().Info("starting build controller")
@@ -262,7 +262,7 @@ func (o ControllerOptions) startHealthEndpoint(isTektonClientReady, isJenkinXCli
 	log.Logger().Infof("The service is shutting down...")
 	err := srv.Shutdown(context.Background())
 	if err != nil {
-		return errors.Wrapf(err, "failed to shutdown cleanly")
+		return fmt.Errorf("failed to shutdown cleanly: %w", err)
 	}
 	log.Logger().Infof("Done")
 	return nil
