@@ -36,13 +36,6 @@ spec:
           resources: {}
         - name: upload-binaries
           resources: {}
-        - image: ghcr.io/jenkins-x/builder-go:latest
-          name: promote-release
-          resources: {}
-          script: |
-            #!/bin/bash
-            source .jx/variables.sh
-            ./promote.sh
   podTemplate: {}
   serviceAccountName: tekton-bot
   timeout: 3h
