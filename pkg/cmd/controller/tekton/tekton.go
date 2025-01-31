@@ -367,8 +367,8 @@ func streamMaskedRunningBuildLogs(tl *tektonlog.TektonLogger, activity *jxv1.Pip
 				_, err = writer.Write([]byte(line + "\n"))
 			}
 		}
-		if err == nil {
-			err = fmt.Errorf("getting logs for build %s: %w", buildName, err)
+		if err == nil && tl.Err() != nil {
+			err = fmt.Errorf("getting logs for build %s: %w", buildName, tl.Err())
 		}
 		writer.CloseWithError(err) //nolint
 	}()
