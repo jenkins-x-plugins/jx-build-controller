@@ -5,9 +5,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gocloud.dev/blob"
 	"io"
+	"path"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -93,7 +96,7 @@ func (o *Options) Start() {
 			o.onPipelineRun(obj, o.Namespace)
 			log.Logger().Infof("added pipelinerun %s", e.Name)
 		},
-		UpdateFunc: func(old, new interface{}) {
+		UpdateFunc: func(_, new interface{}) {
 			e := new.(*v1beta1.PipelineRun)
 			o.onPipelineRun(new, o.Namespace)
 			log.Logger().Infof("updated %s", e.Name)
@@ -150,6 +153,13 @@ func (o *Options) OnPipelineRunUpsert(ctx context.Context, pr *v1beta1.PipelineR
 		if name == "" {
 			return nil, nil
 		}
+		if pr.Labels["build"] == "1" {
+			buildNum := o.findMaxBuildFromPersistedLogs(ctx, pr)
+			if buildNum > 0 {
+				pr.Labels["build"] = strconv.Itoa(buildNum + 1)
+				name = pipelines.ToPipelineActivityName(pr, paItems)
+			}
+		}
 
 		var err error
 		found := false
@@ -192,6 +202,48 @@ func (o *Options) OnPipelineRunUpsert(ctx context.Context, pr *v1beta1.PipelineR
 	}
 
 	return o.retryUpdate(ctx, f, activityInterface, 5)
+}
+
+func (o *Options) findMaxBuildFromPersistedLogs(ctx context.Context, pr *v1beta1.PipelineRun) int {
+	bucketURL := o.bucketURL
+	if bucketURL == "" {
+		return 0
+	}
+	labels := pr.Labels
+	owner := naming.ToValidName(activities.GetLabel(labels, activities.OwnerLabels))
+	repository := naming.ToValidName(activities.GetLabel(labels, activities.RepoLabels))
+	branch := naming.ToValidName(activities.GetLabel(labels, activities.BranchLabels))
+	pathDir := filepath.Join("jenkins-x", "logs", owner, repository, branch)
+	// TODO: Skip looking in bucket if this build is triggered by creation of pull request.
+	// But at the moment that is unknown here. So either move the logic to lighthouse or lighthouse should make the
+	// action available in environment variable
+	log.Logger().Debugf("open logs bucket (%s) to find latest build number", bucketURL)
+	bucket, err := blob.OpenBucket(ctx, bucketURL)
+	if err != nil {
+		log.Logger().Warnf("Can't open logs bucket (%s) to find latest build number: %s", bucketURL, err)
+		return 0
+	}
+	log.Logger().Debugf("listing prefix %s of logs bucket (%s) to find latest build number", pathDir, bucketURL)
+	iter := bucket.List(&blob.ListOptions{Prefix: pathDir})
+	maxBuild := 0
+	for {
+		obj, err := iter.Next(ctx)
+		if err != nil {
+			if err != io.EOF {
+				log.Logger().Warnf("Can not list log bucket (%s) to find max build number in %s: %s",
+					bucketURL, pathDir, err)
+			}
+			break
+		}
+		pathWithoutExt, found := strings.CutSuffix(obj.Key, ".yaml")
+		if found {
+			i, _ := strconv.Atoi(path.Base(pathWithoutExt))
+			if i > maxBuild {
+				maxBuild = i
+			}
+		}
+	}
+	return maxBuild
 }
 
 func (o *Options) retryUpdate(ctx context.Context, f func() (*jxv1.PipelineActivity, error), activityInterface v1.PipelineActivityInterface, retryCount int) (*jxv1.PipelineActivity, error) {
