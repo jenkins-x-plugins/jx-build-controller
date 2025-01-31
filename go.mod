@@ -4,13 +4,13 @@ require (
 	github.com/cpuguy83/go-md2man v1.0.10
 	github.com/gorilla/mux v1.8.1
 	github.com/jenkins-x-plugins/jx-pipeline v0.7.17
-	github.com/jenkins-x-plugins/jx-secret v0.4.10
+	github.com/jenkins-x-plugins/jx-secret v0.4.11
 	github.com/jenkins-x/jx-api/v4 v4.7.9
-	github.com/jenkins-x/jx-helpers/v3 v3.9.1
+	github.com/jenkins-x/jx-helpers/v3 v3.9.2
 	github.com/jenkins-x/jx-kube-client/v3 v3.0.8
 	github.com/jenkins-x/jx-logging/v3 v3.0.17
 	github.com/spf13/cobra v1.8.1
-	github.com/spf13/pflag v1.0.5
+	github.com/spf13/pflag v1.0.6
 	github.com/stretchr/testify v1.10.0
 	github.com/tektoncd/pipeline v0.41.0
 	go.opentelemetry.io/otel v1.33.0
