@@ -5,9 +5,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/builds"
+	"gocloud.dev/blob"
 	"io"
+	"path"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -33,6 +37,7 @@ import (
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	tkversioned "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	informersTekton "github.com/tektoncd/pipeline/pkg/client/informers/externalversions"
+
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -50,16 +55,19 @@ import (
 const traceIDAnnotationKey = "pipeline.jenkins-x.io/traceID"
 
 type Options struct {
-	KubeClient    kubernetes.Interface
-	TektonClient  tkversioned.Interface
-	JXClient      jxVersioned.Interface
-	gitClient     gitclient.Interface
-	ActivityCache *jx.ActivityCache
-	Namespace     string
-	Masker        watcher.Options
-	IsReady       *atomic.Value
-	CommandRunner cmdrunner.CommandRunner
-	bucketURL     string
+	KubeClient            kubernetes.Interface
+	TektonClient          tkversioned.Interface
+	JXClient              jxVersioned.Interface
+	gitClient             gitclient.Interface
+	ActivityCache         *jx.ActivityCache
+	Namespace             string
+	Masker                watcher.Options
+	IsReady               *atomic.Value
+	CommandRunner         cmdrunner.CommandRunner
+	bucketURL             string
+	ActivityCheckInterval time.Duration
+	ActivityCheckAge      time.Duration
+	pipelineRunInformer   cache.SharedIndexInformer
 }
 
 func (o *Options) Start() {
@@ -86,14 +94,14 @@ func (o *Options) Start() {
 		informersTekton.WithNamespace(o.Namespace),
 	)
 
-	pipelineRunInformer := informerFactoryTekton.Tekton().V1beta1().PipelineRuns().Informer()
-	pipelineRunInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+	o.pipelineRunInformer = informerFactoryTekton.Tekton().V1beta1().PipelineRuns().Informer()
+	o.pipelineRunInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
 			e := obj.(*v1beta1.PipelineRun)
 			o.onPipelineRun(obj, o.Namespace)
 			log.Logger().Infof("added pipelinerun %s", e.Name)
 		},
-		UpdateFunc: func(old, new interface{}) {
+		UpdateFunc: func(_, new interface{}) {
 			e := new.(*v1beta1.PipelineRun)
 			o.onPipelineRun(new, o.Namespace)
 			log.Logger().Infof("updated %s", e.Name)
@@ -105,13 +113,19 @@ func (o *Options) Start() {
 
 	informerFactoryTekton.Start(stop)
 	// wait for the initial synchronization of the local cache
-	if !cache.WaitForCacheSync(stop, pipelineRunInformer.HasSynced) {
+	if !cache.WaitForCacheSync(stop, o.pipelineRunInformer.HasSynced) {
 		runtime.HandleError(fmt.Errorf("timed out waiting for tekton caches to sync"))
 	}
 	o.IsReady.Store(true)
 
 	<-stop
-
+	ticker := time.NewTicker(o.ActivityCheckInterval)
+	go func(ticker *time.Ticker) {
+		o.abortActivityWithMissingPR()
+		for range ticker.C {
+			o.abortActivityWithMissingPR()
+		}
+	}(ticker)
 	// Wait forever
 	select {}
 }
@@ -149,6 +163,13 @@ func (o *Options) OnPipelineRunUpsert(ctx context.Context, pr *v1beta1.PipelineR
 		name := pipelines.ToPipelineActivityName(pr, paItems)
 		if name == "" {
 			return nil, nil
+		}
+		if pr.Labels["build"] == "1" {
+			buildNum := o.findMaxBuildFromPersistedLogs(ctx, pr)
+			if buildNum > 0 {
+				pr.Labels["build"] = strconv.Itoa(buildNum + 1)
+				name = pipelines.ToPipelineActivityName(pr, paItems)
+			}
 		}
 
 		var err error
@@ -192,6 +213,48 @@ func (o *Options) OnPipelineRunUpsert(ctx context.Context, pr *v1beta1.PipelineR
 	}
 
 	return o.retryUpdate(ctx, f, activityInterface, 5)
+}
+
+func (o *Options) findMaxBuildFromPersistedLogs(ctx context.Context, pr *v1beta1.PipelineRun) int {
+	bucketURL := o.bucketURL
+	if bucketURL == "" {
+		return 0
+	}
+	labels := pr.Labels
+	owner := naming.ToValidName(activities.GetLabel(labels, activities.OwnerLabels))
+	repository := naming.ToValidName(activities.GetLabel(labels, activities.RepoLabels))
+	branch := naming.ToValidName(activities.GetLabel(labels, activities.BranchLabels))
+	pathDir := filepath.Join("jenkins-x", "logs", owner, repository, branch)
+	// TODO: Skip looking in bucket if this build is triggered by creation of pull request.
+	// But at the moment that is unknown here. So either move the logic to lighthouse or lighthouse should make the
+	// action available in environment variable
+	log.Logger().Debugf("open logs bucket (%s) to find latest build number", bucketURL)
+	bucket, err := blob.OpenBucket(ctx, bucketURL)
+	if err != nil {
+		log.Logger().Warnf("Can't open logs bucket (%s) to find latest build number: %s", bucketURL, err)
+		return 0
+	}
+	log.Logger().Debugf("listing prefix %s of logs bucket (%s) to find latest build number", pathDir, bucketURL)
+	iter := bucket.List(&blob.ListOptions{Prefix: pathDir})
+	maxBuild := 0
+	for {
+		obj, err := iter.Next(ctx)
+		if err != nil {
+			if err != io.EOF {
+				log.Logger().Warnf("Can not list log bucket (%s) to find max build number in %s: %s",
+					bucketURL, pathDir, err)
+			}
+			break
+		}
+		pathWithoutExt, found := strings.CutSuffix(obj.Key, ".yaml")
+		if found {
+			i, _ := strconv.Atoi(path.Base(pathWithoutExt))
+			if i > maxBuild {
+				maxBuild = i
+			}
+		}
+	}
+	return maxBuild
 }
 
 func (o *Options) retryUpdate(ctx context.Context, f func() (*jxv1.PipelineActivity, error), activityInterface v1.PipelineActivityInterface, retryCount int) (*jxv1.PipelineActivity, error) {
@@ -351,6 +414,34 @@ func (o *Options) GitClient() gitclient.Interface {
 		o.gitClient = cli.NewCLIClient("", o.CommandRunner)
 	}
 	return o.gitClient
+}
+
+// abortActivityWithMissingPR checks old pipelineactivities with status pending and running
+func (o *Options) abortActivityWithMissingPR() {
+	list := o.ActivityCache.List()
+	for i := range list {
+		pa := &list[i]
+		if (pa.Spec.Status == jxv1.ActivityStatusTypePending || pa.Spec.Status == jxv1.ActivityStatusTypeRunning) &&
+			time.Since(pa.CreationTimestamp.Time) > o.ActivityCheckAge {
+			pr := pa.Labels[builds.LabelPipelineRunName]
+			if pr != "" {
+				_, exists, err := o.pipelineRunInformer.GetStore().GetByKey(o.Namespace + "/" + pr)
+				if err != nil {
+					log.Logger().Errorf("Can't check existence of %s: %s", pr, err)
+				} else if !exists {
+					activities.UpdateStatus(pa, true, nil)
+					activityInterface := o.JXClient.JenkinsV1().PipelineActivities(o.Namespace)
+					updatedPa, err := activityInterface.Update(context.Background(), pa, metav1.UpdateOptions{})
+					if err != nil {
+						log.Logger().Errorf("could not update pipeline activity %s: %s", pa.Name, err)
+					} else {
+						o.ActivityCache.Upsert(updatedPa)
+					}
+				}
+			}
+		}
+	}
+
 }
 
 func streamMaskedRunningBuildLogs(tl *tektonlog.TektonLogger, activity *jxv1.PipelineActivity, pr *v1beta1.PipelineRun, buildName string, logMasker *masker.Client) io.ReadCloser {

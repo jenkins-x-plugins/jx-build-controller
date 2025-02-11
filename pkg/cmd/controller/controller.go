@@ -66,6 +66,8 @@ type ControllerOptions struct {
 	Masker                  watcher.Options
 	tracesExporterType      string
 	tracesExporterEndpoint  string
+	ActivityCheckInterval   time.Duration
+	ActivityCheckAge        time.Duration
 }
 
 // NewCmdController creates a command object for the command
@@ -89,6 +91,8 @@ func NewCmdController() (*cobra.Command, *ControllerOptions) {
 	cmd.Flags().StringVarP(&o.port, "port", "", "8080", "The port for health and readiness checks to listen on")
 	cmd.Flags().StringVarP(&o.tracesExporterType, "traces-exporter-type", "", os.Getenv("TRACES_EXPORTER_TYPE"), "The OpenTelemetry traces exporter type: otlp:grpc:insecure, otlp:http:insecure or jaeger:http:thrift")
 	cmd.Flags().StringVarP(&o.tracesExporterEndpoint, "traces-exporter-endpoint", "", os.Getenv("TRACES_EXPORTER_ENDPOINT"), "The OpenTelemetry traces exporter endpoint (host:port)")
+	cmd.Flags().DurationVarP(&o.ActivityCheckInterval, "activity-check-interval", "", time.Minute*10, "How often pipeline run for activity with status Pending and Running are verified")
+	cmd.Flags().DurationVarP(&o.ActivityCheckAge, "activity-check-age", "", time.Hour, "At what age pipline activities with status Pending and Running are started to be verified")
 	o.BaseOptions.AddBaseFlags(cmd)
 	return cmd, o
 }
@@ -201,12 +205,14 @@ func (o *ControllerOptions) Run() error {
 	}
 
 	to := &tekton.Options{
-		TektonClient:  o.TektonClient,
-		KubeClient:    o.KubeClient,
-		JXClient:      o.JXClient,
-		Namespace:     ns,
-		IsReady:       isTektonClientReady,
-		ActivityCache: activityCache,
+		TektonClient:          o.TektonClient,
+		KubeClient:            o.KubeClient,
+		JXClient:              o.JXClient,
+		Namespace:             ns,
+		IsReady:               isTektonClientReady,
+		ActivityCache:         activityCache,
+		ActivityCheckInterval: o.ActivityCheckInterval,
+		ActivityCheckAge:      o.ActivityCheckAge,
 	}
 
 	// lets ensure the git client is setup to use git credentials
