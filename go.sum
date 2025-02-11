@@ -179,8 +179,8 @@ github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymF
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
-github.com/evanphx/json-patch v5.9.0+incompatible h1:fBXyNpNMuTTDdquAq/uisOr2lShz4oaXpDTX2bLe7ls=
-github.com/evanphx/json-patch v5.9.0+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLiYLvXMP4fmwYFNcr97nuDLSk=
+github.com/evanphx/json-patch v4.12.0+incompatible h1:4onqiflcdA9EOZ4RxV643DvftH5pOlLGNtQ5lPWQu84=
+github.com/evanphx/json-patch v4.12.0+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLiYLvXMP4fmwYFNcr97nuDLSk=
 github.com/evanphx/json-patch/v5 v5.6.0 h1:b91NhWfaz02IuVxO9faSllyAtNXHMPkC5J8sJCLunww=
 github.com/evanphx/json-patch/v5 v5.6.0/go.mod h1:G79N1coSVB93tBe7j6PhzjmR3/2VvlbKOFpnXhI9Bw4=
 github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
@@ -349,8 +349,8 @@ github.com/hinshun/vt10x v0.0.0-20220119200601-820417d04eec/go.mod h1:Q48J4R4Dvx
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
-github.com/jenkins-x-plugins/jx-pipeline v0.7.17 h1:U1ICJ5slqj0uYEuoizqTNV+zLHRISIPvH4BioYXKeCY=
-github.com/jenkins-x-plugins/jx-pipeline v0.7.17/go.mod h1:6eV7CBzFTSi01kgVPaV7Tf1h28/LvYkR37sEsI6jXjc=
+github.com/jenkins-x-plugins/jx-pipeline v0.7.18 h1:z5E/frNiBoLu3ZaFBTCVC1NIGwZvIJARCfr1282tmDw=
+github.com/jenkins-x-plugins/jx-pipeline v0.7.18/go.mod h1:JjacQT3MfNz8lQjnfrx9kD/3rrDADXoNRvFt8BGKx+o=
 github.com/jenkins-x-plugins/jx-secret v0.4.11 h1:3b1eyl4V9sIg8o2is36PjuRFC8DVyHfcDjRa71ckcf4=
 github.com/jenkins-x-plugins/jx-secret v0.4.11/go.mod h1:ZYZtxHpt7eETy5cXFi/fF+ZwyUvFz3CB2WW7IvV9uaw=
 github.com/jenkins-x/go-scm v1.14.53 h1:Utc9FbHzCuyXQ9F7gmXxNLUwG70Fp2niNS+m8+eGXcY=
