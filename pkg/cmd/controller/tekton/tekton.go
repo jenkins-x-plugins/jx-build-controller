@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/builds"
 	"gocloud.dev/blob"
 	"io"
 	"path"
@@ -36,6 +37,7 @@ import (
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	tkversioned "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	informersTekton "github.com/tektoncd/pipeline/pkg/client/informers/externalversions"
+
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -53,16 +55,19 @@ import (
 const traceIDAnnotationKey = "pipeline.jenkins-x.io/traceID"
 
 type Options struct {
-	KubeClient    kubernetes.Interface
-	TektonClient  tkversioned.Interface
-	JXClient      jxVersioned.Interface
-	gitClient     gitclient.Interface
-	ActivityCache *jx.ActivityCache
-	Namespace     string
-	Masker        watcher.Options
-	IsReady       *atomic.Value
-	CommandRunner cmdrunner.CommandRunner
-	bucketURL     string
+	KubeClient            kubernetes.Interface
+	TektonClient          tkversioned.Interface
+	JXClient              jxVersioned.Interface
+	gitClient             gitclient.Interface
+	ActivityCache         *jx.ActivityCache
+	Namespace             string
+	Masker                watcher.Options
+	IsReady               *atomic.Value
+	CommandRunner         cmdrunner.CommandRunner
+	bucketURL             string
+	ActivityCheckInterval time.Duration
+	ActivityCheckAge      time.Duration
+	pipelineRunInformer   cache.SharedIndexInformer
 }
 
 func (o *Options) Start() {
@@ -89,8 +94,8 @@ func (o *Options) Start() {
 		informersTekton.WithNamespace(o.Namespace),
 	)
 
-	pipelineRunInformer := informerFactoryTekton.Tekton().V1beta1().PipelineRuns().Informer()
-	pipelineRunInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+	o.pipelineRunInformer = informerFactoryTekton.Tekton().V1beta1().PipelineRuns().Informer()
+	o.pipelineRunInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
 			e := obj.(*v1beta1.PipelineRun)
 			o.onPipelineRun(obj, o.Namespace)
@@ -108,13 +113,19 @@ func (o *Options) Start() {
 
 	informerFactoryTekton.Start(stop)
 	// wait for the initial synchronization of the local cache
-	if !cache.WaitForCacheSync(stop, pipelineRunInformer.HasSynced) {
+	if !cache.WaitForCacheSync(stop, o.pipelineRunInformer.HasSynced) {
 		runtime.HandleError(fmt.Errorf("timed out waiting for tekton caches to sync"))
 	}
 	o.IsReady.Store(true)
 
 	<-stop
-
+	ticker := time.NewTicker(o.ActivityCheckInterval)
+	go func(ticker *time.Ticker) {
+		o.abortActivityWithMissingPR()
+		for range ticker.C {
+			o.abortActivityWithMissingPR()
+		}
+	}(ticker)
 	// Wait forever
 	select {}
 }
@@ -403,6 +414,34 @@ func (o *Options) GitClient() gitclient.Interface {
 		o.gitClient = cli.NewCLIClient("", o.CommandRunner)
 	}
 	return o.gitClient
+}
+
+// abortActivityWithMissingPR checks old pipelineactivities with status pending and running
+func (o *Options) abortActivityWithMissingPR() {
+	list := o.ActivityCache.List()
+	for i := range list {
+		pa := &list[i]
+		if (pa.Spec.Status == jxv1.ActivityStatusTypePending || pa.Spec.Status == jxv1.ActivityStatusTypeRunning) &&
+			time.Since(pa.CreationTimestamp.Time) > o.ActivityCheckAge {
+			pr := pa.Labels[builds.LabelPipelineRunName]
+			if pr != "" {
+				_, exists, err := o.pipelineRunInformer.GetStore().GetByKey(o.Namespace + "/" + pr)
+				if err != nil {
+					log.Logger().Errorf("Can't check existence of %s: %s", pr, err)
+				} else if !exists {
+					activities.UpdateStatus(pa, true, nil)
+					activityInterface := o.JXClient.JenkinsV1().PipelineActivities(o.Namespace)
+					updatedPa, err := activityInterface.Update(context.Background(), pa, metav1.UpdateOptions{})
+					if err != nil {
+						log.Logger().Errorf("could not update pipeline activity %s: %s", pa.Name, err)
+					} else {
+						o.ActivityCache.Upsert(updatedPa)
+					}
+				}
+			}
+		}
+	}
+
 }
 
 func streamMaskedRunningBuildLogs(tl *tektonlog.TektonLogger, activity *jxv1.PipelineActivity, pr *v1beta1.PipelineRun, buildName string, logMasker *masker.Client) io.ReadCloser {
