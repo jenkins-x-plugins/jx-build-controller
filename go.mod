@@ -3,7 +3,7 @@ module github.com/jenkins-x-plugins/jx-build-controller
 require (
 	github.com/cpuguy83/go-md2man v1.0.10
 	github.com/gorilla/mux v1.8.1
-	github.com/jenkins-x-plugins/jx-pipeline v0.7.18
+	github.com/jenkins-x-plugins/jx-pipeline v0.7.19
 	github.com/jenkins-x-plugins/jx-secret v0.4.11
 	github.com/jenkins-x/jx-api/v4 v4.7.9
 	github.com/jenkins-x/jx-helpers/v3 v3.9.2
@@ -20,6 +20,7 @@ require (
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.33.0
 	go.opentelemetry.io/otel/sdk v1.33.0
 	go.opentelemetry.io/otel/trace v1.33.0
+	gocloud.dev v0.37.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.32.1
 	k8s.io/client-go v0.32.1
@@ -161,7 +162,6 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
-	gocloud.dev v0.37.0 // indirect
 	golang.org/x/crypto v0.32.0 // indirect
 	golang.org/x/mod v0.22.0 // indirect
 	golang.org/x/net v0.34.0 // indirect
