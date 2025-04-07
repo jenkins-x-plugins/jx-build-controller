@@ -3,7 +3,7 @@ package tekton_test
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -16,7 +16,7 @@ import (
 	"github.com/jenkins-x/jx-helpers/v3/pkg/testhelpers"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/yamls"
 	"github.com/stretchr/testify/require"
-	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
+	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1"
 	faketekton "github.com/tektoncd/pipeline/pkg/client/clientset/versioned/fake"
 	"k8s.io/client-go/kubernetes/fake"
 )
@@ -30,7 +30,7 @@ func TestBuildControllerTekton(t *testing.T) {
 	sourceDir := filepath.Join("testdata", "tekton")
 	ns := "jx"
 
-	tmpDir, err := ioutil.TempDir("", "")
+	tmpDir, err := os.MkdirTemp("", "")
 	require.NoError(t, err, "failed to create temp dir")
 	t.Logf("generating PipelineActivity resources to %s\n", tmpDir)
 
@@ -45,7 +45,7 @@ func TestBuildControllerTekton(t *testing.T) {
 		prFile := filepath.Join(sourceDir, "pr", fileName)
 		expectedPAFile := filepath.Join(sourceDir, "pa", fileName)
 
-		pr := &v1beta1.PipelineRun{}
+		pr := &v1.PipelineRun{}
 		err := yamls.LoadFile(prFile, pr)
 		require.NoError(t, err, "failed to load %s", prFile)
 
@@ -75,7 +75,7 @@ func TestBuildControllerMetaPipeline(t *testing.T) {
 	sourceDir := filepath.Join("testdata", "jx")
 	ns := "jx"
 
-	tmpDir, err := ioutil.TempDir("", "")
+	tmpDir, err := os.MkdirTemp("", "")
 	require.NoError(t, err, "failed to create temp dir")
 	t.Logf("generating PipelineActivity resources to %s\n", tmpDir)
 
@@ -90,7 +90,7 @@ func TestBuildControllerMetaPipeline(t *testing.T) {
 		prFile := filepath.Join(sourceDir, "pr", fileName)
 		expectedPAFile := filepath.Join(sourceDir, "pa", fileName)
 
-		pr := &v1beta1.PipelineRun{}
+		pr := &v1.PipelineRun{}
 		err := yamls.LoadFile(prFile, pr)
 		require.NoError(t, err, "failed to load %s", prFile)
 
