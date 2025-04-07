@@ -3,7 +3,7 @@ package tekton_test
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -30,7 +30,7 @@ func TestBuildControllerTekton(t *testing.T) {
 	sourceDir := filepath.Join("testdata", "tekton")
 	ns := "jx"
 
-	tmpDir, err := ioutil.TempDir("", "")
+	tmpDir, err := os.MkdirTemp("", "")
 	require.NoError(t, err, "failed to create temp dir")
 	t.Logf("generating PipelineActivity resources to %s\n", tmpDir)
 
@@ -75,7 +75,7 @@ func TestBuildControllerMetaPipeline(t *testing.T) {
 	sourceDir := filepath.Join("testdata", "jx")
 	ns := "jx"
 
-	tmpDir, err := ioutil.TempDir("", "")
+	tmpDir, err := os.MkdirTemp("", "")
 	require.NoError(t, err, "failed to create temp dir")
 	t.Logf("generating PipelineActivity resources to %s\n", tmpDir)
 
