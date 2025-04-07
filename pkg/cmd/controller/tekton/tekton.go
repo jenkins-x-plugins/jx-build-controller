@@ -482,9 +482,14 @@ func generatePipelineTrace(ctx context.Context, activity *jxv1.PipelineActivity)
 		}
 	)
 
+	traceTimeStamp := activity.Spec.StartedTimestamp
+	if traceTimeStamp == nil {
+		// If activity hasn't started there is nothing to trace
+		return ""
+	}
 	ctx, rootSpan := tracer.Start(ctx, activity.Name,
 		trace.WithNewRoot(),
-		trace.WithTimestamp(activity.Spec.StartedTimestamp.Time),
+		trace.WithTimestamp(traceTimeStamp.Time),
 		trace.WithAttributes(pipelineAttributes...),
 	)
 
