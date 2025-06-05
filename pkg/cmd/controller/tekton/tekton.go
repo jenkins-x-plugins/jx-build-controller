@@ -24,7 +24,7 @@ import (
 	"github.com/jenkins-x-plugins/jx-secret/pkg/masker/watcher"
 	jxv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 	jxVersioned "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
-	v1 "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned/typed/jenkins.io/v1"
+	"github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned/typed/jenkins.io/v1"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cmdrunner"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient/cli"
@@ -34,7 +34,7 @@ import (
 	"github.com/jenkins-x/jx-helpers/v3/pkg/stringhelpers"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 
-	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
+	tektonv1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1"
 	tkversioned "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	informersTekton "github.com/tektoncd/pipeline/pkg/client/informers/externalversions"
 
@@ -94,15 +94,15 @@ func (o *Options) Start() {
 		informersTekton.WithNamespace(o.Namespace),
 	)
 
-	o.pipelineRunInformer = informerFactoryTekton.Tekton().V1beta1().PipelineRuns().Informer()
+	o.pipelineRunInformer = informerFactoryTekton.Tekton().V1().PipelineRuns().Informer()
 	o.pipelineRunInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
-			e := obj.(*v1beta1.PipelineRun)
+			e := obj.(*tektonv1.PipelineRun)
 			o.onPipelineRun(obj, o.Namespace)
 			log.Logger().Infof("added pipelinerun %s", e.Name)
 		},
 		UpdateFunc: func(_, new interface{}) {
-			e := new.(*v1beta1.PipelineRun)
+			e := new.(*tektonv1.PipelineRun)
 			o.onPipelineRun(new, o.Namespace)
 			log.Logger().Infof("updated %s", e.Name)
 		},
@@ -131,7 +131,7 @@ func (o *Options) Start() {
 }
 
 func (o *Options) onPipelineRun(obj interface{}, ns string) {
-	pr, ok := obj.(*v1beta1.PipelineRun)
+	pr, ok := obj.(*tektonv1.PipelineRun)
 	if !ok {
 		log.Logger().Infof("Object is not a PipelineRun %#v", obj)
 		return
@@ -155,7 +155,7 @@ func (o *Options) onPipelineRun(obj interface{}, ns string) {
 }
 
 // OnPipelineRunUpsert lets upsert the associated PipelineActivity
-func (o *Options) OnPipelineRunUpsert(ctx context.Context, pr *v1beta1.PipelineRun, ns string) (*jxv1.PipelineActivity, error) {
+func (o *Options) OnPipelineRunUpsert(ctx context.Context, pr *tektonv1.PipelineRun, ns string) (*jxv1.PipelineActivity, error) {
 	activityInterface := o.JXClient.JenkinsV1().PipelineActivities(ns)
 
 	f := func() (*jxv1.PipelineActivity, error) {
@@ -189,7 +189,7 @@ func (o *Options) OnPipelineRunUpsert(ctx context.Context, pr *v1beta1.PipelineR
 		}
 		original := pa.DeepCopy()
 
-		pipelines.ToPipelineActivity(pr, pa, true)
+		pipelines.ToPipelineActivity(o.TektonClient, pr, pa, true)
 
 		if found {
 			// lets ignore if we don't change it...
@@ -215,7 +215,7 @@ func (o *Options) OnPipelineRunUpsert(ctx context.Context, pr *v1beta1.PipelineR
 	return o.retryUpdate(ctx, f, activityInterface, 5)
 }
 
-func (o *Options) findMaxBuildFromPersistedLogs(ctx context.Context, pr *v1beta1.PipelineRun) int {
+func (o *Options) findMaxBuildFromPersistedLogs(ctx context.Context, pr *tektonv1.PipelineRun) int {
 	bucketURL := o.bucketURL
 	if bucketURL == "" {
 		return 0
@@ -294,7 +294,7 @@ func (o *Options) retryUpdate(ctx context.Context, f func() (*jxv1.PipelineActiv
 }
 
 // StoreResources stores resources
-func (o *Options) StoreResources(ctx context.Context, pr *v1beta1.PipelineRun, activity *jxv1.PipelineActivity, ns string) error {
+func (o *Options) StoreResources(ctx context.Context, pr *tektonv1.PipelineRun, activity *jxv1.PipelineActivity, ns string) error {
 	// we'll store the logs only of the pipeline is finished
 	if !activity.Spec.Status.IsTerminated() {
 		return nil
@@ -444,8 +444,8 @@ func (o *Options) abortActivityWithMissingPR() {
 
 }
 
-func streamMaskedRunningBuildLogs(tl *tektonlog.TektonLogger, activity *jxv1.PipelineActivity, pr *v1beta1.PipelineRun, buildName string, logMasker *masker.Client) io.ReadCloser {
-	prList := []*v1beta1.PipelineRun{pr}
+func streamMaskedRunningBuildLogs(tl *tektonlog.TektonLogger, activity *jxv1.PipelineActivity, pr *tektonv1.PipelineRun, buildName string, logMasker *masker.Client) io.ReadCloser {
+	prList := []*tektonv1.PipelineRun{pr}
 	reader, writer := io.Pipe()
 	go func() {
 		var err error
