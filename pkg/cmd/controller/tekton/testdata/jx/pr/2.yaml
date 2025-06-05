@@ -25,163 +25,85 @@ metadata:
   name: release-9hs6f
   namespace: jx
   ownerReferences:
-  - apiVersion: lighthouse.jenkins.io/v1alpha1
-    blockOwnerDeletion: true
-    controller: true
-    kind: LighthouseJob
-    name: c7f487b6-086a-11eb-bdf0-6e97bc223765
-    uid: 27d9926d-41c2-40f7-a319-52a4099a902a
+    - apiVersion: lighthouse.jenkins.io/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: LighthouseJob
+      name: c7f487b6-086a-11eb-bdf0-6e97bc223765
+      uid: 27d9926d-41c2-40f7-a319-52a4099a902a
   resourceVersion: "15853449"
   selfLink: /apis/tekton.dev/v1beta1/namespaces/jx/pipelineruns/release-9hs6f
   uid: 8b5af959-7dfa-4bff-8a82-80384e6f1d45
 spec:
   params:
-  - name: BUILD_ID
-    value: "1602054027949"
-  - name: JOB_NAME
-    value: release
-  - name: JOB_SPEC
-    value: type:postsubmit
-  - name: JOB_TYPE
-    value: postsubmit
-  - name: PULL_BASE_REF
-    value: master
-  - name: PULL_BASE_SHA
-    value: 1233cfd611a1d5280879c5f3fca44c181e3183cb
-  - name: PULL_REFS
-    value: master:1233cfd611a1d5280879c5f3fca44c181e3183cb
-  - name: REPO_NAME
-    value: nodey530
-  - name: REPO_OWNER
-    value: jstrachan
-  - name: REPO_URL
-    value: https://github.com/jstrachan/nodey530.git
+    - name: BUILD_ID
+      value: "1602054027949"
+    - name: JOB_NAME
+      value: release
+    - name: JOB_SPEC
+      value: type:postsubmit
+    - name: JOB_TYPE
+      value: postsubmit
+    - name: PULL_BASE_REF
+      value: master
+    - name: PULL_BASE_SHA
+      value: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+    - name: PULL_REFS
+      value: master:1233cfd611a1d5280879c5f3fca44c181e3183cb
+    - name: REPO_NAME
+      value: nodey530
+    - name: REPO_OWNER
+      value: jstrachan
+    - name: REPO_URL
+      value: https://github.com/jstrachan/nodey530.git
   pipelineSpec:
     params:
-    - description: the unique build number
-      name: BUILD_ID
-      type: string
-    - description: the name of the job which is the trigger context name
-      name: JOB_NAME
-      type: string
-    - description: the specification of the job
-      name: JOB_SPEC
-      type: string
-    - description: 'the kind of job: postsubmit or presubmit'
-      name: JOB_TYPE
-      type: string
-    - default: master
-      description: the base git reference of the pull request
-      name: PULL_BASE_REF
-      type: string
-    - description: the git sha of the base of the pull request
-      name: PULL_BASE_SHA
-      type: string
-    - default: ""
-      description: git pull request number
-      name: PULL_NUMBER
-      type: string
-    - default: ""
-      description: git pull request ref in the form 'refs/pull/$PULL_NUMBER/head'
-      name: PULL_PULL_REF
-      type: string
-    - default: master
-      description: git revision to checkout (branch, tag, sha, ref…)
-      name: PULL_PULL_SHA
-      type: string
-    - description: git pull reference strings of base and latest in the form 'master:$PULL_BASE_SHA,$PULL_NUMBER:$PULL_PULL_SHA:refs/pull/$PULL_NUMBER/head'
-      name: PULL_REFS
-      type: string
-    - description: git repository name
-      name: REPO_NAME
-      type: string
-    - description: git repository owner (user or organisation)
-      name: REPO_OWNER
-      type: string
-    - description: git url to clone
-      name: REPO_URL
-      type: string
+      - description: the unique build number
+        name: BUILD_ID
+        type: string
+      - description: the name of the job which is the trigger context name
+        name: JOB_NAME
+        type: string
+      - description: the specification of the job
+        name: JOB_SPEC
+        type: string
+      - description: 'the kind of job: postsubmit or presubmit'
+        name: JOB_TYPE
+        type: string
+      - default: master
+        description: the base git reference of the pull request
+        name: PULL_BASE_REF
+        type: string
+      - description: the git sha of the base of the pull request
+        name: PULL_BASE_SHA
+        type: string
+      - default: ""
+        description: git pull request number
+        name: PULL_NUMBER
+        type: string
+      - default: ""
+        description: git pull request ref in the form 'refs/pull/$PULL_NUMBER/head'
+        name: PULL_PULL_REF
+        type: string
+      - default: master
+        description: git revision to checkout (branch, tag, sha, ref…)
+        name: PULL_PULL_SHA
+        type: string
+      - description: git pull reference strings of base and latest in the form 'master:$PULL_BASE_SHA,$PULL_NUMBER:$PULL_PULL_SHA:refs/pull/$PULL_NUMBER/head'
+        name: PULL_REFS
+        type: string
+      - description: git repository name
+        name: REPO_NAME
+        type: string
+      - description: git repository owner (user or organisation)
+        name: REPO_OWNER
+        type: string
+      - description: git url to clone
+        name: REPO_URL
+        type: string
     tasks:
-    - name: from-build-pack
-      params:
-      - name: BUILD_ID
-        value: $(params.BUILD_ID)
-      - name: JOB_NAME
-        value: $(params.JOB_NAME)
-      - name: JOB_SPEC
-        value: $(params.JOB_SPEC)
-      - name: JOB_TYPE
-        value: $(params.JOB_TYPE)
-      - name: PULL_BASE_REF
-        value: $(params.PULL_BASE_REF)
-      - name: PULL_BASE_SHA
-        value: $(params.PULL_BASE_SHA)
-      - name: PULL_NUMBER
-        value: $(params.PULL_NUMBER)
-      - name: PULL_PULL_REF
-        value: $(params.PULL_PULL_REF)
-      - name: PULL_PULL_SHA
-        value: $(params.PULL_PULL_SHA)
-      - name: PULL_REFS
-        value: $(params.PULL_REFS)
-      - name: REPO_NAME
-        value: $(params.REPO_NAME)
-      - name: REPO_OWNER
-        value: $(params.REPO_OWNER)
-      - name: REPO_URL
-        value: $(params.REPO_URL)
-      taskSpec:
-        metadata: {}
+      - name: from-build-pack
         params:
-        - description: git url to clone
-          name: REPO_URL
-          type: string
-        - default: master
-          description: git revision to checkout (branch, tag, sha, ref…)
-          name: PULL_PULL_SHA
-          type: string
-        - default: source
-          description: subdirectory inside of /workspace to clone the git repo
-          name: subdirectory
-          type: string
-        - description: the unique build number
-          name: BUILD_ID
-          type: string
-        - description: the name of the job which is the trigger context name
-          name: JOB_NAME
-          type: string
-        - description: the specification of the job
-          name: JOB_SPEC
-          type: string
-        - description: 'the kind of job: postsubmit or presubmit'
-          name: JOB_TYPE
-          type: string
-        - default: master
-          description: the base git reference of the pull request
-          name: PULL_BASE_REF
-          type: string
-        - description: the git sha of the base of the pull request
-          name: PULL_BASE_SHA
-          type: string
-        - default: ""
-          description: git pull request number
-          name: PULL_NUMBER
-          type: string
-        - default: ""
-          description: git pull request ref in the form 'refs/pull/$PULL_NUMBER/head'
-          name: PULL_PULL_REF
-          type: string
-        - description: git pull reference strings of base and latest in the form 'master:$PULL_BASE_SHA,$PULL_NUMBER:$PULL_PULL_SHA:refs/pull/$PULL_NUMBER/head'
-          name: PULL_REFS
-          type: string
-        - description: git repository name
-          name: REPO_NAME
-          type: string
-        - description: git repository owner (user or organisation)
-          name: REPO_OWNER
-          type: string
-        stepTemplate:
-          env:
           - name: BUILD_ID
             value: $(params.BUILD_ID)
           - name: JOB_NAME
@@ -208,1177 +130,704 @@ spec:
             value: $(params.REPO_OWNER)
           - name: REPO_URL
             value: $(params.REPO_URL)
-          - name: XDG_CONFIG_HOME
-            value: /tekton/home
-          name: ""
-          resources:
-            requests:
-              cpu: 400m
-              memory: 512Mi
-          volumeMounts:
-          - mountPath: /home/jenkins
-            name: workspace-volume
-          - mountPath: /etc/podinfo
-            name: podinfo
-            readOnly: true
-          workingDir: /workspace/source
-        steps:
-        - args:
-          - -c
-          - 'mkdir -p $HOME; git config --global --add user.name $GIT_AUTHOR_NAME;
-            git config --global --add user.email $GIT_AUTHOR_EMAIL; git config --global
-            credential.helper store; git clone $(params.REPO_URL) $(params.subdirectory);
-            echo cloned url: $(params.REPO_URL) to dir: $(params.subdirectory); cd
-            $(params.subdirectory); git checkout $(params.PULL_PULL_SHA); echo checked
-            out revision: $(params.PULL_PULL_SHA) to dir: $(params.subdirectory)'
-          command:
-          - /bin/sh
-          image: gcr.io/jenkinsxio/builder-jx:2.1.32-662
-          name: git-clone
-          resources: {}
-          workingDir: /workspace
-        - args:
-          - '[ -d /builder/home ] || mkdir -p /builder && ln -s /tekton/home /builder/home'
-          command:
-          - /bin/sh
-          - -c
-          image: gcr.io/jenkinsxio/builder-jx:2.1.142-761
-          name: setup-builder-home
-          resources: {}
-        - args:
-          - gitops
-          - git
-          - setup
-          - --namespace
-          - jx-git-operator
-          command:
-          - jx
-          image: gcr.io/jenkinsxio/jx-cli:latest
-          name: git-setup
-          resources: {}
-          workingDir: /workspace
-        - args:
-          - step
-          - git
-          - merge
-          - --verbose
-          - --baseSHA
-          - $(params.PULL_BASE_SHA)
-          - --sha
-          - $(params.PULL_PULL_SHA)
-          - --baseBranch
-          - $(params.PULL_BASE_REF)
-          command:
-          - jx
-          image: gcr.io/jenkinsxio/builder-jx:2.1.142-761
-          name: git-merge
-          resources: {}
-        - args:
-          - gitops
-          - variables
-          command:
-          - jx
-          image: gcr.io/jenkinsxio/jx-cli:latest
-          name: jx-variables
-          resources: {}
-        - args:
-          - source .jx/variables.sh && jx step syntax effective --output-dir . --context
-            ${JOB_NAME} --env BUILD_NUMBER=${BUILD_NUMBER} --env PIPELINE_KIND=${PIPELINE_KIND}
-            --env PIPELINE_CONTEXT=${JOB_NAME} --env SOURCE_URL=${REPO_URL} --env
-            REPO_OWNER=${REPO_OWNER} --env REPO_NAME=${REPO_NAME} --env APP_NAME=${APP_NAME}
-            --env BRANCH_NAME=${BRANCH_NAME} --env JOB_NAME=${JOB_NAME} --env PULL_BASE_REF=${PULL_BASE_REF}
-            --env PULL_BASE_SHA=${PULL_BASE_SHA} --env PULL_PULL_SHA=${PULL_PULL_SHA}
-            --env JOB_TYPE=${JOB_TYPE} --env JOB_SPEC=${JOB_SPEC} --env PULL_NUMBER=${PULL_NUMBER}
-          command:
-          - /bin/sh
-          - -c
-          image: gcr.io/jenkinsxio/builder-maven:2.1.142-761
-          name: create-effective-pipeline
-          resources: {}
-        - args:
-          - source .jx/variables.sh && jx step create task --clone-dir /workspace/source
-            --kind ${PIPELINE_KIND} --pr-number ${PULL_NUMBER} --service-account tekton-bot
-            --source source --branch ${BRANCH_NAME} --build-number 1 --context ${JOB_NAME}
-          command:
-          - /bin/sh
-          - -c
-          image: gcr.io/jenkinsxio/builder-maven:2.1.142-761
-          name: create-tekton-crds
-          resources: {}
-        volumes:
-        - emptyDir: {}
-          name: workspace-volume
-        - downwardAPI:
-            items:
-            - fieldRef:
-                fieldPath: metadata.labels
-              path: labels
-          name: podinfo
-  serviceAccountName: tekton-bot
-  timeout: 24h0m0s
-status:
-  conditions:
-  - lastTransitionTime: "2020-10-07T07:00:28Z"
-    message: 'Tasks Completed: 0 (Failed: 0, Cancelled 0), Incomplete: 1, Skipped:
-      0'
-    reason: Running
-    status: Unknown
-    type: Succeeded
-  pipelineSpec:
-    params:
-    - description: the unique build number
-      name: BUILD_ID
-      type: string
-    - description: the name of the job which is the trigger context name
-      name: JOB_NAME
-      type: string
-    - description: the specification of the job
-      name: JOB_SPEC
-      type: string
-    - description: 'the kind of job: postsubmit or presubmit'
-      name: JOB_TYPE
-      type: string
-    - default: master
-      description: the base git reference of the pull request
-      name: PULL_BASE_REF
-      type: string
-    - description: the git sha of the base of the pull request
-      name: PULL_BASE_SHA
-      type: string
-    - default: ""
-      description: git pull request number
-      name: PULL_NUMBER
-      type: string
-    - default: ""
-      description: git pull request ref in the form 'refs/pull/$PULL_NUMBER/head'
-      name: PULL_PULL_REF
-      type: string
-    - default: master
-      description: git revision to checkout (branch, tag, sha, ref…)
-      name: PULL_PULL_SHA
-      type: string
-    - description: git pull reference strings of base and latest in the form 'master:$PULL_BASE_SHA,$PULL_NUMBER:$PULL_PULL_SHA:refs/pull/$PULL_NUMBER/head'
-      name: PULL_REFS
-      type: string
-    - description: git repository name
-      name: REPO_NAME
-      type: string
-    - description: git repository owner (user or organisation)
-      name: REPO_OWNER
-      type: string
-    - description: git url to clone
-      name: REPO_URL
-      type: string
-    tasks:
-    - name: from-build-pack
-      params:
-      - name: BUILD_ID
-        value: $(params.BUILD_ID)
-      - name: JOB_NAME
-        value: $(params.JOB_NAME)
-      - name: JOB_SPEC
-        value: $(params.JOB_SPEC)
-      - name: JOB_TYPE
-        value: $(params.JOB_TYPE)
-      - name: PULL_BASE_REF
-        value: $(params.PULL_BASE_REF)
-      - name: PULL_BASE_SHA
-        value: $(params.PULL_BASE_SHA)
-      - name: PULL_NUMBER
-        value: $(params.PULL_NUMBER)
-      - name: PULL_PULL_REF
-        value: $(params.PULL_PULL_REF)
-      - name: PULL_PULL_SHA
-        value: $(params.PULL_PULL_SHA)
-      - name: PULL_REFS
-        value: $(params.PULL_REFS)
-      - name: REPO_NAME
-        value: $(params.REPO_NAME)
-      - name: REPO_OWNER
-        value: $(params.REPO_OWNER)
-      - name: REPO_URL
-        value: $(params.REPO_URL)
-      taskSpec:
-        metadata: {}
-        params:
-        - description: git url to clone
-          name: REPO_URL
-          type: string
-        - default: master
-          description: git revision to checkout (branch, tag, sha, ref…)
-          name: PULL_PULL_SHA
-          type: string
-        - default: source
-          description: subdirectory inside of /workspace to clone the git repo
-          name: subdirectory
-          type: string
-        - description: the unique build number
-          name: BUILD_ID
-          type: string
-        - description: the name of the job which is the trigger context name
-          name: JOB_NAME
-          type: string
-        - description: the specification of the job
-          name: JOB_SPEC
-          type: string
-        - description: 'the kind of job: postsubmit or presubmit'
-          name: JOB_TYPE
-          type: string
-        - default: master
-          description: the base git reference of the pull request
-          name: PULL_BASE_REF
-          type: string
-        - description: the git sha of the base of the pull request
-          name: PULL_BASE_SHA
-          type: string
-        - default: ""
-          description: git pull request number
-          name: PULL_NUMBER
-          type: string
-        - default: ""
-          description: git pull request ref in the form 'refs/pull/$PULL_NUMBER/head'
-          name: PULL_PULL_REF
-          type: string
-        - description: git pull reference strings of base and latest in the form 'master:$PULL_BASE_SHA,$PULL_NUMBER:$PULL_PULL_SHA:refs/pull/$PULL_NUMBER/head'
-          name: PULL_REFS
-          type: string
-        - description: git repository name
-          name: REPO_NAME
-          type: string
-        - description: git repository owner (user or organisation)
-          name: REPO_OWNER
-          type: string
-        stepTemplate:
-          env:
-          - name: BUILD_ID
-            value: $(params.BUILD_ID)
-          - name: JOB_NAME
-            value: $(params.JOB_NAME)
-          - name: JOB_SPEC
-            value: $(params.JOB_SPEC)
-          - name: JOB_TYPE
-            value: $(params.JOB_TYPE)
-          - name: PULL_BASE_REF
-            value: $(params.PULL_BASE_REF)
-          - name: PULL_BASE_SHA
-            value: $(params.PULL_BASE_SHA)
-          - name: PULL_NUMBER
-            value: $(params.PULL_NUMBER)
-          - name: PULL_PULL_REF
-            value: $(params.PULL_PULL_REF)
-          - name: PULL_PULL_SHA
-            value: $(params.PULL_PULL_SHA)
-          - name: PULL_REFS
-            value: $(params.PULL_REFS)
-          - name: REPO_NAME
-            value: $(params.REPO_NAME)
-          - name: REPO_OWNER
-            value: $(params.REPO_OWNER)
-          - name: REPO_URL
-            value: $(params.REPO_URL)
-          - name: XDG_CONFIG_HOME
-            value: /tekton/home
-          name: ""
-          resources:
-            requests:
-              cpu: 400m
-              memory: 512Mi
-          volumeMounts:
-          - mountPath: /home/jenkins
-            name: workspace-volume
-          - mountPath: /etc/podinfo
-            name: podinfo
-            readOnly: true
-          workingDir: /workspace/source
-        steps:
-        - args:
-          - -c
-          - 'mkdir -p $HOME; git config --global --add user.name $GIT_AUTHOR_NAME;
-            git config --global --add user.email $GIT_AUTHOR_EMAIL; git config --global
-            credential.helper store; git clone $(params.REPO_URL) $(params.subdirectory);
-            echo cloned url: $(params.REPO_URL) to dir: $(params.subdirectory); cd
-            $(params.subdirectory); git checkout $(params.PULL_PULL_SHA); echo checked
-            out revision: $(params.PULL_PULL_SHA) to dir: $(params.subdirectory)'
-          command:
-          - /bin/sh
-          env:
-          - name: BUILD_ID
-            value: $(params.BUILD_ID)
-          - name: JOB_NAME
-            value: $(params.JOB_NAME)
-          - name: JOB_SPEC
-            value: $(params.JOB_SPEC)
-          - name: JOB_TYPE
-            value: $(params.JOB_TYPE)
-          - name: PULL_BASE_REF
-            value: $(params.PULL_BASE_REF)
-          - name: PULL_BASE_SHA
-            value: $(params.PULL_BASE_SHA)
-          - name: PULL_NUMBER
-            value: $(params.PULL_NUMBER)
-          - name: PULL_PULL_REF
-            value: $(params.PULL_PULL_REF)
-          - name: PULL_PULL_SHA
-            value: $(params.PULL_PULL_SHA)
-          - name: PULL_REFS
-            value: $(params.PULL_REFS)
-          - name: REPO_NAME
-            value: $(params.REPO_NAME)
-          - name: REPO_OWNER
-            value: $(params.REPO_OWNER)
-          - name: REPO_URL
-            value: $(params.REPO_URL)
-          - name: XDG_CONFIG_HOME
-            value: /tekton/home
-          image: gcr.io/jenkinsxio/builder-jx:2.1.32-662
-          name: git-clone
-          resources:
-            requests:
-              cpu: 400m
-              memory: 512Mi
-          volumeMounts:
-          - mountPath: /home/jenkins
-            name: workspace-volume
-          - mountPath: /etc/podinfo
-            name: podinfo
-            readOnly: true
-          workingDir: /workspace
-        - args:
-          - '[ -d /builder/home ] || mkdir -p /builder && ln -s /tekton/home /builder/home'
-          command:
-          - /bin/sh
-          - -c
-          env:
-          - name: BUILD_ID
-            value: $(params.BUILD_ID)
-          - name: JOB_NAME
-            value: $(params.JOB_NAME)
-          - name: JOB_SPEC
-            value: $(params.JOB_SPEC)
-          - name: JOB_TYPE
-            value: $(params.JOB_TYPE)
-          - name: PULL_BASE_REF
-            value: $(params.PULL_BASE_REF)
-          - name: PULL_BASE_SHA
-            value: $(params.PULL_BASE_SHA)
-          - name: PULL_NUMBER
-            value: $(params.PULL_NUMBER)
-          - name: PULL_PULL_REF
-            value: $(params.PULL_PULL_REF)
-          - name: PULL_PULL_SHA
-            value: $(params.PULL_PULL_SHA)
-          - name: PULL_REFS
-            value: $(params.PULL_REFS)
-          - name: REPO_NAME
-            value: $(params.REPO_NAME)
-          - name: REPO_OWNER
-            value: $(params.REPO_OWNER)
-          - name: REPO_URL
-            value: $(params.REPO_URL)
-          - name: XDG_CONFIG_HOME
-            value: /tekton/home
-          image: gcr.io/jenkinsxio/builder-jx:2.1.142-761
-          name: setup-builder-home
-          resources:
-            requests:
-              cpu: 400m
-              memory: 512Mi
-          volumeMounts:
-          - mountPath: /home/jenkins
-            name: workspace-volume
-          - mountPath: /etc/podinfo
-            name: podinfo
-            readOnly: true
-          workingDir: /workspace/source
-        - args:
-          - gitops
-          - git
-          - setup
-          - --namespace
-          - jx-git-operator
-          command:
-          - jx
-          env:
-          - name: BUILD_ID
-            value: $(params.BUILD_ID)
-          - name: JOB_NAME
-            value: $(params.JOB_NAME)
-          - name: JOB_SPEC
-            value: $(params.JOB_SPEC)
-          - name: JOB_TYPE
-            value: $(params.JOB_TYPE)
-          - name: PULL_BASE_REF
-            value: $(params.PULL_BASE_REF)
-          - name: PULL_BASE_SHA
-            value: $(params.PULL_BASE_SHA)
-          - name: PULL_NUMBER
-            value: $(params.PULL_NUMBER)
-          - name: PULL_PULL_REF
-            value: $(params.PULL_PULL_REF)
-          - name: PULL_PULL_SHA
-            value: $(params.PULL_PULL_SHA)
-          - name: PULL_REFS
-            value: $(params.PULL_REFS)
-          - name: REPO_NAME
-            value: $(params.REPO_NAME)
-          - name: REPO_OWNER
-            value: $(params.REPO_OWNER)
-          - name: REPO_URL
-            value: $(params.REPO_URL)
-          - name: XDG_CONFIG_HOME
-            value: /tekton/home
-          image: gcr.io/jenkinsxio/jx-cli:latest
-          name: git-setup
-          resources:
-            requests:
-              cpu: 400m
-              memory: 512Mi
-          volumeMounts:
-          - mountPath: /home/jenkins
-            name: workspace-volume
-          - mountPath: /etc/podinfo
-            name: podinfo
-            readOnly: true
-          workingDir: /workspace
-        - args:
-          - step
-          - git
-          - merge
-          - --verbose
-          - --baseSHA
-          - $(params.PULL_BASE_SHA)
-          - --sha
-          - $(params.PULL_PULL_SHA)
-          - --baseBranch
-          - $(params.PULL_BASE_REF)
-          command:
-          - jx
-          env:
-          - name: BUILD_ID
-            value: $(params.BUILD_ID)
-          - name: JOB_NAME
-            value: $(params.JOB_NAME)
-          - name: JOB_SPEC
-            value: $(params.JOB_SPEC)
-          - name: JOB_TYPE
-            value: $(params.JOB_TYPE)
-          - name: PULL_BASE_REF
-            value: $(params.PULL_BASE_REF)
-          - name: PULL_BASE_SHA
-            value: $(params.PULL_BASE_SHA)
-          - name: PULL_NUMBER
-            value: $(params.PULL_NUMBER)
-          - name: PULL_PULL_REF
-            value: $(params.PULL_PULL_REF)
-          - name: PULL_PULL_SHA
-            value: $(params.PULL_PULL_SHA)
-          - name: PULL_REFS
-            value: $(params.PULL_REFS)
-          - name: REPO_NAME
-            value: $(params.REPO_NAME)
-          - name: REPO_OWNER
-            value: $(params.REPO_OWNER)
-          - name: REPO_URL
-            value: $(params.REPO_URL)
-          - name: XDG_CONFIG_HOME
-            value: /tekton/home
-          image: gcr.io/jenkinsxio/builder-jx:2.1.142-761
-          name: git-merge
-          resources:
-            requests:
-              cpu: 400m
-              memory: 512Mi
-          volumeMounts:
-          - mountPath: /home/jenkins
-            name: workspace-volume
-          - mountPath: /etc/podinfo
-            name: podinfo
-            readOnly: true
-          workingDir: /workspace/source
-        - args:
-          - gitops
-          - variables
-          command:
-          - jx
-          env:
-          - name: BUILD_ID
-            value: $(params.BUILD_ID)
-          - name: JOB_NAME
-            value: $(params.JOB_NAME)
-          - name: JOB_SPEC
-            value: $(params.JOB_SPEC)
-          - name: JOB_TYPE
-            value: $(params.JOB_TYPE)
-          - name: PULL_BASE_REF
-            value: $(params.PULL_BASE_REF)
-          - name: PULL_BASE_SHA
-            value: $(params.PULL_BASE_SHA)
-          - name: PULL_NUMBER
-            value: $(params.PULL_NUMBER)
-          - name: PULL_PULL_REF
-            value: $(params.PULL_PULL_REF)
-          - name: PULL_PULL_SHA
-            value: $(params.PULL_PULL_SHA)
-          - name: PULL_REFS
-            value: $(params.PULL_REFS)
-          - name: REPO_NAME
-            value: $(params.REPO_NAME)
-          - name: REPO_OWNER
-            value: $(params.REPO_OWNER)
-          - name: REPO_URL
-            value: $(params.REPO_URL)
-          - name: XDG_CONFIG_HOME
-            value: /tekton/home
-          image: gcr.io/jenkinsxio/jx-cli:latest
-          name: jx-variables
-          resources:
-            requests:
-              cpu: 400m
-              memory: 512Mi
-          volumeMounts:
-          - mountPath: /home/jenkins
-            name: workspace-volume
-          - mountPath: /etc/podinfo
-            name: podinfo
-            readOnly: true
-          workingDir: /workspace/source
-        - args:
-          - source .jx/variables.sh && jx step syntax effective --output-dir . --context
-            ${JOB_NAME} --env BUILD_NUMBER=${BUILD_NUMBER} --env PIPELINE_KIND=${PIPELINE_KIND}
-            --env PIPELINE_CONTEXT=${JOB_NAME} --env SOURCE_URL=${REPO_URL} --env
-            REPO_OWNER=${REPO_OWNER} --env REPO_NAME=${REPO_NAME} --env APP_NAME=${APP_NAME}
-            --env BRANCH_NAME=${BRANCH_NAME} --env JOB_NAME=${JOB_NAME} --env PULL_BASE_REF=${PULL_BASE_REF}
-            --env PULL_BASE_SHA=${PULL_BASE_SHA} --env PULL_PULL_SHA=${PULL_PULL_SHA}
-            --env JOB_TYPE=${JOB_TYPE} --env JOB_SPEC=${JOB_SPEC} --env PULL_NUMBER=${PULL_NUMBER}
-          command:
-          - /bin/sh
-          - -c
-          env:
-          - name: BUILD_ID
-            value: $(params.BUILD_ID)
-          - name: JOB_NAME
-            value: $(params.JOB_NAME)
-          - name: JOB_SPEC
-            value: $(params.JOB_SPEC)
-          - name: JOB_TYPE
-            value: $(params.JOB_TYPE)
-          - name: PULL_BASE_REF
-            value: $(params.PULL_BASE_REF)
-          - name: PULL_BASE_SHA
-            value: $(params.PULL_BASE_SHA)
-          - name: PULL_NUMBER
-            value: $(params.PULL_NUMBER)
-          - name: PULL_PULL_REF
-            value: $(params.PULL_PULL_REF)
-          - name: PULL_PULL_SHA
-            value: $(params.PULL_PULL_SHA)
-          - name: PULL_REFS
-            value: $(params.PULL_REFS)
-          - name: REPO_NAME
-            value: $(params.REPO_NAME)
-          - name: REPO_OWNER
-            value: $(params.REPO_OWNER)
-          - name: REPO_URL
-            value: $(params.REPO_URL)
-          - name: XDG_CONFIG_HOME
-            value: /tekton/home
-          image: gcr.io/jenkinsxio/builder-maven:2.1.142-761
-          name: create-effective-pipeline
-          resources:
-            requests:
-              cpu: 400m
-              memory: 512Mi
-          volumeMounts:
-          - mountPath: /home/jenkins
-            name: workspace-volume
-          - mountPath: /etc/podinfo
-            name: podinfo
-            readOnly: true
-          workingDir: /workspace/source
-        - args:
-          - source .jx/variables.sh && jx step create task --clone-dir /workspace/source
-            --kind ${PIPELINE_KIND} --pr-number ${PULL_NUMBER} --service-account tekton-bot
-            --source source --branch ${BRANCH_NAME} --build-number 1 --context ${JOB_NAME}
-          command:
-          - /bin/sh
-          - -c
-          env:
-          - name: BUILD_ID
-            value: $(params.BUILD_ID)
-          - name: JOB_NAME
-            value: $(params.JOB_NAME)
-          - name: JOB_SPEC
-            value: $(params.JOB_SPEC)
-          - name: JOB_TYPE
-            value: $(params.JOB_TYPE)
-          - name: PULL_BASE_REF
-            value: $(params.PULL_BASE_REF)
-          - name: PULL_BASE_SHA
-            value: $(params.PULL_BASE_SHA)
-          - name: PULL_NUMBER
-            value: $(params.PULL_NUMBER)
-          - name: PULL_PULL_REF
-            value: $(params.PULL_PULL_REF)
-          - name: PULL_PULL_SHA
-            value: $(params.PULL_PULL_SHA)
-          - name: PULL_REFS
-            value: $(params.PULL_REFS)
-          - name: REPO_NAME
-            value: $(params.REPO_NAME)
-          - name: REPO_OWNER
-            value: $(params.REPO_OWNER)
-          - name: REPO_URL
-            value: $(params.REPO_URL)
-          - name: XDG_CONFIG_HOME
-            value: /tekton/home
-          image: gcr.io/jenkinsxio/builder-maven:2.1.142-761
-          name: create-tekton-crds
-          resources:
-            requests:
-              cpu: 400m
-              memory: 512Mi
-          volumeMounts:
-          - mountPath: /home/jenkins
-            name: workspace-volume
-          - mountPath: /etc/podinfo
-            name: podinfo
-            readOnly: true
-          workingDir: /workspace/source
-        volumes:
-        - emptyDir: {}
-          name: workspace-volume
-        - downwardAPI:
-            items:
-            - fieldRef:
-                fieldPath: metadata.labels
-              path: labels
-          name: podinfo
-  startTime: "2020-10-07T07:00:28Z"
-  taskRuns:
-    release-9hs6f-from-build-pack-ddnhv:
-      pipelineTaskName: meta-pipeline
-      status:
-        conditions:
-        - lastTransitionTime: "2020-10-07T07:00:33Z"
-          message: Not all Steps in the Task have finished executing
-          reason: Running
-          status: Unknown
-          type: Succeeded
-        podName: release-9hs6f-from-build-pack-ddnhv-pod-dzw9t
-        startTime: "2020-10-07T07:00:28Z"
-        steps:
-        - container: step-git-clone
-          imageID: docker-pullable://gcr.io/jenkinsxio/builder-jx@sha256:ae504f2426df367f426b255e359d03e25e5bd137d846a422432d2d405c85598a
-          name: git-clone
-          terminated:
-            containerID: docker://d2bae345c5fd09a73843e375ab3667200da6b81926365fcc6421d82d41b4cb27
-            exitCode: 0
-            finishedAt: "2020-10-07T07:00:35Z"
-            reason: Completed
-            startedAt: "2020-10-07T07:00:35Z"
-        - container: step-setup-builder-home
-          imageID: docker-pullable://gcr.io/jenkinsxio/builder-jx@sha256:40c90b3a199f3c10780b68fe855956fd7f694907f62ff4c263f0cbb2fa89a023
-          name: setup-builder-home
-          terminated:
-            containerID: docker://1af7880d028139187173df9bdb3895b2029a90c3f85e8f081ba1247b0284897c
-            exitCode: 0
-            finishedAt: "2020-10-07T07:00:36Z"
-            reason: Completed
-            startedAt: "2020-10-07T07:00:36Z"
-        - container: step-git-setup
-          imageID: docker-pullable://gcr.io/jenkinsxio/jx-cli@sha256:40da36f51c7e6f6fe3fa77a0f98f094fc0c1fb9b212316c9e1674888cec321d4
-          name: git-setup
-          terminated:
-            containerID: docker://f1e4f6540638188de2f244743fc9f5b0b20828e492e4af1f291ebc29e099ec76
-            exitCode: 0
-            finishedAt: "2020-10-07T07:00:37Z"
-            reason: Completed
-            startedAt: "2020-10-07T07:00:37Z"
-        - container: step-git-merge
-          imageID: docker-pullable://gcr.io/jenkinsxio/builder-jx@sha256:40c90b3a199f3c10780b68fe855956fd7f694907f62ff4c263f0cbb2fa89a023
-          name: git-merge
-          terminated:
-            containerID: docker://533f065dc2d5c7ed3f5d697aec8e9e0cadf4a936876feaeddbf43b6f2c2f5bc5
-            exitCode: 0
-            finishedAt: "2020-10-07T07:00:38Z"
-            reason: Completed
-            startedAt: "2020-10-07T07:00:37Z"
-        - container: step-jx-variables
-          imageID: docker-pullable://gcr.io/jenkinsxio/jx-cli@sha256:40da36f51c7e6f6fe3fa77a0f98f094fc0c1fb9b212316c9e1674888cec321d4
-          name: jx-variables
-          terminated:
-            containerID: docker://3c0c590edcc66a05df21299b249a03476808c7e530f2b26eae0fd2e21d4b2f73
-            exitCode: 0
-            finishedAt: "2020-10-07T07:00:38Z"
-            reason: Completed
-            startedAt: "2020-10-07T07:00:38Z"
-        - container: step-create-effective-pipeline
-          imageID: docker-pullable://gcr.io/jenkinsxio/builder-maven@sha256:0d9b2ad0fda38ba06a8ceef977d6f127e62d410f24fc2d0d43197ae5c359c4e0
-          name: create-effective-pipeline
-          terminated:
-            containerID: docker://6b0f978f874a7a8da920454b3ab77d94fa4cea0e2659581a11d06bf99ed07383
-            exitCode: 0
-            finishedAt: "2020-10-07T07:00:42Z"
-            reason: Completed
-            startedAt: "2020-10-07T07:00:38Z"
-        - container: step-create-tekton-crds
-          imageID: docker-pullable://gcr.io/jenkinsxio/builder-maven@sha256:0d9b2ad0fda38ba06a8ceef977d6f127e62d410f24fc2d0d43197ae5c359c4e0
-          name: create-tekton-crds
-          running:
-            startedAt: "2020-10-07T07:00:33Z"
         taskSpec:
+          metadata: {}
           params:
-          - description: git url to clone
-            name: REPO_URL
-            type: string
-          - default: master
-            description: git revision to checkout (branch, tag, sha, ref…)
-            name: PULL_PULL_SHA
-            type: string
-          - default: source
-            description: subdirectory inside of /workspace to clone the git repo
-            name: subdirectory
-            type: string
-          - description: the unique build number
-            name: BUILD_ID
-            type: string
-          - description: the name of the job which is the trigger context name
-            name: JOB_NAME
-            type: string
-          - description: the specification of the job
-            name: JOB_SPEC
-            type: string
-          - description: 'the kind of job: postsubmit or presubmit'
-            name: JOB_TYPE
-            type: string
-          - default: master
-            description: the base git reference of the pull request
-            name: PULL_BASE_REF
-            type: string
-          - description: the git sha of the base of the pull request
-            name: PULL_BASE_SHA
-            type: string
-          - default: ""
-            description: git pull request number
-            name: PULL_NUMBER
-            type: string
-          - default: ""
-            description: git pull request ref in the form 'refs/pull/$PULL_NUMBER/head'
-            name: PULL_PULL_REF
-            type: string
-          - description: git pull reference strings of base and latest in the form
-              'master:$PULL_BASE_SHA,$PULL_NUMBER:$PULL_PULL_SHA:refs/pull/$PULL_NUMBER/head'
-            name: PULL_REFS
-            type: string
-          - description: git repository name
-            name: REPO_NAME
-            type: string
-          - description: git repository owner (user or organisation)
-            name: REPO_OWNER
-            type: string
+            - description: git url to clone
+              name: REPO_URL
+              type: string
+            - default: master
+              description: git revision to checkout (branch, tag, sha, ref…)
+              name: PULL_PULL_SHA
+              type: string
+            - default: source
+              description: subdirectory inside of /workspace to clone the git repo
+              name: subdirectory
+              type: string
+            - description: the unique build number
+              name: BUILD_ID
+              type: string
+            - description: the name of the job which is the trigger context name
+              name: JOB_NAME
+              type: string
+            - description: the specification of the job
+              name: JOB_SPEC
+              type: string
+            - description: 'the kind of job: postsubmit or presubmit'
+              name: JOB_TYPE
+              type: string
+            - default: master
+              description: the base git reference of the pull request
+              name: PULL_BASE_REF
+              type: string
+            - description: the git sha of the base of the pull request
+              name: PULL_BASE_SHA
+              type: string
+            - default: ""
+              description: git pull request number
+              name: PULL_NUMBER
+              type: string
+            - default: ""
+              description: git pull request ref in the form 'refs/pull/$PULL_NUMBER/head'
+              name: PULL_PULL_REF
+              type: string
+            - description: git pull reference strings of base and latest in the form 'master:$PULL_BASE_SHA,$PULL_NUMBER:$PULL_PULL_SHA:refs/pull/$PULL_NUMBER/head'
+              name: PULL_REFS
+              type: string
+            - description: git repository name
+              name: REPO_NAME
+              type: string
+            - description: git repository owner (user or organisation)
+              name: REPO_OWNER
+              type: string
           stepTemplate:
             env:
-            - name: BUILD_ID
-              value: $(params.BUILD_ID)
-            - name: JOB_NAME
-              value: $(params.JOB_NAME)
-            - name: JOB_SPEC
-              value: $(params.JOB_SPEC)
-            - name: JOB_TYPE
-              value: $(params.JOB_TYPE)
-            - name: PULL_BASE_REF
-              value: $(params.PULL_BASE_REF)
-            - name: PULL_BASE_SHA
-              value: $(params.PULL_BASE_SHA)
-            - name: PULL_NUMBER
-              value: $(params.PULL_NUMBER)
-            - name: PULL_PULL_REF
-              value: $(params.PULL_PULL_REF)
-            - name: PULL_PULL_SHA
-              value: $(params.PULL_PULL_SHA)
-            - name: PULL_REFS
-              value: $(params.PULL_REFS)
-            - name: REPO_NAME
-              value: $(params.REPO_NAME)
-            - name: REPO_OWNER
-              value: $(params.REPO_OWNER)
-            - name: REPO_URL
-              value: $(params.REPO_URL)
-            - name: XDG_CONFIG_HOME
-              value: /tekton/home
+              - name: BUILD_ID
+                value: $(params.BUILD_ID)
+              - name: JOB_NAME
+                value: $(params.JOB_NAME)
+              - name: JOB_SPEC
+                value: $(params.JOB_SPEC)
+              - name: JOB_TYPE
+                value: $(params.JOB_TYPE)
+              - name: PULL_BASE_REF
+                value: $(params.PULL_BASE_REF)
+              - name: PULL_BASE_SHA
+                value: $(params.PULL_BASE_SHA)
+              - name: PULL_NUMBER
+                value: $(params.PULL_NUMBER)
+              - name: PULL_PULL_REF
+                value: $(params.PULL_PULL_REF)
+              - name: PULL_PULL_SHA
+                value: $(params.PULL_PULL_SHA)
+              - name: PULL_REFS
+                value: $(params.PULL_REFS)
+              - name: REPO_NAME
+                value: $(params.REPO_NAME)
+              - name: REPO_OWNER
+                value: $(params.REPO_OWNER)
+              - name: REPO_URL
+                value: $(params.REPO_URL)
+              - name: XDG_CONFIG_HOME
+                value: /tekton/home
             name: ""
             resources:
               requests:
                 cpu: 400m
                 memory: 512Mi
             volumeMounts:
-            - mountPath: /home/jenkins
-              name: workspace-volume
-            - mountPath: /etc/podinfo
-              name: podinfo
-              readOnly: true
+              - mountPath: /home/jenkins
+                name: workspace-volume
+              - mountPath: /etc/podinfo
+                name: podinfo
+                readOnly: true
             workingDir: /workspace/source
           steps:
-          - args:
-            - -c
-            - 'mkdir -p $HOME; git config --global --add user.name $GIT_AUTHOR_NAME;
-              git config --global --add user.email $GIT_AUTHOR_EMAIL; git config --global
-              credential.helper store; git clone $(params.REPO_URL) $(params.subdirectory);
-              echo cloned url: $(params.REPO_URL) to dir: $(params.subdirectory);
-              cd $(params.subdirectory); git checkout $(params.PULL_PULL_SHA); echo
-              checked out revision: $(params.PULL_PULL_SHA) to dir: $(params.subdirectory)'
-            command:
-            - /bin/sh
-            env:
-            - name: BUILD_ID
-              value: $(params.BUILD_ID)
-            - name: JOB_NAME
-              value: $(params.JOB_NAME)
-            - name: JOB_SPEC
-              value: $(params.JOB_SPEC)
-            - name: JOB_TYPE
-              value: $(params.JOB_TYPE)
-            - name: PULL_BASE_REF
-              value: $(params.PULL_BASE_REF)
-            - name: PULL_BASE_SHA
-              value: $(params.PULL_BASE_SHA)
-            - name: PULL_NUMBER
-              value: $(params.PULL_NUMBER)
-            - name: PULL_PULL_REF
-              value: $(params.PULL_PULL_REF)
-            - name: PULL_PULL_SHA
-              value: $(params.PULL_PULL_SHA)
-            - name: PULL_REFS
-              value: $(params.PULL_REFS)
-            - name: REPO_NAME
-              value: $(params.REPO_NAME)
-            - name: REPO_OWNER
-              value: $(params.REPO_OWNER)
-            - name: REPO_URL
-              value: $(params.REPO_URL)
-            - name: XDG_CONFIG_HOME
-              value: /tekton/home
-            image: gcr.io/jenkinsxio/builder-jx:2.1.32-662
-            name: git-clone
-            resources:
-              requests:
-                cpu: 400m
-                memory: 512Mi
-            volumeMounts:
-            - mountPath: /home/jenkins
-              name: workspace-volume
-            - mountPath: /etc/podinfo
-              name: podinfo
-              readOnly: true
-            workingDir: /workspace
-          - args:
-            - '[ -d /builder/home ] || mkdir -p /builder && ln -s /tekton/home /builder/home'
-            command:
-            - /bin/sh
-            - -c
-            env:
-            - name: BUILD_ID
-              value: $(params.BUILD_ID)
-            - name: JOB_NAME
-              value: $(params.JOB_NAME)
-            - name: JOB_SPEC
-              value: $(params.JOB_SPEC)
-            - name: JOB_TYPE
-              value: $(params.JOB_TYPE)
-            - name: PULL_BASE_REF
-              value: $(params.PULL_BASE_REF)
-            - name: PULL_BASE_SHA
-              value: $(params.PULL_BASE_SHA)
-            - name: PULL_NUMBER
-              value: $(params.PULL_NUMBER)
-            - name: PULL_PULL_REF
-              value: $(params.PULL_PULL_REF)
-            - name: PULL_PULL_SHA
-              value: $(params.PULL_PULL_SHA)
-            - name: PULL_REFS
-              value: $(params.PULL_REFS)
-            - name: REPO_NAME
-              value: $(params.REPO_NAME)
-            - name: REPO_OWNER
-              value: $(params.REPO_OWNER)
-            - name: REPO_URL
-              value: $(params.REPO_URL)
-            - name: XDG_CONFIG_HOME
-              value: /tekton/home
-            image: gcr.io/jenkinsxio/builder-jx:2.1.142-761
-            name: setup-builder-home
-            resources:
-              requests:
-                cpu: 400m
-                memory: 512Mi
-            volumeMounts:
-            - mountPath: /home/jenkins
-              name: workspace-volume
-            - mountPath: /etc/podinfo
-              name: podinfo
-              readOnly: true
-            workingDir: /workspace/source
-          - args:
-            - gitops
-            - git
-            - setup
-            - --namespace
-            - jx-git-operator
-            command:
-            - jx
-            env:
-            - name: BUILD_ID
-              value: $(params.BUILD_ID)
-            - name: JOB_NAME
-              value: $(params.JOB_NAME)
-            - name: JOB_SPEC
-              value: $(params.JOB_SPEC)
-            - name: JOB_TYPE
-              value: $(params.JOB_TYPE)
-            - name: PULL_BASE_REF
-              value: $(params.PULL_BASE_REF)
-            - name: PULL_BASE_SHA
-              value: $(params.PULL_BASE_SHA)
-            - name: PULL_NUMBER
-              value: $(params.PULL_NUMBER)
-            - name: PULL_PULL_REF
-              value: $(params.PULL_PULL_REF)
-            - name: PULL_PULL_SHA
-              value: $(params.PULL_PULL_SHA)
-            - name: PULL_REFS
-              value: $(params.PULL_REFS)
-            - name: REPO_NAME
-              value: $(params.REPO_NAME)
-            - name: REPO_OWNER
-              value: $(params.REPO_OWNER)
-            - name: REPO_URL
-              value: $(params.REPO_URL)
-            - name: XDG_CONFIG_HOME
-              value: /tekton/home
-            image: gcr.io/jenkinsxio/jx-cli:latest
-            name: git-setup
-            resources:
-              requests:
-                cpu: 400m
-                memory: 512Mi
-            volumeMounts:
-            - mountPath: /home/jenkins
-              name: workspace-volume
-            - mountPath: /etc/podinfo
-              name: podinfo
-              readOnly: true
-            workingDir: /workspace
-          - args:
-            - step
-            - git
-            - merge
-            - --verbose
-            - --baseSHA
-            - $(params.PULL_BASE_SHA)
-            - --sha
-            - $(params.PULL_PULL_SHA)
-            - --baseBranch
-            - $(params.PULL_BASE_REF)
-            command:
-            - jx
-            env:
-            - name: BUILD_ID
-              value: $(params.BUILD_ID)
-            - name: JOB_NAME
-              value: $(params.JOB_NAME)
-            - name: JOB_SPEC
-              value: $(params.JOB_SPEC)
-            - name: JOB_TYPE
-              value: $(params.JOB_TYPE)
-            - name: PULL_BASE_REF
-              value: $(params.PULL_BASE_REF)
-            - name: PULL_BASE_SHA
-              value: $(params.PULL_BASE_SHA)
-            - name: PULL_NUMBER
-              value: $(params.PULL_NUMBER)
-            - name: PULL_PULL_REF
-              value: $(params.PULL_PULL_REF)
-            - name: PULL_PULL_SHA
-              value: $(params.PULL_PULL_SHA)
-            - name: PULL_REFS
-              value: $(params.PULL_REFS)
-            - name: REPO_NAME
-              value: $(params.REPO_NAME)
-            - name: REPO_OWNER
-              value: $(params.REPO_OWNER)
-            - name: REPO_URL
-              value: $(params.REPO_URL)
-            - name: XDG_CONFIG_HOME
-              value: /tekton/home
-            image: gcr.io/jenkinsxio/builder-jx:2.1.142-761
-            name: git-merge
-            resources:
-              requests:
-                cpu: 400m
-                memory: 512Mi
-            volumeMounts:
-            - mountPath: /home/jenkins
-              name: workspace-volume
-            - mountPath: /etc/podinfo
-              name: podinfo
-              readOnly: true
-            workingDir: /workspace/source
-          - args:
-            - gitops
-            - variables
-            command:
-            - jx
-            env:
-            - name: BUILD_ID
-              value: $(params.BUILD_ID)
-            - name: JOB_NAME
-              value: $(params.JOB_NAME)
-            - name: JOB_SPEC
-              value: $(params.JOB_SPEC)
-            - name: JOB_TYPE
-              value: $(params.JOB_TYPE)
-            - name: PULL_BASE_REF
-              value: $(params.PULL_BASE_REF)
-            - name: PULL_BASE_SHA
-              value: $(params.PULL_BASE_SHA)
-            - name: PULL_NUMBER
-              value: $(params.PULL_NUMBER)
-            - name: PULL_PULL_REF
-              value: $(params.PULL_PULL_REF)
-            - name: PULL_PULL_SHA
-              value: $(params.PULL_PULL_SHA)
-            - name: PULL_REFS
-              value: $(params.PULL_REFS)
-            - name: REPO_NAME
-              value: $(params.REPO_NAME)
-            - name: REPO_OWNER
-              value: $(params.REPO_OWNER)
-            - name: REPO_URL
-              value: $(params.REPO_URL)
-            - name: XDG_CONFIG_HOME
-              value: /tekton/home
-            image: gcr.io/jenkinsxio/jx-cli:latest
-            name: jx-variables
-            resources:
-              requests:
-                cpu: 400m
-                memory: 512Mi
-            volumeMounts:
-            - mountPath: /home/jenkins
-              name: workspace-volume
-            - mountPath: /etc/podinfo
-              name: podinfo
-              readOnly: true
-            workingDir: /workspace/source
-          - args:
-            - source .jx/variables.sh && jx step syntax effective --output-dir . --context
-              ${JOB_NAME} --env BUILD_NUMBER=${BUILD_NUMBER} --env PIPELINE_KIND=${PIPELINE_KIND}
-              --env PIPELINE_CONTEXT=${JOB_NAME} --env SOURCE_URL=${REPO_URL} --env
-              REPO_OWNER=${REPO_OWNER} --env REPO_NAME=${REPO_NAME} --env APP_NAME=${APP_NAME}
-              --env BRANCH_NAME=${BRANCH_NAME} --env JOB_NAME=${JOB_NAME} --env PULL_BASE_REF=${PULL_BASE_REF}
-              --env PULL_BASE_SHA=${PULL_BASE_SHA} --env PULL_PULL_SHA=${PULL_PULL_SHA}
-              --env JOB_TYPE=${JOB_TYPE} --env JOB_SPEC=${JOB_SPEC} --env PULL_NUMBER=${PULL_NUMBER}
-            command:
-            - /bin/sh
-            - -c
-            env:
-            - name: BUILD_ID
-              value: $(params.BUILD_ID)
-            - name: JOB_NAME
-              value: $(params.JOB_NAME)
-            - name: JOB_SPEC
-              value: $(params.JOB_SPEC)
-            - name: JOB_TYPE
-              value: $(params.JOB_TYPE)
-            - name: PULL_BASE_REF
-              value: $(params.PULL_BASE_REF)
-            - name: PULL_BASE_SHA
-              value: $(params.PULL_BASE_SHA)
-            - name: PULL_NUMBER
-              value: $(params.PULL_NUMBER)
-            - name: PULL_PULL_REF
-              value: $(params.PULL_PULL_REF)
-            - name: PULL_PULL_SHA
-              value: $(params.PULL_PULL_SHA)
-            - name: PULL_REFS
-              value: $(params.PULL_REFS)
-            - name: REPO_NAME
-              value: $(params.REPO_NAME)
-            - name: REPO_OWNER
-              value: $(params.REPO_OWNER)
-            - name: REPO_URL
-              value: $(params.REPO_URL)
-            - name: XDG_CONFIG_HOME
-              value: /tekton/home
-            image: gcr.io/jenkinsxio/builder-maven:2.1.142-761
-            name: create-effective-pipeline
-            resources:
-              requests:
-                cpu: 400m
-                memory: 512Mi
-            volumeMounts:
-            - mountPath: /home/jenkins
-              name: workspace-volume
-            - mountPath: /etc/podinfo
-              name: podinfo
-              readOnly: true
-            workingDir: /workspace/source
-          - args:
-            - source .jx/variables.sh && jx step create task --clone-dir /workspace/source
-              --kind ${PIPELINE_KIND} --pr-number ${PULL_NUMBER} --service-account
-              tekton-bot --source source --branch ${BRANCH_NAME} --build-number 1
-              --context ${JOB_NAME}
-            command:
-            - /bin/sh
-            - -c
-            env:
-            - name: BUILD_ID
-              value: $(params.BUILD_ID)
-            - name: JOB_NAME
-              value: $(params.JOB_NAME)
-            - name: JOB_SPEC
-              value: $(params.JOB_SPEC)
-            - name: JOB_TYPE
-              value: $(params.JOB_TYPE)
-            - name: PULL_BASE_REF
-              value: $(params.PULL_BASE_REF)
-            - name: PULL_BASE_SHA
-              value: $(params.PULL_BASE_SHA)
-            - name: PULL_NUMBER
-              value: $(params.PULL_NUMBER)
-            - name: PULL_PULL_REF
-              value: $(params.PULL_PULL_REF)
-            - name: PULL_PULL_SHA
-              value: $(params.PULL_PULL_SHA)
-            - name: PULL_REFS
-              value: $(params.PULL_REFS)
-            - name: REPO_NAME
-              value: $(params.REPO_NAME)
-            - name: REPO_OWNER
-              value: $(params.REPO_OWNER)
-            - name: REPO_URL
-              value: $(params.REPO_URL)
-            - name: XDG_CONFIG_HOME
-              value: /tekton/home
-            image: gcr.io/jenkinsxio/builder-maven:2.1.142-761
-            name: create-tekton-crds
-            resources:
-              requests:
-                cpu: 400m
-                memory: 512Mi
-            volumeMounts:
-            - mountPath: /home/jenkins
-              name: workspace-volume
-            - mountPath: /etc/podinfo
-              name: podinfo
-              readOnly: true
-            workingDir: /workspace/source
+            - args:
+                - -c
+                - 'mkdir -p $HOME; git config --global --add user.name $GIT_AUTHOR_NAME; git config --global --add user.email $GIT_AUTHOR_EMAIL; git config --global credential.helper store; git clone $(params.REPO_URL) $(params.subdirectory); echo cloned url: $(params.REPO_URL) to dir: $(params.subdirectory); cd $(params.subdirectory); git checkout $(params.PULL_PULL_SHA); echo checked out revision: $(params.PULL_PULL_SHA) to dir: $(params.subdirectory)'
+              command:
+                - /bin/sh
+              image: gcr.io/jenkinsxio/builder-jx:2.1.32-662
+              name: git-clone
+              resources: {}
+              workingDir: /workspace
+            - args:
+                - '[ -d /builder/home ] || mkdir -p /builder && ln -s /tekton/home /builder/home'
+              command:
+                - /bin/sh
+                - -c
+              image: gcr.io/jenkinsxio/builder-jx:2.1.142-761
+              name: setup-builder-home
+              resources: {}
+            - args:
+                - gitops
+                - git
+                - setup
+                - --namespace
+                - jx-git-operator
+              command:
+                - jx
+              image: gcr.io/jenkinsxio/jx-cli:latest
+              name: git-setup
+              resources: {}
+              workingDir: /workspace
+            - args:
+                - step
+                - git
+                - merge
+                - --verbose
+                - --baseSHA
+                - $(params.PULL_BASE_SHA)
+                - --sha
+                - $(params.PULL_PULL_SHA)
+                - --baseBranch
+                - $(params.PULL_BASE_REF)
+              command:
+                - jx
+              image: gcr.io/jenkinsxio/builder-jx:2.1.142-761
+              name: git-merge
+              resources: {}
+            - args:
+                - gitops
+                - variables
+              command:
+                - jx
+              image: gcr.io/jenkinsxio/jx-cli:latest
+              name: jx-variables
+              resources: {}
+            - args:
+                - source .jx/variables.sh && jx step syntax effective --output-dir . --context ${JOB_NAME} --env BUILD_NUMBER=${BUILD_NUMBER} --env PIPELINE_KIND=${PIPELINE_KIND} --env PIPELINE_CONTEXT=${JOB_NAME} --env SOURCE_URL=${REPO_URL} --env REPO_OWNER=${REPO_OWNER} --env REPO_NAME=${REPO_NAME} --env APP_NAME=${APP_NAME} --env BRANCH_NAME=${BRANCH_NAME} --env JOB_NAME=${JOB_NAME} --env PULL_BASE_REF=${PULL_BASE_REF} --env PULL_BASE_SHA=${PULL_BASE_SHA} --env PULL_PULL_SHA=${PULL_PULL_SHA} --env JOB_TYPE=${JOB_TYPE} --env JOB_SPEC=${JOB_SPEC} --env PULL_NUMBER=${PULL_NUMBER}
+              command:
+                - /bin/sh
+                - -c
+              image: gcr.io/jenkinsxio/builder-maven:2.1.142-761
+              name: create-effective-pipeline
+              resources: {}
+            - args:
+                - source .jx/variables.sh && jx step create task --clone-dir /workspace/source --kind ${PIPELINE_KIND} --pr-number ${PULL_NUMBER} --service-account tekton-bot --source source --branch ${BRANCH_NAME} --build-number 1 --context ${JOB_NAME}
+              command:
+                - /bin/sh
+                - -c
+              image: gcr.io/jenkinsxio/builder-maven:2.1.142-761
+              name: create-tekton-crds
+              resources: {}
           volumes:
-          - emptyDir: {}
-            name: workspace-volume
-          - downwardAPI:
-              items:
-              - fieldRef:
-                  fieldPath: metadata.labels
-                path: labels
-            name: podinfo
+            - emptyDir: {}
+              name: workspace-volume
+            - downwardAPI:
+                items:
+                  - fieldRef:
+                      fieldPath: metadata.labels
+                    path: labels
+              name: podinfo
+  serviceAccountName: tekton-bot
+  timeout: 24h0m0s
+status:
+  conditions:
+    - lastTransitionTime: "2020-10-07T07:00:28Z"
+      message: 'Tasks Completed: 0 (Failed: 0, Cancelled 0), Incomplete: 1, Skipped: 0'
+      reason: Running
+      status: Unknown
+      type: Succeeded
+  pipelineSpec:
+    params:
+      - description: the unique build number
+        name: BUILD_ID
+        type: string
+      - description: the name of the job which is the trigger context name
+        name: JOB_NAME
+        type: string
+      - description: the specification of the job
+        name: JOB_SPEC
+        type: string
+      - description: 'the kind of job: postsubmit or presubmit'
+        name: JOB_TYPE
+        type: string
+      - default: master
+        description: the base git reference of the pull request
+        name: PULL_BASE_REF
+        type: string
+      - description: the git sha of the base of the pull request
+        name: PULL_BASE_SHA
+        type: string
+      - default: ""
+        description: git pull request number
+        name: PULL_NUMBER
+        type: string
+      - default: ""
+        description: git pull request ref in the form 'refs/pull/$PULL_NUMBER/head'
+        name: PULL_PULL_REF
+        type: string
+      - default: master
+        description: git revision to checkout (branch, tag, sha, ref…)
+        name: PULL_PULL_SHA
+        type: string
+      - description: git pull reference strings of base and latest in the form 'master:$PULL_BASE_SHA,$PULL_NUMBER:$PULL_PULL_SHA:refs/pull/$PULL_NUMBER/head'
+        name: PULL_REFS
+        type: string
+      - description: git repository name
+        name: REPO_NAME
+        type: string
+      - description: git repository owner (user or organisation)
+        name: REPO_OWNER
+        type: string
+      - description: git url to clone
+        name: REPO_URL
+        type: string
+    tasks:
+      - name: from-build-pack
+        params:
+          - name: BUILD_ID
+            value: $(params.BUILD_ID)
+          - name: JOB_NAME
+            value: $(params.JOB_NAME)
+          - name: JOB_SPEC
+            value: $(params.JOB_SPEC)
+          - name: JOB_TYPE
+            value: $(params.JOB_TYPE)
+          - name: PULL_BASE_REF
+            value: $(params.PULL_BASE_REF)
+          - name: PULL_BASE_SHA
+            value: $(params.PULL_BASE_SHA)
+          - name: PULL_NUMBER
+            value: $(params.PULL_NUMBER)
+          - name: PULL_PULL_REF
+            value: $(params.PULL_PULL_REF)
+          - name: PULL_PULL_SHA
+            value: $(params.PULL_PULL_SHA)
+          - name: PULL_REFS
+            value: $(params.PULL_REFS)
+          - name: REPO_NAME
+            value: $(params.REPO_NAME)
+          - name: REPO_OWNER
+            value: $(params.REPO_OWNER)
+          - name: REPO_URL
+            value: $(params.REPO_URL)
+        taskSpec:
+          metadata: {}
+          params:
+            - description: git url to clone
+              name: REPO_URL
+              type: string
+            - default: master
+              description: git revision to checkout (branch, tag, sha, ref…)
+              name: PULL_PULL_SHA
+              type: string
+            - default: source
+              description: subdirectory inside of /workspace to clone the git repo
+              name: subdirectory
+              type: string
+            - description: the unique build number
+              name: BUILD_ID
+              type: string
+            - description: the name of the job which is the trigger context name
+              name: JOB_NAME
+              type: string
+            - description: the specification of the job
+              name: JOB_SPEC
+              type: string
+            - description: 'the kind of job: postsubmit or presubmit'
+              name: JOB_TYPE
+              type: string
+            - default: master
+              description: the base git reference of the pull request
+              name: PULL_BASE_REF
+              type: string
+            - description: the git sha of the base of the pull request
+              name: PULL_BASE_SHA
+              type: string
+            - default: ""
+              description: git pull request number
+              name: PULL_NUMBER
+              type: string
+            - default: ""
+              description: git pull request ref in the form 'refs/pull/$PULL_NUMBER/head'
+              name: PULL_PULL_REF
+              type: string
+            - description: git pull reference strings of base and latest in the form 'master:$PULL_BASE_SHA,$PULL_NUMBER:$PULL_PULL_SHA:refs/pull/$PULL_NUMBER/head'
+              name: PULL_REFS
+              type: string
+            - description: git repository name
+              name: REPO_NAME
+              type: string
+            - description: git repository owner (user or organisation)
+              name: REPO_OWNER
+              type: string
+          stepTemplate:
+            env:
+              - name: BUILD_ID
+                value: $(params.BUILD_ID)
+              - name: JOB_NAME
+                value: $(params.JOB_NAME)
+              - name: JOB_SPEC
+                value: $(params.JOB_SPEC)
+              - name: JOB_TYPE
+                value: $(params.JOB_TYPE)
+              - name: PULL_BASE_REF
+                value: $(params.PULL_BASE_REF)
+              - name: PULL_BASE_SHA
+                value: $(params.PULL_BASE_SHA)
+              - name: PULL_NUMBER
+                value: $(params.PULL_NUMBER)
+              - name: PULL_PULL_REF
+                value: $(params.PULL_PULL_REF)
+              - name: PULL_PULL_SHA
+                value: $(params.PULL_PULL_SHA)
+              - name: PULL_REFS
+                value: $(params.PULL_REFS)
+              - name: REPO_NAME
+                value: $(params.REPO_NAME)
+              - name: REPO_OWNER
+                value: $(params.REPO_OWNER)
+              - name: REPO_URL
+                value: $(params.REPO_URL)
+              - name: XDG_CONFIG_HOME
+                value: /tekton/home
+            name: ""
+            resources:
+              requests:
+                cpu: 400m
+                memory: 512Mi
+            volumeMounts:
+              - mountPath: /home/jenkins
+                name: workspace-volume
+              - mountPath: /etc/podinfo
+                name: podinfo
+                readOnly: true
+            workingDir: /workspace/source
+          steps:
+            - args:
+                - -c
+                - 'mkdir -p $HOME; git config --global --add user.name $GIT_AUTHOR_NAME; git config --global --add user.email $GIT_AUTHOR_EMAIL; git config --global credential.helper store; git clone $(params.REPO_URL) $(params.subdirectory); echo cloned url: $(params.REPO_URL) to dir: $(params.subdirectory); cd $(params.subdirectory); git checkout $(params.PULL_PULL_SHA); echo checked out revision: $(params.PULL_PULL_SHA) to dir: $(params.subdirectory)'
+              command:
+                - /bin/sh
+              env:
+                - name: BUILD_ID
+                  value: $(params.BUILD_ID)
+                - name: JOB_NAME
+                  value: $(params.JOB_NAME)
+                - name: JOB_SPEC
+                  value: $(params.JOB_SPEC)
+                - name: JOB_TYPE
+                  value: $(params.JOB_TYPE)
+                - name: PULL_BASE_REF
+                  value: $(params.PULL_BASE_REF)
+                - name: PULL_BASE_SHA
+                  value: $(params.PULL_BASE_SHA)
+                - name: PULL_NUMBER
+                  value: $(params.PULL_NUMBER)
+                - name: PULL_PULL_REF
+                  value: $(params.PULL_PULL_REF)
+                - name: PULL_PULL_SHA
+                  value: $(params.PULL_PULL_SHA)
+                - name: PULL_REFS
+                  value: $(params.PULL_REFS)
+                - name: REPO_NAME
+                  value: $(params.REPO_NAME)
+                - name: REPO_OWNER
+                  value: $(params.REPO_OWNER)
+                - name: REPO_URL
+                  value: $(params.REPO_URL)
+                - name: XDG_CONFIG_HOME
+                  value: /tekton/home
+              image: gcr.io/jenkinsxio/builder-jx:2.1.32-662
+              name: git-clone
+              resources:
+                requests:
+                  cpu: 400m
+                  memory: 512Mi
+              volumeMounts:
+                - mountPath: /home/jenkins
+                  name: workspace-volume
+                - mountPath: /etc/podinfo
+                  name: podinfo
+                  readOnly: true
+              workingDir: /workspace
+            - args:
+                - '[ -d /builder/home ] || mkdir -p /builder && ln -s /tekton/home /builder/home'
+              command:
+                - /bin/sh
+                - -c
+              env:
+                - name: BUILD_ID
+                  value: $(params.BUILD_ID)
+                - name: JOB_NAME
+                  value: $(params.JOB_NAME)
+                - name: JOB_SPEC
+                  value: $(params.JOB_SPEC)
+                - name: JOB_TYPE
+                  value: $(params.JOB_TYPE)
+                - name: PULL_BASE_REF
+                  value: $(params.PULL_BASE_REF)
+                - name: PULL_BASE_SHA
+                  value: $(params.PULL_BASE_SHA)
+                - name: PULL_NUMBER
+                  value: $(params.PULL_NUMBER)
+                - name: PULL_PULL_REF
+                  value: $(params.PULL_PULL_REF)
+                - name: PULL_PULL_SHA
+                  value: $(params.PULL_PULL_SHA)
+                - name: PULL_REFS
+                  value: $(params.PULL_REFS)
+                - name: REPO_NAME
+                  value: $(params.REPO_NAME)
+                - name: REPO_OWNER
+                  value: $(params.REPO_OWNER)
+                - name: REPO_URL
+                  value: $(params.REPO_URL)
+                - name: XDG_CONFIG_HOME
+                  value: /tekton/home
+              image: gcr.io/jenkinsxio/builder-jx:2.1.142-761
+              name: setup-builder-home
+              resources:
+                requests:
+                  cpu: 400m
+                  memory: 512Mi
+              volumeMounts:
+                - mountPath: /home/jenkins
+                  name: workspace-volume
+                - mountPath: /etc/podinfo
+                  name: podinfo
+                  readOnly: true
+              workingDir: /workspace/source
+            - args:
+                - gitops
+                - git
+                - setup
+                - --namespace
+                - jx-git-operator
+              command:
+                - jx
+              env:
+                - name: BUILD_ID
+                  value: $(params.BUILD_ID)
+                - name: JOB_NAME
+                  value: $(params.JOB_NAME)
+                - name: JOB_SPEC
+                  value: $(params.JOB_SPEC)
+                - name: JOB_TYPE
+                  value: $(params.JOB_TYPE)
+                - name: PULL_BASE_REF
+                  value: $(params.PULL_BASE_REF)
+                - name: PULL_BASE_SHA
+                  value: $(params.PULL_BASE_SHA)
+                - name: PULL_NUMBER
+                  value: $(params.PULL_NUMBER)
+                - name: PULL_PULL_REF
+                  value: $(params.PULL_PULL_REF)
+                - name: PULL_PULL_SHA
+                  value: $(params.PULL_PULL_SHA)
+                - name: PULL_REFS
+                  value: $(params.PULL_REFS)
+                - name: REPO_NAME
+                  value: $(params.REPO_NAME)
+                - name: REPO_OWNER
+                  value: $(params.REPO_OWNER)
+                - name: REPO_URL
+                  value: $(params.REPO_URL)
+                - name: XDG_CONFIG_HOME
+                  value: /tekton/home
+              image: gcr.io/jenkinsxio/jx-cli:latest
+              name: git-setup
+              resources:
+                requests:
+                  cpu: 400m
+                  memory: 512Mi
+              volumeMounts:
+                - mountPath: /home/jenkins
+                  name: workspace-volume
+                - mountPath: /etc/podinfo
+                  name: podinfo
+                  readOnly: true
+              workingDir: /workspace
+            - args:
+                - step
+                - git
+                - merge
+                - --verbose
+                - --baseSHA
+                - $(params.PULL_BASE_SHA)
+                - --sha
+                - $(params.PULL_PULL_SHA)
+                - --baseBranch
+                - $(params.PULL_BASE_REF)
+              command:
+                - jx
+              env:
+                - name: BUILD_ID
+                  value: $(params.BUILD_ID)
+                - name: JOB_NAME
+                  value: $(params.JOB_NAME)
+                - name: JOB_SPEC
+                  value: $(params.JOB_SPEC)
+                - name: JOB_TYPE
+                  value: $(params.JOB_TYPE)
+                - name: PULL_BASE_REF
+                  value: $(params.PULL_BASE_REF)
+                - name: PULL_BASE_SHA
+                  value: $(params.PULL_BASE_SHA)
+                - name: PULL_NUMBER
+                  value: $(params.PULL_NUMBER)
+                - name: PULL_PULL_REF
+                  value: $(params.PULL_PULL_REF)
+                - name: PULL_PULL_SHA
+                  value: $(params.PULL_PULL_SHA)
+                - name: PULL_REFS
+                  value: $(params.PULL_REFS)
+                - name: REPO_NAME
+                  value: $(params.REPO_NAME)
+                - name: REPO_OWNER
+                  value: $(params.REPO_OWNER)
+                - name: REPO_URL
+                  value: $(params.REPO_URL)
+                - name: XDG_CONFIG_HOME
+                  value: /tekton/home
+              image: gcr.io/jenkinsxio/builder-jx:2.1.142-761
+              name: git-merge
+              resources:
+                requests:
+                  cpu: 400m
+                  memory: 512Mi
+              volumeMounts:
+                - mountPath: /home/jenkins
+                  name: workspace-volume
+                - mountPath: /etc/podinfo
+                  name: podinfo
+                  readOnly: true
+              workingDir: /workspace/source
+            - args:
+                - gitops
+                - variables
+              command:
+                - jx
+              env:
+                - name: BUILD_ID
+                  value: $(params.BUILD_ID)
+                - name: JOB_NAME
+                  value: $(params.JOB_NAME)
+                - name: JOB_SPEC
+                  value: $(params.JOB_SPEC)
+                - name: JOB_TYPE
+                  value: $(params.JOB_TYPE)
+                - name: PULL_BASE_REF
+                  value: $(params.PULL_BASE_REF)
+                - name: PULL_BASE_SHA
+                  value: $(params.PULL_BASE_SHA)
+                - name: PULL_NUMBER
+                  value: $(params.PULL_NUMBER)
+                - name: PULL_PULL_REF
+                  value: $(params.PULL_PULL_REF)
+                - name: PULL_PULL_SHA
+                  value: $(params.PULL_PULL_SHA)
+                - name: PULL_REFS
+                  value: $(params.PULL_REFS)
+                - name: REPO_NAME
+                  value: $(params.REPO_NAME)
+                - name: REPO_OWNER
+                  value: $(params.REPO_OWNER)
+                - name: REPO_URL
+                  value: $(params.REPO_URL)
+                - name: XDG_CONFIG_HOME
+                  value: /tekton/home
+              image: gcr.io/jenkinsxio/jx-cli:latest
+              name: jx-variables
+              resources:
+                requests:
+                  cpu: 400m
+                  memory: 512Mi
+              volumeMounts:
+                - mountPath: /home/jenkins
+                  name: workspace-volume
+                - mountPath: /etc/podinfo
+                  name: podinfo
+                  readOnly: true
+              workingDir: /workspace/source
+            - args:
+                - source .jx/variables.sh && jx step syntax effective --output-dir . --context ${JOB_NAME} --env BUILD_NUMBER=${BUILD_NUMBER} --env PIPELINE_KIND=${PIPELINE_KIND} --env PIPELINE_CONTEXT=${JOB_NAME} --env SOURCE_URL=${REPO_URL} --env REPO_OWNER=${REPO_OWNER} --env REPO_NAME=${REPO_NAME} --env APP_NAME=${APP_NAME} --env BRANCH_NAME=${BRANCH_NAME} --env JOB_NAME=${JOB_NAME} --env PULL_BASE_REF=${PULL_BASE_REF} --env PULL_BASE_SHA=${PULL_BASE_SHA} --env PULL_PULL_SHA=${PULL_PULL_SHA} --env JOB_TYPE=${JOB_TYPE} --env JOB_SPEC=${JOB_SPEC} --env PULL_NUMBER=${PULL_NUMBER}
+              command:
+                - /bin/sh
+                - -c
+              env:
+                - name: BUILD_ID
+                  value: $(params.BUILD_ID)
+                - name: JOB_NAME
+                  value: $(params.JOB_NAME)
+                - name: JOB_SPEC
+                  value: $(params.JOB_SPEC)
+                - name: JOB_TYPE
+                  value: $(params.JOB_TYPE)
+                - name: PULL_BASE_REF
+                  value: $(params.PULL_BASE_REF)
+                - name: PULL_BASE_SHA
+                  value: $(params.PULL_BASE_SHA)
+                - name: PULL_NUMBER
+                  value: $(params.PULL_NUMBER)
+                - name: PULL_PULL_REF
+                  value: $(params.PULL_PULL_REF)
+                - name: PULL_PULL_SHA
+                  value: $(params.PULL_PULL_SHA)
+                - name: PULL_REFS
+                  value: $(params.PULL_REFS)
+                - name: REPO_NAME
+                  value: $(params.REPO_NAME)
+                - name: REPO_OWNER
+                  value: $(params.REPO_OWNER)
+                - name: REPO_URL
+                  value: $(params.REPO_URL)
+                - name: XDG_CONFIG_HOME
+                  value: /tekton/home
+              image: gcr.io/jenkinsxio/builder-maven:2.1.142-761
+              name: create-effective-pipeline
+              resources:
+                requests:
+                  cpu: 400m
+                  memory: 512Mi
+              volumeMounts:
+                - mountPath: /home/jenkins
+                  name: workspace-volume
+                - mountPath: /etc/podinfo
+                  name: podinfo
+                  readOnly: true
+              workingDir: /workspace/source
+            - args:
+                - source .jx/variables.sh && jx step create task --clone-dir /workspace/source --kind ${PIPELINE_KIND} --pr-number ${PULL_NUMBER} --service-account tekton-bot --source source --branch ${BRANCH_NAME} --build-number 1 --context ${JOB_NAME}
+              command:
+                - /bin/sh
+                - -c
+              env:
+                - name: BUILD_ID
+                  value: $(params.BUILD_ID)
+                - name: JOB_NAME
+                  value: $(params.JOB_NAME)
+                - name: JOB_SPEC
+                  value: $(params.JOB_SPEC)
+                - name: JOB_TYPE
+                  value: $(params.JOB_TYPE)
+                - name: PULL_BASE_REF
+                  value: $(params.PULL_BASE_REF)
+                - name: PULL_BASE_SHA
+                  value: $(params.PULL_BASE_SHA)
+                - name: PULL_NUMBER
+                  value: $(params.PULL_NUMBER)
+                - name: PULL_PULL_REF
+                  value: $(params.PULL_PULL_REF)
+                - name: PULL_PULL_SHA
+                  value: $(params.PULL_PULL_SHA)
+                - name: PULL_REFS
+                  value: $(params.PULL_REFS)
+                - name: REPO_NAME
+                  value: $(params.REPO_NAME)
+                - name: REPO_OWNER
+                  value: $(params.REPO_OWNER)
+                - name: REPO_URL
+                  value: $(params.REPO_URL)
+                - name: XDG_CONFIG_HOME
+                  value: /tekton/home
+              image: gcr.io/jenkinsxio/builder-maven:2.1.142-761
+              name: create-tekton-crds
+              resources:
+                requests:
+                  cpu: 400m
+                  memory: 512Mi
+              volumeMounts:
+                - mountPath: /home/jenkins
+                  name: workspace-volume
+                - mountPath: /etc/podinfo
+                  name: podinfo
+                  readOnly: true
+              workingDir: /workspace/source
+          volumes:
+            - emptyDir: {}
+              name: workspace-volume
+            - downwardAPI:
+                items:
+                  - fieldRef:
+                      fieldPath: metadata.labels
+                    path: labels
+              name: podinfo
+  startTime: "2020-10-07T07:00:28Z"
+  childReferences:
+    - apiVersion: tekton.dev/v1
+      kind: TaskRun
+      name: release-9hs6f-meta-pipeline-ddnhv

@@ -20,7 +20,7 @@ metadata:
     lighthouse.jenkins-x.io/refs.org: jstrachan
     lighthouse.jenkins-x.io/refs.repo: nodey530
     lighthouse.jenkins-x.io/type: postsubmit
-    podName: release-9hs6f-from-build-pack-ddnhv-pod-dzw9t
+    podName: release-9hs6f-meta-pipeline-ddnhv-pod-dzw9t
     tekton.dev/pipeline: release-9hs6f
   name: jstrachan-nodey530-master-1
   namespace: jx

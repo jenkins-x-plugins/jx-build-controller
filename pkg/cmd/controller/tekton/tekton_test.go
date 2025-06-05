@@ -3,6 +3,7 @@ package tekton_test
 import (
 	"context"
 	"fmt"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"os"
 	"path/filepath"
 	"testing"
@@ -43,11 +44,23 @@ func TestBuildControllerTekton(t *testing.T) {
 	for i := 1; i <= 5; i++ {
 		fileName := fmt.Sprintf("%d.yaml", i)
 		prFile := filepath.Join(sourceDir, "pr", fileName)
+		trFile := filepath.Join(sourceDir, "tr", fileName)
 		expectedPAFile := filepath.Join(sourceDir, "pa", fileName)
 
 		pr := &v1.PipelineRun{}
 		err := yamls.LoadFile(prFile, pr)
 		require.NoError(t, err, "failed to load %s", prFile)
+
+		tr := &v1.TaskRun{}
+		err = yamls.LoadFile(trFile, tr)
+		require.NoError(t, err, "failed to load %s", trFile)
+
+		_, err = o.TektonClient.TektonV1().TaskRuns(ns).Create(context.TODO(), tr, metav1.CreateOptions{})
+		if err != nil {
+			require.ErrorContains(t, err, "already exists", "failed to store taskrun %s", trFile)
+			_, err = o.TektonClient.TektonV1().TaskRuns(ns).Update(context.TODO(), tr, metav1.UpdateOptions{})
+		}
+		require.NoError(t, err, "failed to store taskrun %s", trFile)
 
 		// lets recreate the cache each loop so we load all the latest activities
 		o.ActivityCache, err = jx.NewActivityCache(o.JXClient, ns)
@@ -55,6 +68,7 @@ func TestBuildControllerTekton(t *testing.T) {
 
 		pa, err := o.OnPipelineRunUpsert(context.TODO(), pr, ns)
 		require.NoError(t, err, "failed to process PipelineRun %i", i)
+		require.NotNil(t, pa, "PipelineActivity %s is nil", i)
 
 		testpipelines.ClearTimestamps(pa)
 		if regenTestDataMode {
@@ -86,13 +100,26 @@ func TestBuildControllerMetaPipeline(t *testing.T) {
 	o.Namespace = ns
 
 	for i := 1; i <= 6; i++ {
+		o.TektonClient = faketekton.NewSimpleClientset()
 		fileName := fmt.Sprintf("%d.yaml", i)
 		prFile := filepath.Join(sourceDir, "pr", fileName)
+		trFile := filepath.Join(sourceDir, "tr", fileName)
 		expectedPAFile := filepath.Join(sourceDir, "pa", fileName)
 
 		pr := &v1.PipelineRun{}
 		err := yamls.LoadFile(prFile, pr)
 		require.NoError(t, err, "failed to load %s", prFile)
+
+		tr := &v1.TaskRun{}
+		err = yamls.LoadFile(trFile, tr)
+		require.NoError(t, err, "failed to load %s", trFile)
+
+		_, err = o.TektonClient.TektonV1().TaskRuns(ns).Create(context.TODO(), tr, metav1.CreateOptions{})
+		if err != nil {
+			require.ErrorContains(t, err, "already exists", "failed to store taskrun %s", trFile)
+			_, err = o.TektonClient.TektonV1().TaskRuns(ns).Update(context.TODO(), tr, metav1.UpdateOptions{})
+		}
+		require.NoError(t, err, "failed to store taskrun %s", trFile)
 
 		// lets recreate the cache each loop so we load all the latest activities
 		o.ActivityCache, err = jx.NewActivityCache(o.JXClient, ns)
@@ -100,6 +127,7 @@ func TestBuildControllerMetaPipeline(t *testing.T) {
 
 		pa, err := o.OnPipelineRunUpsert(context.TODO(), pr, ns)
 		require.NoError(t, err, "failed to process PipelineRun %i", i)
+		require.NotNil(t, pa, "PipelineActivity %s is nil", i)
 		testpipelines.ClearTimestamps(pa)
 
 		if regenTestDataMode {

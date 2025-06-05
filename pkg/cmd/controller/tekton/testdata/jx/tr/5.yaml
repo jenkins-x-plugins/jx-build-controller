@@ -1,0 +1,890 @@
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  name: jstrachan-nodey530-master-relea-ttnnr-1-from-build-pack-5szl2
+status:
+  conditions:
+    - lastTransitionTime: "2020-10-07T07:01:02Z"
+      message: Not all Steps in the Task have finished executing
+      reason: Running
+      status: Unknown
+      type: Succeeded
+  podName: jstrachan-nodey530-master-relea-ttnnr-1-from-build-pack-5-bl22f
+  startTime: "2020-10-07T07:00:54Z"
+  steps:
+    - container: step-setup-builder-home
+      imageID: docker-pullable://gcr.io/jenkinsxio/builder-jx@sha256:40c90b3a199f3c10780b68fe855956fd7f694907f62ff4c263f0cbb2fa89a023
+      name: setup-builder-home
+      terminated:
+        containerID: docker://a71f117d37a60d18c9070332743f4320ade23eda287e9dee47d6c839f3526ef3
+        exitCode: 0
+        finishedAt: "2020-10-07T07:01:06Z"
+        reason: Completed
+        startedAt: "2020-10-07T07:01:06Z"
+    - container: step-git-merge
+      imageID: docker-pullable://gcr.io/jenkinsxio/builder-jx@sha256:40c90b3a199f3c10780b68fe855956fd7f694907f62ff4c263f0cbb2fa89a023
+      name: git-merge
+      terminated:
+        containerID: docker://50835aa6528c13cf1ada1a8e217bd2aab4b027e620a24b7c38c5a8d5c3a771d3
+        exitCode: 0
+        finishedAt: "2020-10-07T07:01:07Z"
+        reason: Completed
+        startedAt: "2020-10-07T07:01:06Z"
+    - container: step-setup-jx-git-credentials
+      imageID: docker-pullable://gcr.io/jenkinsxio/builder-nodejs@sha256:6b4139a2dc70df86be294b090a852015cec70b079819da6eec54797d8dc25b4a
+      name: setup-jx-git-credentials
+      terminated:
+        containerID: docker://85feccc1233012c4682874013a643a5e26e4d8657d72d6698bc467c9f766034f
+        exitCode: 0
+        finishedAt: "2020-10-07T07:01:09Z"
+        reason: Completed
+        startedAt: "2020-10-07T07:01:08Z"
+    - container: step-build-npmrc
+      imageID: docker-pullable://gcr.io/jenkinsxio/builder-nodejs@sha256:6b4139a2dc70df86be294b090a852015cec70b079819da6eec54797d8dc25b4a
+      name: build-npmrc
+      terminated:
+        containerID: docker://d1b556729f7881eab208da6bad95acf80feefc88e73f7714cc148ff24f7dd1e5
+        exitCode: 0
+        finishedAt: "2020-10-07T07:01:09Z"
+        reason: Completed
+        startedAt: "2020-10-07T07:01:09Z"
+    - container: step-build-npm-install
+      imageID: docker-pullable://gcr.io/jenkinsxio/builder-nodejs@sha256:6b4139a2dc70df86be294b090a852015cec70b079819da6eec54797d8dc25b4a
+      name: build-npm-install
+      terminated:
+        containerID: docker://b3cf4ce780677c391798c14e9752cf4e564090ef9322d9269ccb0da2a487efcc
+        exitCode: 0
+        finishedAt: "2020-10-07T07:01:12Z"
+        reason: Completed
+        startedAt: "2020-10-07T07:01:10Z"
+    - container: step-build-npm-test
+      imageID: docker-pullable://gcr.io/jenkinsxio/builder-nodejs@sha256:6b4139a2dc70df86be294b090a852015cec70b079819da6eec54797d8dc25b4a
+      name: build-npm-test
+      terminated:
+        containerID: docker://6b9a9f0617e3a03e2f0cd66dcdc17047b5d5bb75e5842af0e4219f94ad4b7499
+        exitCode: 0
+        finishedAt: "2020-10-07T07:01:13Z"
+        reason: Completed
+        startedAt: "2020-10-07T07:01:12Z"
+    - container: step-build-container-build
+      imageID: docker-pullable://gcr.io/kaniko-project/executor@sha256:be318701bf818b309cb5b6bcbc709e88161db4229d105423abe5b66948a2f676
+      name: build-container-build
+      terminated:
+        containerID: docker://b875f8281c7b5bb34c833549ecb18857bb9f678c27114ab3190cb6ad06be583c
+        exitCode: 0
+        finishedAt: "2020-10-07T07:01:27Z"
+        reason: Completed
+        startedAt: "2020-10-07T07:01:14Z"
+    - container: step-promote-changelog
+      imageID: docker-pullable://gcr.io/jenkinsxio/builder-go@sha256:c157d03686df5b6799afa4ce224c0d734090463e0d62031272377abd429ffab8
+      name: promote-changelog
+      terminated:
+        containerID: docker://0e59d96c4169e5e64b3ffb6a5e54ed2b1b80cfb71b275916654613828e38c0a4
+        exitCode: 0
+        finishedAt: "2020-10-07T07:01:40Z"
+        reason: Completed
+        startedAt: "2020-10-07T07:01:27Z"
+    - container: step-promote-helm-release
+      imageID: docker-pullable://gcr.io/jenkinsxio/builder-go@sha256:c157d03686df5b6799afa4ce224c0d734090463e0d62031272377abd429ffab8
+      name: promote-helm-release
+      terminated:
+        containerID: docker://4e9ce4773db1a53a88d410db2af9af8f7a39f1fedcf8cc8098ac8516b8a7834d
+        exitCode: 0
+        finishedAt: "2020-10-07T07:01:48Z"
+        reason: Completed
+        startedAt: "2020-10-07T07:01:40Z"
+    - container: step-promote-jx-promote
+      imageID: docker-pullable://gcr.io/jenkinsxio/jx-cli@sha256:40da36f51c7e6f6fe3fa77a0f98f094fc0c1fb9b212316c9e1674888cec321d4
+      name: promote-jx-promote
+      running:
+        startedAt: "2020-10-07T07:01:00Z"
+    - container: step-git-source-workspace-sx9ms
+      imageID: docker-pullable://gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init@sha256:17d8d9f55002fccf40e0c83ff2773a1db120beddfa53b87e5e2879e149050659
+      name: git-source-workspace-sx9ms
+      terminated:
+        containerID: docker://2f70891351713606658f64413c5e22c50e1aa24286d81636660502a169860321
+        exitCode: 0
+        finishedAt: "2020-10-07T07:01:05Z"
+        message: '[{"key":"commit","value":"18dcb2dadcf3bd44ed21a986de34233f32bda528","resourceName":"workspace","resourceRef":{"name":"workspace"}},{"key":"url","value":"https://github.com/jstrachan/nodey530.git","resourceName":"workspace","resourceRef":{"name":"workspace"}}]'
+        reason: Completed
+        startedAt: "2020-10-07T07:01:03Z"
+  taskSpec:
+    params:
+      - default: 1.0.4
+        description: the version number for this pipeline which is used as a tag on docker images and helm charts
+        name: version
+        type: string
+      - default: "1"
+        description: the PipelineRun build number
+        name: build_id
+        type: string
+    resources:
+      inputs:
+        - name: workspace
+          targetPath: source
+          type: git
+    steps:
+      - args:
+          - '[ -d /builder/home ] || mkdir -p /builder && ln -s /tekton/home /builder/home'
+        command:
+          - /bin/sh
+          - -c
+        env:
+          - name: APP_NAME
+            value: nodey530
+          - name: BRANCH_NAME
+            value: master
+          - name: BUILD_NUMBER
+            value: "1"
+          - name: DOCKER_REGISTRY
+            valueFrom:
+              configMapKeyRef:
+                key: docker.registry
+                name: jenkins-x-docker-registry
+          - name: GIT_AUTHOR_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_AUTHOR_NAME
+            value: jenkins-x-bot
+          - name: GIT_COMMITTER_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_COMMITTER_NAME
+            value: jenkins-x-bot
+          - name: JOB_NAME
+            value: release
+          - name: JOB_SPEC
+            value: type:postsubmit
+          - name: JOB_TYPE
+            value: postsubmit
+          - name: PIPELINE_CONTEXT
+            value: release
+          - name: PIPELINE_KIND
+            value: release
+          - name: PULL_BASE_REF
+            value: master
+          - name: PULL_BASE_SHA
+            value: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+          - name: PULL_NUMBER
+          - name: PULL_PULL_SHA
+            value: master
+          - name: REPO_NAME
+            value: nodey530
+          - name: REPO_OWNER
+            value: jstrachan
+          - name: SOURCE_URL
+            value: https://github.com/jstrachan/nodey530.git
+          - name: XDG_CONFIG_HOME
+            value: /workspace/xdg_config
+          - name: DOCKER_REGISTRY_ORG
+            value: jenkins-x-labs-bdd
+          - name: JX_BATCH_MODE
+            value: "true"
+          - name: VERSION
+            value: $(inputs.params.version)
+          - name: BUILD_ID
+            value: $(inputs.params.build_id)
+          - name: PREVIEW_VERSION
+            value: $(inputs.params.version)
+        image: gcr.io/jenkinsxio/builder-jx:2.1.142-761
+        name: setup-builder-home
+        resources:
+          requests:
+            cpu: 400m
+            memory: 512Mi
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - mountPath: /home/jenkins
+            name: workspace-volume
+          - mountPath: /etc/podinfo
+            name: podinfo
+            readOnly: true
+        workingDir: /workspace/source
+      - args:
+          - step
+          - git
+          - merge
+          - --verbose
+        command:
+          - jx
+        env:
+          - name: APP_NAME
+            value: nodey530
+          - name: BRANCH_NAME
+            value: master
+          - name: BUILD_NUMBER
+            value: "1"
+          - name: DOCKER_REGISTRY
+            valueFrom:
+              configMapKeyRef:
+                key: docker.registry
+                name: jenkins-x-docker-registry
+          - name: GIT_AUTHOR_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_AUTHOR_NAME
+            value: jenkins-x-bot
+          - name: GIT_COMMITTER_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_COMMITTER_NAME
+            value: jenkins-x-bot
+          - name: JOB_NAME
+            value: release
+          - name: JOB_SPEC
+            value: type:postsubmit
+          - name: JOB_TYPE
+            value: postsubmit
+          - name: PIPELINE_CONTEXT
+            value: release
+          - name: PIPELINE_KIND
+            value: release
+          - name: PULL_BASE_REF
+            value: master
+          - name: PULL_BASE_SHA
+            value: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+          - name: PULL_NUMBER
+          - name: PULL_PULL_SHA
+            value: master
+          - name: REPO_NAME
+            value: nodey530
+          - name: REPO_OWNER
+            value: jstrachan
+          - name: SOURCE_URL
+            value: https://github.com/jstrachan/nodey530.git
+          - name: XDG_CONFIG_HOME
+            value: /workspace/xdg_config
+          - name: DOCKER_REGISTRY_ORG
+            value: jenkins-x-labs-bdd
+          - name: JX_BATCH_MODE
+            value: "true"
+          - name: VERSION
+            value: $(inputs.params.version)
+          - name: BUILD_ID
+            value: $(inputs.params.build_id)
+          - name: PREVIEW_VERSION
+            value: $(inputs.params.version)
+        image: gcr.io/jenkinsxio/builder-jx:2.1.142-761
+        name: git-merge
+        resources:
+          requests:
+            cpu: 400m
+            memory: 512Mi
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - mountPath: /home/jenkins
+            name: workspace-volume
+          - mountPath: /etc/podinfo
+            name: podinfo
+            readOnly: true
+        workingDir: /workspace/source
+      - args:
+          - jx step git credentials
+        command:
+          - /bin/sh
+          - -c
+        env:
+          - name: APP_NAME
+            value: nodey530
+          - name: BRANCH_NAME
+            value: master
+          - name: BUILD_NUMBER
+            value: "1"
+          - name: DOCKER_REGISTRY
+            valueFrom:
+              configMapKeyRef:
+                key: docker.registry
+                name: jenkins-x-docker-registry
+          - name: GIT_AUTHOR_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_AUTHOR_NAME
+            value: jenkins-x-bot
+          - name: GIT_COMMITTER_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_COMMITTER_NAME
+            value: jenkins-x-bot
+          - name: JOB_NAME
+            value: release
+          - name: JOB_SPEC
+            value: type:postsubmit
+          - name: JOB_TYPE
+            value: postsubmit
+          - name: PIPELINE_CONTEXT
+            value: release
+          - name: PIPELINE_KIND
+            value: release
+          - name: PULL_BASE_REF
+            value: master
+          - name: PULL_BASE_SHA
+            value: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+          - name: PULL_NUMBER
+          - name: PULL_PULL_SHA
+            value: master
+          - name: REPO_NAME
+            value: nodey530
+          - name: REPO_OWNER
+            value: jstrachan
+          - name: SOURCE_URL
+            value: https://github.com/jstrachan/nodey530.git
+          - name: XDG_CONFIG_HOME
+            value: /workspace/xdg_config
+          - name: DOCKER_REGISTRY_ORG
+            value: jenkins-x-labs-bdd
+          - name: JX_BATCH_MODE
+            value: "true"
+          - name: VERSION
+            value: $(inputs.params.version)
+          - name: BUILD_ID
+            value: $(inputs.params.build_id)
+          - name: PREVIEW_VERSION
+            value: $(inputs.params.version)
+        image: gcr.io/jenkinsxio/builder-nodejs:2.1.150-769
+        name: setup-jx-git-credentials
+        resources:
+          requests:
+            cpu: 400m
+            memory: 512Mi
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - mountPath: /home/jenkins
+            name: workspace-volume
+          - mountPath: /etc/podinfo
+            name: podinfo
+            readOnly: true
+        workingDir: /workspace/source
+      - args:
+          - jx step credential -s npm-token -k file -f /builder/home/.npmrc --optional=true
+        command:
+          - /bin/sh
+          - -c
+        env:
+          - name: APP_NAME
+            value: nodey530
+          - name: BRANCH_NAME
+            value: master
+          - name: BUILD_NUMBER
+            value: "1"
+          - name: DOCKER_REGISTRY
+            valueFrom:
+              configMapKeyRef:
+                key: docker.registry
+                name: jenkins-x-docker-registry
+          - name: GIT_AUTHOR_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_AUTHOR_NAME
+            value: jenkins-x-bot
+          - name: GIT_COMMITTER_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_COMMITTER_NAME
+            value: jenkins-x-bot
+          - name: JOB_NAME
+            value: release
+          - name: JOB_SPEC
+            value: type:postsubmit
+          - name: JOB_TYPE
+            value: postsubmit
+          - name: PIPELINE_CONTEXT
+            value: release
+          - name: PIPELINE_KIND
+            value: release
+          - name: PULL_BASE_REF
+            value: master
+          - name: PULL_BASE_SHA
+            value: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+          - name: PULL_NUMBER
+          - name: PULL_PULL_SHA
+            value: master
+          - name: REPO_NAME
+            value: nodey530
+          - name: REPO_OWNER
+            value: jstrachan
+          - name: SOURCE_URL
+            value: https://github.com/jstrachan/nodey530.git
+          - name: XDG_CONFIG_HOME
+            value: /workspace/xdg_config
+          - name: DOCKER_REGISTRY_ORG
+            value: jenkins-x-labs-bdd
+          - name: JX_BATCH_MODE
+            value: "true"
+          - name: VERSION
+            value: $(inputs.params.version)
+          - name: BUILD_ID
+            value: $(inputs.params.build_id)
+          - name: PREVIEW_VERSION
+            value: $(inputs.params.version)
+        image: gcr.io/jenkinsxio/builder-nodejs:2.1.150-769
+        name: build-npmrc
+        resources:
+          requests:
+            cpu: 400m
+            memory: 512Mi
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - mountPath: /home/jenkins
+            name: workspace-volume
+          - mountPath: /etc/podinfo
+            name: podinfo
+            readOnly: true
+        workingDir: /workspace/source
+      - args:
+          - npm install
+        command:
+          - /bin/sh
+          - -c
+        env:
+          - name: APP_NAME
+            value: nodey530
+          - name: BRANCH_NAME
+            value: master
+          - name: BUILD_NUMBER
+            value: "1"
+          - name: DOCKER_REGISTRY
+            valueFrom:
+              configMapKeyRef:
+                key: docker.registry
+                name: jenkins-x-docker-registry
+          - name: GIT_AUTHOR_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_AUTHOR_NAME
+            value: jenkins-x-bot
+          - name: GIT_COMMITTER_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_COMMITTER_NAME
+            value: jenkins-x-bot
+          - name: JOB_NAME
+            value: release
+          - name: JOB_SPEC
+            value: type:postsubmit
+          - name: JOB_TYPE
+            value: postsubmit
+          - name: PIPELINE_CONTEXT
+            value: release
+          - name: PIPELINE_KIND
+            value: release
+          - name: PULL_BASE_REF
+            value: master
+          - name: PULL_BASE_SHA
+            value: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+          - name: PULL_NUMBER
+          - name: PULL_PULL_SHA
+            value: master
+          - name: REPO_NAME
+            value: nodey530
+          - name: REPO_OWNER
+            value: jstrachan
+          - name: SOURCE_URL
+            value: https://github.com/jstrachan/nodey530.git
+          - name: XDG_CONFIG_HOME
+            value: /workspace/xdg_config
+          - name: DOCKER_REGISTRY_ORG
+            value: jenkins-x-labs-bdd
+          - name: JX_BATCH_MODE
+            value: "true"
+          - name: VERSION
+            value: $(inputs.params.version)
+          - name: BUILD_ID
+            value: $(inputs.params.build_id)
+          - name: PREVIEW_VERSION
+            value: $(inputs.params.version)
+        image: gcr.io/jenkinsxio/builder-nodejs:2.1.150-769
+        name: build-npm-install
+        resources:
+          requests:
+            cpu: 400m
+            memory: 512Mi
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - mountPath: /home/jenkins
+            name: workspace-volume
+          - mountPath: /etc/podinfo
+            name: podinfo
+            readOnly: true
+        workingDir: /workspace/source
+      - args:
+          - CI=true DISPLAY=:99 npm test
+        command:
+          - /bin/sh
+          - -c
+        env:
+          - name: APP_NAME
+            value: nodey530
+          - name: BRANCH_NAME
+            value: master
+          - name: BUILD_NUMBER
+            value: "1"
+          - name: DOCKER_REGISTRY
+            valueFrom:
+              configMapKeyRef:
+                key: docker.registry
+                name: jenkins-x-docker-registry
+          - name: GIT_AUTHOR_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_AUTHOR_NAME
+            value: jenkins-x-bot
+          - name: GIT_COMMITTER_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_COMMITTER_NAME
+            value: jenkins-x-bot
+          - name: JOB_NAME
+            value: release
+          - name: JOB_SPEC
+            value: type:postsubmit
+          - name: JOB_TYPE
+            value: postsubmit
+          - name: PIPELINE_CONTEXT
+            value: release
+          - name: PIPELINE_KIND
+            value: release
+          - name: PULL_BASE_REF
+            value: master
+          - name: PULL_BASE_SHA
+            value: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+          - name: PULL_NUMBER
+          - name: PULL_PULL_SHA
+            value: master
+          - name: REPO_NAME
+            value: nodey530
+          - name: REPO_OWNER
+            value: jstrachan
+          - name: SOURCE_URL
+            value: https://github.com/jstrachan/nodey530.git
+          - name: XDG_CONFIG_HOME
+            value: /workspace/xdg_config
+          - name: DOCKER_REGISTRY_ORG
+            value: jenkins-x-labs-bdd
+          - name: JX_BATCH_MODE
+            value: "true"
+          - name: VERSION
+            value: $(inputs.params.version)
+          - name: BUILD_ID
+            value: $(inputs.params.build_id)
+          - name: PREVIEW_VERSION
+            value: $(inputs.params.version)
+        image: gcr.io/jenkinsxio/builder-nodejs:2.1.150-769
+        name: build-npm-test
+        resources:
+          requests:
+            cpu: 400m
+            memory: 512Mi
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - mountPath: /home/jenkins
+            name: workspace-volume
+          - mountPath: /etc/podinfo
+            name: podinfo
+            readOnly: true
+        workingDir: /workspace/source
+      - args:
+          - /kaniko/executor $KANIKO_FLAGS --cache=true --cache-dir=/workspace --context=/workspace/source --dockerfile=/workspace/source/Dockerfile --destination=$DOCKER_REGISTRY/$DOCKER_REGISTRY_ORG/$APP_NAME:$VERSION --cache-repo=$DOCKER_REGISTRY/$DOCKER_REGISTRY_ORG/cache
+        command:
+          - /busybox/sh
+          - -c
+        env:
+          - name: APP_NAME
+            value: nodey530
+          - name: BRANCH_NAME
+            value: master
+          - name: BUILD_NUMBER
+            value: "1"
+          - name: DOCKER_REGISTRY
+            valueFrom:
+              configMapKeyRef:
+                key: docker.registry
+                name: jenkins-x-docker-registry
+          - name: GIT_AUTHOR_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_AUTHOR_NAME
+            value: jenkins-x-bot
+          - name: GIT_COMMITTER_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_COMMITTER_NAME
+            value: jenkins-x-bot
+          - name: GOOGLE_APPLICATION_CREDENTIALS
+          - name: JOB_NAME
+            value: release
+          - name: JOB_SPEC
+            value: type:postsubmit
+          - name: JOB_TYPE
+            value: postsubmit
+          - name: NO_GOOGLE_APPLICATION_CREDENTIALS
+            value: "true"
+          - name: PIPELINE_CONTEXT
+            value: release
+          - name: PIPELINE_KIND
+            value: release
+          - name: PULL_BASE_REF
+            value: master
+          - name: PULL_BASE_SHA
+            value: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+          - name: PULL_NUMBER
+          - name: PULL_PULL_SHA
+            value: master
+          - name: REPO_NAME
+            value: nodey530
+          - name: REPO_OWNER
+            value: jstrachan
+          - name: SOURCE_URL
+            value: https://github.com/jstrachan/nodey530.git
+          - name: XDG_CONFIG_HOME
+            value: /workspace/xdg_config
+          - name: DOCKER_REGISTRY_ORG
+            value: jenkins-x-labs-bdd
+          - name: JX_BATCH_MODE
+            value: "true"
+          - name: VERSION
+            value: $(inputs.params.version)
+          - name: BUILD_ID
+            value: $(inputs.params.build_id)
+          - name: PREVIEW_VERSION
+            value: $(inputs.params.version)
+        image: gcr.io/kaniko-project/executor:debug-v0.24.0
+        name: build-container-build
+        resources:
+          requests:
+            cpu: 400m
+            memory: 512Mi
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - mountPath: /home/jenkins
+            name: workspace-volume
+          - mountPath: /etc/podinfo
+            name: podinfo
+            readOnly: true
+        workingDir: /workspace/source
+      - args:
+          - cd /workspace/source/charts/nodey530 && jx step changelog --batch-mode --version v${VERSION}
+        command:
+          - /bin/sh
+          - -c
+        env:
+          - name: APP_NAME
+            value: nodey530
+          - name: BRANCH_NAME
+            value: master
+          - name: BUILD_NUMBER
+            value: "1"
+          - name: DOCKER_REGISTRY
+            valueFrom:
+              configMapKeyRef:
+                key: docker.registry
+                name: jenkins-x-docker-registry
+          - name: GIT_AUTHOR_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_AUTHOR_NAME
+            value: jenkins-x-bot
+          - name: GIT_COMMITTER_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_COMMITTER_NAME
+            value: jenkins-x-bot
+          - name: JOB_NAME
+            value: release
+          - name: JOB_SPEC
+            value: type:postsubmit
+          - name: JOB_TYPE
+            value: postsubmit
+          - name: PIPELINE_CONTEXT
+            value: release
+          - name: PIPELINE_KIND
+            value: release
+          - name: PULL_BASE_REF
+            value: master
+          - name: PULL_BASE_SHA
+            value: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+          - name: PULL_NUMBER
+          - name: PULL_PULL_SHA
+            value: master
+          - name: REPO_NAME
+            value: nodey530
+          - name: REPO_OWNER
+            value: jstrachan
+          - name: SOURCE_URL
+            value: https://github.com/jstrachan/nodey530.git
+          - name: XDG_CONFIG_HOME
+            value: /workspace/xdg_config
+          - name: DOCKER_REGISTRY_ORG
+            value: jenkins-x-labs-bdd
+          - name: JX_BATCH_MODE
+            value: "true"
+          - name: VERSION
+            value: $(inputs.params.version)
+          - name: BUILD_ID
+            value: $(inputs.params.build_id)
+          - name: PREVIEW_VERSION
+            value: $(inputs.params.version)
+        image: gcr.io/jenkinsxio/builder-go:2.1.142-761
+        name: promote-changelog
+        resources:
+          requests:
+            cpu: 400m
+            memory: 512Mi
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - mountPath: /home/jenkins
+            name: workspace-volume
+          - mountPath: /etc/podinfo
+            name: podinfo
+            readOnly: true
+        workingDir: /workspace/source
+      - args:
+          - cd /workspace/source/charts/nodey530 && jx step helm release
+        command:
+          - /bin/sh
+          - -c
+        env:
+          - name: APP_NAME
+            value: nodey530
+          - name: BRANCH_NAME
+            value: master
+          - name: BUILD_NUMBER
+            value: "1"
+          - name: DOCKER_REGISTRY
+            valueFrom:
+              configMapKeyRef:
+                key: docker.registry
+                name: jenkins-x-docker-registry
+          - name: GIT_AUTHOR_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_AUTHOR_NAME
+            value: jenkins-x-bot
+          - name: GIT_COMMITTER_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_COMMITTER_NAME
+            value: jenkins-x-bot
+          - name: JOB_NAME
+            value: release
+          - name: JOB_SPEC
+            value: type:postsubmit
+          - name: JOB_TYPE
+            value: postsubmit
+          - name: PIPELINE_CONTEXT
+            value: release
+          - name: PIPELINE_KIND
+            value: release
+          - name: PULL_BASE_REF
+            value: master
+          - name: PULL_BASE_SHA
+            value: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+          - name: PULL_NUMBER
+          - name: PULL_PULL_SHA
+            value: master
+          - name: REPO_NAME
+            value: nodey530
+          - name: REPO_OWNER
+            value: jstrachan
+          - name: SOURCE_URL
+            value: https://github.com/jstrachan/nodey530.git
+          - name: XDG_CONFIG_HOME
+            value: /workspace/xdg_config
+          - name: DOCKER_REGISTRY_ORG
+            value: jenkins-x-labs-bdd
+          - name: JX_BATCH_MODE
+            value: "true"
+          - name: VERSION
+            value: $(inputs.params.version)
+          - name: BUILD_ID
+            value: $(inputs.params.build_id)
+          - name: PREVIEW_VERSION
+            value: $(inputs.params.version)
+        image: gcr.io/jenkinsxio/builder-go:2.1.142-761
+        name: promote-helm-release
+        resources:
+          requests:
+            cpu: 400m
+            memory: 512Mi
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - mountPath: /home/jenkins
+            name: workspace-volume
+          - mountPath: /etc/podinfo
+            name: podinfo
+            readOnly: true
+        workingDir: /workspace/source
+      - args:
+          - cd /workspace/source/charts/nodey530 && jx promote -b --all-auto --timeout 1h
+        command:
+          - /bin/sh
+          - -c
+        env:
+          - name: APP_NAME
+            value: nodey530
+          - name: BRANCH_NAME
+            value: master
+          - name: BUILD_NUMBER
+            value: "1"
+          - name: DOCKER_REGISTRY
+            valueFrom:
+              configMapKeyRef:
+                key: docker.registry
+                name: jenkins-x-docker-registry
+          - name: GIT_AUTHOR_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_AUTHOR_NAME
+            value: jenkins-x-bot
+          - name: GIT_COMMITTER_EMAIL
+            value: jenkins-x@googlegroups.com
+          - name: GIT_COMMITTER_NAME
+            value: jenkins-x-bot
+          - name: JOB_NAME
+            value: release
+          - name: JOB_SPEC
+            value: type:postsubmit
+          - name: JOB_TYPE
+            value: postsubmit
+          - name: PIPELINE_CONTEXT
+            value: release
+          - name: PIPELINE_KIND
+            value: release
+          - name: PULL_BASE_REF
+            value: master
+          - name: PULL_BASE_SHA
+            value: 1233cfd611a1d5280879c5f3fca44c181e3183cb
+          - name: PULL_NUMBER
+          - name: PULL_PULL_SHA
+            value: master
+          - name: REPO_NAME
+            value: nodey530
+          - name: REPO_OWNER
+            value: jstrachan
+          - name: SOURCE_URL
+            value: https://github.com/jstrachan/nodey530.git
+          - name: XDG_CONFIG_HOME
+            value: /workspace/xdg_config
+          - name: DOCKER_REGISTRY_ORG
+            value: jenkins-x-labs-bdd
+          - name: JX_BATCH_MODE
+            value: "true"
+          - name: VERSION
+            value: $(inputs.params.version)
+          - name: BUILD_ID
+            value: $(inputs.params.build_id)
+          - name: PREVIEW_VERSION
+            value: $(inputs.params.version)
+        image: gcr.io/jenkinsxio/jx-cli:3.0.484
+        name: promote-jx-promote
+        resources:
+          requests:
+            cpu: 400m
+            memory: 512Mi
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - mountPath: /home/jenkins
+            name: workspace-volume
+          - mountPath: /etc/podinfo
+            name: podinfo
+            readOnly: true
+        workingDir: /workspace/source
+    volumes:
+      - emptyDir: {}
+        name: workspace-volume
+      - downwardAPI:
+          items:
+            - fieldRef:
+                fieldPath: metadata.labels
+              path: labels
+        name: podinfo
