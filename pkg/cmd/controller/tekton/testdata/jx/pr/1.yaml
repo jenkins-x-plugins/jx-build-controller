@@ -831,3 +831,5 @@ status:
     - apiVersion: tekton.dev/v1
       kind: TaskRun
       name: release-9hs6f-meta-pipeline-ddnhv
+      pipelineTaskName: meta-pipeline
+

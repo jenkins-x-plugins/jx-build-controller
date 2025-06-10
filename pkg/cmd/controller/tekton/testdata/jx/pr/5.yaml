@@ -72,3 +72,4 @@ status:
     - apiVersion: tekton.dev/v1
       kind: TaskRun
       name: jstrachan-nodey530-master-relea-ttnnr-1-from-build-pack-5szl2
+      pipelineTaskName: from-build-pack
