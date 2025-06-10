@@ -1292,3 +1292,4 @@ status:
     - apiVersion: tekton.dev/v1
       kind: TaskRun
       name: release-zm5v8-from-build-pack-9f2m9
+      pipelineTaskName: from-build-pack
