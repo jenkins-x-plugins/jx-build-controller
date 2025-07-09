@@ -64,8 +64,7 @@ func (o *Options) Start() {
 
 	informerFactory.Start(stop)
 	if !cache.WaitForCacheSync(stop, jxActivityInformer.HasSynced) {
-		msg := "timed out waiting for jx caches to sync"
-		runtime.HandleError(fmt.Errorf(msg))
+		runtime.HandleError(fmt.Errorf("timed out waiting for jx caches to sync"))
 	}
 
 	o.IsReady.Store(true)
