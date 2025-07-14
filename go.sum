@@ -385,8 +385,8 @@ github.com/hinshun/vt10x v0.0.0-20220119200601-820417d04eec/go.mod h1:Q48J4R4Dvx
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
-github.com/jenkins-x-plugins/jx-pipeline v0.7.28 h1:F1x3S8vT0sjS0u5XrTlSlv51VgoeB/SDwJoyCy+BdG0=
-github.com/jenkins-x-plugins/jx-pipeline v0.7.28/go.mod h1:0TaZZ56ZiWDp+l4hY2bNWA3mAYP2rnX6+87p/dCvPpk=
+github.com/jenkins-x-plugins/jx-pipeline v0.7.29 h1:Fk6grfxUIRIcTE1j56U/VGw6mOcEmn0bHtzdISLBHck=
+github.com/jenkins-x-plugins/jx-pipeline v0.7.29/go.mod h1:jUcK96l+1pO2YL2QWUWdoSkT887Ziltk5C97078AZdU=
 github.com/jenkins-x-plugins/jx-secret v0.4.14 h1:+I8AvafBXcIs3jxsxkwO/ee3EkMnoWjEoxpyh62ZlsY=
 github.com/jenkins-x-plugins/jx-secret v0.4.14/go.mod h1:1+1gqkaD4++E02XWXEVfXFPzeHNlKxDejR3B09Ru40I=
 github.com/jenkins-x/go-scm v1.15.1 h1:QcN/iPOYljpRby95NgBOK9NGQX8Z5k04mYf4pP76Cjo=
