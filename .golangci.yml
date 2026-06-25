@@ -1,0 +1,30 @@
+version: "2"
+
+run:
+  timeout: 15m0s
+  build-tags:
+    - build
+
+linters:
+  default: none
+  enable:
+    - errcheck
+    - goconst
+    - gocritic
+    - gosec
+    - govet
+    - ineffassign
+    - misspell
+    - revive
+    - staticcheck
+    - unconvert
+    - unparam
+    - unused
+  exclusions:
+    paths:
+      - vendor
+
+formatters:
+  enable:
+    - gofmt
+    - goimports

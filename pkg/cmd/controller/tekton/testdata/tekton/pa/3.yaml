@@ -4,7 +4,6 @@ metadata:
   annotations:
     lighthouse.jenkins-x.io/cloneURI: https://github.com/jstrachan/nodey532.git
     lighthouse.jenkins-x.io/job: release
-  creationTimestamp: null
   labels:
     build: "1"
     created-by-lighthouse: "true"

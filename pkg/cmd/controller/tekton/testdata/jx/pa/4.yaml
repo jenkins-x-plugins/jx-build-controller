@@ -4,7 +4,6 @@ metadata:
   annotations:
     lighthouse.jenkins-x.io/cloneURI: https://github.com/jstrachan/nodey530.git
     lighthouse.jenkins-x.io/job: release
-  creationTimestamp: null
   labels:
     aadpodidbinding: tekton-bot
     branch: master
