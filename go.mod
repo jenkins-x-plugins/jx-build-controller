@@ -8,7 +8,7 @@ require (
 	github.com/jenkins-x-plugins/jx-pipeline v0.7.41
 	github.com/jenkins-x-plugins/jx-secret v0.4.21
 	github.com/jenkins-x/jx-api/v4 v4.8.6
-	github.com/jenkins-x/jx-helpers/v3 v3.11.6
+	github.com/jenkins-x/jx-helpers/v3 v3.11.7
 	github.com/jenkins-x/jx-kube-client/v3 v3.0.11
 	github.com/jenkins-x/jx-logging/v3 v3.1.6
 	github.com/spf13/cobra v1.10.2
