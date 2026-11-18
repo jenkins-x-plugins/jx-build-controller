@@ -5,7 +5,7 @@ go 1.26.3
 require (
 	github.com/cpuguy83/go-md2man v1.0.10
 	github.com/gorilla/mux v1.8.1
-	github.com/jenkins-x-plugins/jx-pipeline v0.7.55
+	github.com/jenkins-x-plugins/jx-pipeline v0.7.56
 	github.com/jenkins-x-plugins/jx-secret v0.4.21
 	github.com/jenkins-x/jx-api/v4 v4.8.6
 	github.com/jenkins-x/jx-helpers/v3 v3.11.7
